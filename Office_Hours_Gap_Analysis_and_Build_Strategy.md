@@ -296,12 +296,27 @@ Assumes 1-2 engineers working sequentially. If 2+ people, pipeline (Phase 1-2) a
 4. Last resort: Hardcode Agent 1's query plan, but KEEP the reasoning trace text in the UI
 5. NEVER cut: The reasoning trace UI display. That's the entire differentiation.
 
+## Expanded Data Sources (Post-Research Update)
+
+A deep research pass across all 1,052 datasets on Toronto Open Data identified 10 additional parameters that use the same CKAN API patterns already in Agent 2. These are documented in [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md) with confidence scores and build effort estimates.
+
+Key additions for V1.5:
+- **Residential Fire Inspections** (124,414 records, daily) — building-level fire code compliance, far more precise than intersection-level fire incidents
+- **Heritage Formerly Listed** (~3,700 records) — Bill 23 delistings signal neighbourhood change
+- **Building Violations** (48,035 records, daily) — open compliance issues transfer to buyer
+- **Transit Dividend** (TTC GTFS) — $87K transport cost differential over 10 years
+
+The spec (`meridian_spec_final.txt` v3) also introduced two composite inferred signals:
+- **Maintenance Complexity Signal** — composite of building age + structural permits + RentSafeTO + heritage + flood (always Low confidence)
+- **Future Tax Pressure Signal** — composite of dev app density + permit activity + heritage/zoning (always Low confidence, never MPAC prediction)
+
 ## Open Questions
 
 1. **NIM setup status:** Is the NIM container already running on the GX10? If not, add 2 hours to Phase 1.
-2. **CKAN rate limits:** Have you tested hitting all datasets in parallel? Toronto CKAN may throttle concurrent requests.
+2. **CKAN rate limits:** Have you tested hitting all datasets in parallel? Toronto CKAN may throttle concurrent requests. V1.5 expands from 6 to 12+ simultaneous sources.
 3. **Property selection:** Your 3 demo properties need DIFFERENT risk profiles (one high-risk, one medium, one clean). A clean property shows the agent correctly saying "low risk" — judges are suspicious if every example is scary.
 4. **Pitch allocation:** Your idea doc's pitch script is ~60 seconds of monologue. Budget 2-3 minutes for the live demo. Total = 4 minutes.
+5. **Model selection:** Spec says Mistral Medium 3.5 or Qwen 3 7B. Original plan says Llama 3.1 8B. Align before Hour 1 benchmark.
 
 ## Success Criteria
 

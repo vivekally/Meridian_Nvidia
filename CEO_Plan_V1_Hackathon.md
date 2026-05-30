@@ -181,11 +181,40 @@ NEW: "Meridian arms buyers. It doesn't just show you what's wrong — it tells y
 
 Opening line: "Meet Sarah. She's about to sign on a $750K condo. She doesn't know she has $40,000 in negotiation leverage sitting in the city's open data. Here's what Meridian found."
 
+## Expanded Data Sources (discovered post-plan, documented in DATA_PARAMETERS.md)
+
+The deep research pass on Toronto Open Data (1,052 datasets catalogued) identified 10 additional parameters buildable with the same CKAN API patterns. These are categorized as V1.5 (post-hackathon polish) and documented in full in [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md).
+
+**V1.5 additions (same CKAN pattern, minimal effort):**
+- Heritage Formerly Listed (`heritage-formerly-listed`, ~3,700 records) — Bill 23 delistings
+- Residential Fire Inspections (`residential-fire-inspection-results`, 124,414 records) — building-level Ontario Fire Code compliance
+- Building Violations (`building-construction-demolition-violations`, 48,035 records) — open compliance folders
+- Basement Flooding Study Areas (`basement-flooding-study-areas`, 67 subsewersheds)
+- Property Tax Relief Programs (hardcoded by buyer profile)
+- Transit Dividend (`ttc-routes-and-schedules`, GTFS) — already in PDF frontend
+
+**V2 additions (require spatial joins or external APIs):**
+- Committee of Adjustment Applications (35,984 records)
+- Preliminary Zoning Reviews (220,052 records)
+- Zoning By-law Restrictions (11,719+ zones)
+- TSSA Elevator Violations (external)
+- Neighbourhood Crime Rates (158 neighbourhoods)
+
+**Spec alignment (from meridian_spec_final.txt v3):**
+- Three-layer signal architecture: observed / inferred / simulated
+- Buyer profile input (first-time / investor / downsizer) drives tax rate selection, rebate eligibility
+- Multi-residential property tax rate (0.01208792, ~57% higher than residential)
+- Property-type-specific assessed value multipliers (condo 0.90, detached suburban 0.55, etc.)
+- Maintenance Complexity Signal and Future Tax Pressure Signal as composite inferred signals (always Low confidence)
+- RAG corpus for Agent 4 conditional retrieval
+- Wording rules: no "red flag," no dollar figures in flood output, no MPAC predictions
+
+Total parameter inventory: **43 parameters + 6 user inputs** across 5 tiers, mapped to **29 CKAN datasets**.
+
 ## NOT in Scope (V1)
 
 - Flinks bank integration (V2)
 - Buy vs. rent comparison (V3)
-- Transit Dividend scoring (V3)
 - RRSP HBP / FHSA optimizer (V3)
 - React/Next.js frontend (V3)
 - Mobile responsiveness (V3)

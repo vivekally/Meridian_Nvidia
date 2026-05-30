@@ -1,8 +1,8 @@
-# Meridian — The Default Prevention Agent
+# Meridian — True Cost of Ownership Agent
 
-> Don't just calculate cost. Prevent financial ruin.
+> The price tag is the least honest number in the room.
 
-Meridian is an AI agent that takes any Toronto address and reveals the true 10-year cost of ownership, using 6 City of Toronto Open Data sources. It flags hidden risks — heritage designations, flood zones, development pressure, building permit red flags — that a list price never shows.
+Meridian turns a Toronto listing into the true 10-year cost of ownership by combining public city data, deterministic financial logic, and a buyer-facing summary generated on local NVIDIA hardware. It surfaces 43 hidden cost parameters across 29 Toronto Open Data datasets, flags risks that list price never shows, and gives buyers negotiation leverage backed by documented data.
 
 Built for **NVIDIA Spark Hack Toronto** (May 31, 2026). Runs locally on the ASUS GX10 (DGX Spark) via NVIDIA NIM.
 
@@ -12,8 +12,12 @@ Built for **NVIDIA Spark Hack Toronto** (May 31, 2026). Runs locally on the ASUS
 
 | File | Description |
 |------|-------------|
-| [`Meridian_V3_Default_Prevention_-_Final_Idea_Doc.md`](./Meridian_V3_Default_Prevention_-_Final_Idea_Doc.md) | Original product idea doc — full thesis, V1/V2/V3 roadmap, judging criteria analysis |
-| [`Office_Hours_Gap_Analysis_and_Build_Strategy.md`](./Office_Hours_Gap_Analysis_and_Build_Strategy.md) | Gap analysis from /office-hours session — architecture changes, prompt skeletons, inter-agent data contracts, 24-hour build schedule |
+| [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md) | Complete inventory of 43 hidden cost parameters across 5 tiers, mapped to 29 CKAN datasets with confidence scores and spec alignment |
+| [`CEO_Plan_V1_Hackathon.md`](./CEO_Plan_V1_Hackathon.md) | CEO-reviewed build plan — scope decisions, build schedule, phase gates, pitch strategy |
+| [`Meridian_V3_Default_Prevention_-_Final_Idea_Doc.md`](./Meridian_V3_Default_Prevention_-_Final_Idea_Doc.md) | Full product thesis — V1/V2/V3 roadmap, judging criteria analysis, default cascade framing |
+| [`Office_Hours_Gap_Analysis_and_Build_Strategy.md`](./Office_Hours_Gap_Analysis_and_Build_Strategy.md) | Gap analysis — architecture changes, prompt skeletons, inter-agent data contracts, build schedule |
+| [`DESIGN.md`](./DESIGN.md) | Design system — Mercury-inspired dark theme, typography, color palette, spacing |
+| [`TODOS.md`](./TODOS.md) | Deferred items — RAPIDS cuDF, model upgrade, data expansion |
 
 ---
 
@@ -29,24 +33,60 @@ Meridian breaks the default cascade at step 1.
 
 ---
 
-## V1 Architecture (Hackathon Build)
+## Three-Layer Architecture
+
+Every signal Meridian produces is tagged with its type:
 
 ```
-Agent 1: Planning Agent (LLM-powered)
-  → Infers property type, decides which data sources to query, explains why
+LAYER 1 — OBSERVED (direct dataset matches)
+  Heritage designation, flood zone intersection, permit existence,
+  RentSafeTO score, LTT calculation, fire inspections
 
-Agent 2: Data Retrieval (deterministic, parallel)
-  → Heritage Register, Building Permits, TRCA Flood Zone,
-    Development Applications, RentSafeTO (6 Toronto Open Data sources)
+LAYER 2 — INFERRED (computed from multiple observed signals)
+  Maintenance complexity signal, future tax pressure signal,
+  neighbourhood intensification score
 
-Agent 3: Analysis Agent (LLM-powered)
-  → Detects contradictions, rates confidence, computes 10-year costs
-
-Agent 4: Synthesis Agent (LLM-powered)
-  → Plain-English report with dollar amounts, risk flags, and verdict
+LAYER 3 — SIMULATED (projection scenarios, not forecasts)
+  10-year property tax projection, mortgage scenario modeling (base/bear/bull),
+  rate shock scenarios, transit dividend
 ```
 
-The key differentiator: **visible reasoning trace**. Judges see the agent deciding what to check and why — not just results.
+### Agent Pipeline
+
+```
+User Input (address, list price, buyer profile)
+    │
+Agent 1 — Intake (deterministic)
+  → Resolves address → parcel, ward, zoning code
+    │
+Agent 2 — Data Retrieval (deterministic, parallel async)
+  → Heritage (CKAN) | RentSafeTO (CKAN) | Dev Apps (CKAN)
+  → Permits (CKAN) | LTT (hardcoded)  | TRCA Flood (ArcGIS)
+    │
+Agent 3 — Cost Computation (deterministic)
+  → LTT, property tax, mortgage scenarios, risk-weighted signals
+    │
+Agent 4 — Synthesis (LLM — local on GB10)
+  → Plain-English report with confidence scores and negotiation leverage
+    │
+Output: True 10-year cost, hidden flags, confidence per source
+```
+
+---
+
+## Data Sources (29 Toronto Open Data + 1 External)
+
+| Category | Datasets | Signal type |
+|----------|----------|-------------|
+| Heritage | Heritage Register (12,320), HCDs, Formerly Listed | Observed |
+| Building health | Active Permits (228K), Cleared Permits (401K), Violations (48K), Fire Inspections (124K), RentSafeTO (5,340) | Observed |
+| Development pressure | Dev Applications (26K), Dev Pipeline (2,411), CoA Applications (36K), Zoning Reviews (220K) | Observed/Inferred |
+| Environmental | TRCA Flood (ArcGIS), Basement Flooding (67 subsewersheds), Ravine Protection, ESAs (89) | Observed |
+| Financial | LTT brackets, Property tax rates, CMHC premiums, FHSA/HBP rules | Observed/Simulated |
+| Transit | TTC GTFS routes/stops, Subway ridership | Simulated |
+| Safety | Crime rates (158 neighbourhoods), KSI collisions (20K), Noise permits (3,685) | Observed |
+
+Full parameter inventory with confidence scores: [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md)
 
 ---
 
@@ -55,16 +95,17 @@ The key differentiator: **visible reasoning trace**. Judges see the agent decidi
 | Component | Technology |
 |-----------|-----------|
 | Runtime | Python 3.11 on ASUS GX10 (DGX Spark) |
-| LLM | Llama 3.1 8B via NVIDIA NIM |
+| LLM (Agent 4) | Mistral Medium 3.5 or Qwen 3 7B via NVIDIA NIM |
 | Spatial queries | GeoPandas + Shapely |
 | Data fetch | httpx (async) |
 | Frontend | Streamlit |
-| Data sources | Toronto Open Data (CKAN) + TRCA ArcGIS |
+| Data sources | 29 Toronto Open Data (CKAN) + TRCA ArcGIS |
 
 ---
 
 ## Roadmap
 
-- **V1 (Hackathon):** Hidden cost report with agent reasoning trace
+- **V1 (Hackathon):** 10 core parameters + 2 composite signals + visible reasoning trace
+- **V1.5 (Post-hackathon polish):** Transit Dividend, fire inspections, heritage formerly listed, tax relief programs
 - **V2 (July 2026):** Personal affordability layer via Flinks (bank-verified income, emergency runway, rate renewal stress test)
-- **V3 (Q4 2026):** Full buy vs. rent decision engine with Transit Dividend scoring and neighbourhood recommendations
+- **V3 (Q4 2026):** Full buy vs. rent decision engine with neighbourhood recommendations

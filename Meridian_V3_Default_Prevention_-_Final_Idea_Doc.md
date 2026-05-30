@@ -289,16 +289,26 @@ months while building a 6-month buffer, then reassess.
 
 | Dataset | Used In | Records | Verified Live |
 |---------|---------|---------|---------------|
-| Heritage Register | V1 | ~10,000 | Yes (CKAN) |
-| RentSafeTO Evaluations | V1 | 5,340 | Yes (CKAN, refreshed May 29) |
-| Building Permits (Active) | V1 | 228,691 | Yes (CKAN) |
-| Building Permits (Cleared) | V1 | 401,005 | Yes (CKAN) |
-| Development Applications | V1 | ~26,254 | Yes (CKAN) |
-| TTC GTFS / Shapefiles | V3 | routes + stops | Yes (CKAN) |
+| Heritage Register | V1 | 12,320 | Yes (CKAN, May 21 2026) |
+| Heritage Conservation Districts | V1 | ~30 | Yes (CKAN) |
+| RentSafeTO Evaluations | V1 | 5,340 | Yes (CKAN, May 30 2026) |
+| Building Permits (Active) | V1 | 228,573 | Yes (CKAN, daily) |
+| Building Permits (Cleared) | V1 | 401,265 | Yes (CKAN, daily) |
+| Development Applications | V1 | 26,254 | Yes (CKAN, daily) |
+| Address Points | V1 | 525,435 | Yes (CKAN, weekly) |
+| Heritage Formerly Listed | V1.5 | ~3,700 | Yes (CKAN) |
+| Residential Fire Inspections | V1.5 | 124,414 | Yes (CKAN, daily) |
+| Building Violations | V1.5 | 48,035 | Yes (CKAN, daily) |
+| Basement Flooding Study Areas | V1.5 | 67 | Yes (CKAN) |
+| TTC GTFS Routes/Schedules | V1.5 | All routes | Yes (CKAN) |
+| Committee of Adjustment | V2 | 35,984 | Yes (CKAN, daily) |
+| Preliminary Zoning Reviews | V2 | 220,052 | Yes (CKAN, daily) |
+| Zoning By-law | V2 | 11,719+ | Yes (CKAN) |
+| Neighbourhood Crime Rates | V2 | 158 | Yes (CKAN) |
 
-Plus TRCA Floodline (external ArcGIS, not city open data but city-adjacent).
+Plus TRCA Floodline (external ArcGIS, not city open data but city-adjacent), property tax rates (hardcoded from City budget), and CMHC premium schedule.
 
-**Strength: VERY STRONG.** 6 distinct city datasets integrated into a single product. Most teams will use 1-2 datasets. This volume of integration is a clear differentiator.
+**Strength: VERY STRONG.** 29 distinct CKAN datasets catalogued, 12 integrated in V1/V1.5. Most teams will use 1-2 datasets. Deep research across all 1,052 datasets on the portal makes this the most thorough open data integration in the cohort.
 
 **GAP:** None. This is the strongest dimension.
 
@@ -416,12 +426,41 @@ Plus TRCA Floodline (external ArcGIS, not city open data but city-adjacent).
 
 ## Data Sources Summary
 
-| Source | What It Provides | Type | Version |
-|--------|-----------------|------|---------|
-| Toronto Open Data (CKAN) | Heritage, RentSafeTO, permits, dev apps | Public API | V1 |
-| TRCA ArcGIS | Flood zone polygons | Public API | V1 |
-| Ontario/Toronto tax brackets | LTT computation | Hardcoded | V1 |
-| CMHC | Mortgage renewal data, arrears trends | Public reference | V1 (pitch context) |
-| Flinks API | Bank-verified income, debt, cash flow, NSFs | Private (user consent) | V2 |
-| TTC GTFS | Transit stop locations, routes | Public API | V3 |
-| Toronto rent data | Rental market benchmarks | Public/estimated | V3 |
+### V1 Core (verified live on CKAN as of May 30, 2026)
+
+| Source | What It Provides | Records | Type |
+|--------|-----------------|---------|------|
+| Heritage Register (CKAN) | Part IV/V designations | 12,320 | Public API |
+| Heritage Conservation Districts (CKAN) | HCD boundary polygons | ~30 | Public API |
+| Building Permits — Active (CKAN) | Open permits, structural flags | 228,573 | Public API |
+| Building Permits — Cleared (CKAN) | Permit history, maintenance pattern | 401,265 | Public API |
+| Development Applications (CKAN) | Zoning amendments, site plans (500m) | 26,254 | Public API |
+| RentSafeTO Evaluations (CKAN) | Building inspection scores (50 categories) | 5,340 | Public API |
+| TRCA ArcGIS | Flood zone polygons | City-wide | External API |
+| Ontario/Toronto LTT brackets | Land transfer tax computation | N/A | Hardcoded |
+| Property tax rates | 2026 residential + multi-residential | N/A | Hardcoded |
+| CMHC premium schedule | Mortgage insurance tiers | N/A | Hardcoded |
+
+### V1.5 Expansion (same CKAN pattern, post-hackathon polish)
+
+| Source | What It Provides | Records | Type |
+|--------|-----------------|---------|------|
+| Heritage Formerly Listed (CKAN) | Bill 23 delistings | ~3,700 | Public API |
+| Residential Fire Inspections (CKAN) | Building-level fire code compliance | 124,414 | Public API |
+| Building Violations (CKAN) | Open/closed compliance folders | 48,035 | Public API |
+| Basement Flooding Study Areas (CKAN) | Sewer-related flood risk | 67 | Public API |
+| TTC Routes/Schedules (CKAN GTFS) | Transit Dividend calculation | All routes | Public API |
+| Property tax relief programs | Buyer-profile-driven rebates | N/A | Hardcoded |
+
+### V2+ Sources
+
+| Source | What It Provides | Records | Type |
+|--------|-----------------|---------|------|
+| Committee of Adjustment (CKAN) | Minor variances, consents | 35,984 | Public API |
+| Preliminary Zoning Reviews (CKAN) | Zoning certificate requests | 220,052 | Public API |
+| Zoning By-law (CKAN) | Height, coverage, setback restrictions | 11,719+ | Public API |
+| Neighbourhood Crime Rates (CKAN) | 8 crime categories per neighbourhood | 158 | Public API |
+| Flinks API | Bank-verified income, debt, cash flow | N/A | Private (consent) |
+| TSSA Elevator Violations | Elevator inspection data | N/A | External |
+
+**Total: 43 parameters + 6 user inputs across 29 CKAN datasets.** Full inventory: [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md)
