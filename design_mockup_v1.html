@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meridian — Variant C: Risk Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F3F4F6;
+    --surface: #FFFFFF;
+    --border: #E5E7EB;
+    --green: #15803D;
+    --green-light: #DCFCE7;
+    --green-mid: #16A34A;
+    --amber: #D97706;
+    --amber-light: #FEF3C7;
+    --red: #DC2626;
+    --red-light: #FEE2E2;
+    --blue: #2563EB;
+    --blue-light: #EFF6FF;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-muted: #6B7280;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* NAV BAR */
+  .navbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* INPUT STRIP */
+  .input-strip {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    align-items: center;
+  }
+  .input-field {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-primary);
+    outline: none;
+  }
+  .input-field:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(21,128,61,0.08); }
+  .input-addr { flex: 2; }
+  .input-price { flex: 1; }
+  .btn-analyze {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+
+  /* PROPERTY SUBHEADER */
+  .property-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .property-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+  .property-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .property-status {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  /* MAIN GRID */
+  .page { padding: 20px 24px; }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .card-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body { padding: 16px 18px; }
+  .card-icon { width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; }
+  .icon-trace { background: var(--green-light); color: var(--green); }
+  .icon-flags { background: var(--red-light); color: var(--red); }
+  .icon-cost { background: var(--blue-light); color: var(--blue); }
+
+  /* TRACE CARD */
+  .trace-log {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    line-height: 2;
+    color: var(--text-muted);
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .tl { display: flex; gap: 8px; }
+  .tp { font-weight: 600; flex-shrink: 0; min-width: 75px; }
+  .tp-plan { color: var(--green); }
+  .tp-ret { color: var(--blue); }
+  .tp-anal { color: var(--amber); }
+  .tc-ok { color: var(--text-primary); }
+  .trace-divider { border: none; border-top: 1px dashed var(--border); margin: 8px 0; }
+
+  /* CONFIDENCE CHIPS IN TRACE */
+  .conf-chip {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 100px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+    margin-left: 3px;
+  }
+  .conf-high { background: var(--green-light); color: var(--green); }
+  .conf-med { background: var(--amber-light); color: var(--amber); }
+  .conf-unkn { background: #F3F4F6; color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* FLAGS CARD */
+  .flag-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .flag-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .flag-badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .flag-content {}
+  .flag-name { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+  .flag-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  .flag-lev { font-size: 11px; color: var(--green); font-style: italic; margin-top: 3px; }
+  .flag-conf { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+  .flag-conf-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* COST CARD */
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-key { color: var(--text-secondary); }
+  .cost-val {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+  .cost-red { color: var(--red); }
+  .cost-green { color: var(--green); }
+  .cost-total-row .cost-key { font-weight: 700; font-size: 12px; color: var(--text-primary); }
+  .cost-total-row .cost-val { font-size: 14px; font-weight: 700; color: var(--red); }
+  .cost-divider { border: none; border-top: 2px solid var(--border); margin: 8px 0; }
+
+  .rate-scenarios { display: flex; gap: 8px; margin-top: 12px; }
+  .rate-card {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .rate-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .rate-val { font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; }
+  .rate-bull .rate-val { color: var(--green); }
+  .rate-base .rate-val { color: var(--text-primary); }
+  .rate-bear .rate-val { color: var(--red); }
+
+  /* VERDICT BANNER */
+  .verdict-banner {
+    background: var(--red);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(220,38,38,0.25);
+  }
+  .verdict-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .verdict-icon-text {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .verdict-text-group { flex: 1; }
+  .verdict-heading {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .verdict-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.4;
+  }
+  .verdict-cost {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .verdict-cost-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+  .verdict-cost-value {
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+  .verdict-cost-sub { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- NAV BAR -->
+<div class="navbar">
+  <div class="nav-logo">Meridian</div>
+  <div class="input-strip">
+    <input type="text" class="input-field input-addr" value="401 Richmond St W, Toronto" />
+    <input type="text" class="input-field input-price" value="$850,000" />
+    <button class="btn-analyze">⚡ Analyze</button>
+  </div>
+</div>
+
+<!-- PROPERTY SUBHEADER -->
+<div class="property-bar">
+  <div class="property-name">401 Richmond St W, Toronto</div>
+  <div class="property-meta">$850,000 · 5 sources · 2026-05-31</div>
+  <div class="property-status">✓ Analysis complete</div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page">
+
+  <!-- TOP GRID: 3 CARDS -->
+  <div class="grid-3">
+
+    <!-- CARD 1: REASONING TRACE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-trace">🤖</div>
+        Agent Reasoning
+      </div>
+      <div class="card-body">
+        <div class="trace-log">
+          <div class="tl"><span class="tp tp-plan">[Plan]</span><span>Inferred: pre-1990 condo</span></div>
+          <div class="tl"><span class="tp tp-plan">[Plan]</span><span>Querying 5 sources...</span></div>
+          <hr class="trace-divider">
+          <div class="tl"><span class="tp tp-ret">[Data]</span><span class="tc-ok">Heritage: Part IV 1987 <span class="conf-chip conf-high">HIGH</span></span></div>
+          <div class="tl"><span class="tp tp-ret">[Data]</span><span class="tc-ok">Permits: 3 active <span class="conf-chip conf-high">HIGH</span></span></div>
+          <div class="tl"><span class="tp tp-ret">[Data]</span><span class="tc-ok">Dev Apps: 12@500m <span class="conf-chip conf-high">HIGH</span></span></div>
+          <div class="tl"><span class="tp tp-ret">[Data]</span><span class="tc-ok">Flood: CLEAR <span class="conf-chip conf-high">HIGH</span></span></div>
+          <div class="tl"><span class="tp tp-ret">[Data]</span><span class="tc-ok">RentSafe: 71/100 <span class="conf-chip conf-med">MED</span></span></div>
+          <hr class="trace-divider">
+          <div class="tl"><span class="tp tp-anal">[Anal]</span><span>Heritage + permits → HIGH assessment risk</span></div>
+          <div class="tl"><span class="tp tp-anal">[Anal]</span><span>Contradiction: active builds in heritage zone</span></div>
+          <div class="tl"><span class="tp tp-anal">[Anal]</span><span>12 dev apps → tax pressure HIGH</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2: RISK FLAGS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-flags">⚠</div>
+        Risk Flags
+      </div>
+      <div class="card-body">
+        <div class="flag-item">
+          <div class="flag-badge badge-red">RED</div>
+          <div class="flag-content">
+            <div class="flag-name">Heritage Part IV</div>
+            <div class="flag-desc">1987 designation. Renovation costs +40–60%.</div>
+            <div class="flag-lev">→ $40K–$60K leverage at table</div>
+            <div class="flag-conf"><div class="flag-conf-dot" style="background:#15803D"></div>HIGH confidence</div>
+          </div>
+        </div>
+        <div class="flag-item">
+          <div class="flag-badge badge-red">RED</div>
+          <div class="flag-content">
+            <div class="flag-name">3 Active Structural Permits</div>
+            <div class="flag-desc">Assessment risk $15K–$35K within 36 months.</div>
+            <div class="flag-lev">→ Request $25K escrow or price reduction</div>
+            <div class="flag-conf"><div class="flag-conf-dot" style="background:#15803D"></div>HIGH confidence</div>
+          </div>
+        </div>
+        <div class="flag-item">
+          <div class="flag-badge badge-amber">AMBER</div>
+          <div class="flag-content">
+            <div class="flag-name">12 Dev Apps (500m)</div>
+            <div class="flag-desc">Intensification → tax increase $8K–$15K / 10yr.</div>
+            <div class="flag-conf"><div class="flag-conf-dot" style="background:#15803D"></div>HIGH confidence</div>
+          </div>
+        </div>
+        <div class="flag-item">
+          <div class="flag-badge badge-green">CLEAR</div>
+          <div class="flag-content">
+            <div class="flag-name">Flood Zone</div>
+            <div class="flag-desc">Outside TRCA floodplain. No flood premium.</div>
+            <div class="flag-conf"><div class="flag-conf-dot" style="background:#15803D"></div>HIGH confidence</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: 10-YEAR COST -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-cost">$</div>
+        10-Year Cost
+      </div>
+      <div class="card-body">
+        <div class="cost-row"><div class="cost-key">Land Transfer Tax</div><div class="cost-val">$32,475</div></div>
+        <div class="cost-row"><div class="cost-key">FTB Rebate</div><div class="cost-val cost-green">−$8,475</div></div>
+        <div class="cost-row"><div class="cost-key">Property Tax (10yr)</div><div class="cost-val">$71,250</div></div>
+        <div class="cost-row"><div class="cost-key">Heritage Premium</div><div class="cost-val cost-red">$50,000</div></div>
+        <div class="cost-row"><div class="cost-key">Special Assessment</div><div class="cost-val cost-red">$25,000</div></div>
+        <div class="cost-row"><div class="cost-key">Dev Pressure Loading</div><div class="cost-val cost-red">$12,000</div></div>
+        <hr class="cost-divider">
+        <div class="cost-row cost-total-row"><div class="cost-key">True 10-Year Total</div><div class="cost-val">$1,247,250</div></div>
+
+        <div class="rate-scenarios">
+          <div class="rate-card rate-bull">
+            <div class="rate-label">Bull 3.9%</div>
+            <div class="rate-val">$1,198K</div>
+          </div>
+          <div class="rate-card rate-base">
+            <div class="rate-label">Base 5.45%</div>
+            <div class="rate-val">$1,247K</div>
+          </div>
+          <div class="rate-card rate-bear">
+            <div class="rate-label">Bear 6.5%</div>
+            <div class="rate-val">$1,359K</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VERDICT BANNER -->
+  <div class="verdict-banner">
+    <div class="verdict-icon">
+      <div class="verdict-icon-text">RED</div>
+    </div>
+    <div class="verdict-text-group">
+      <div class="verdict-heading">Default risk is material over a 10-year hold.</div>
+      <div class="verdict-sub">
+        Heritage designation, 3 active structural permits, and 12 development applications add $212,000 in costs above list. You have $65,000–$85,000 in negotiation leverage. Use it.
+      </div>
+    </div>
+    <div class="verdict-cost">
+      <div class="verdict-cost-label">True 10-Year Cost</div>
+      <div class="verdict-cost-value">$1,247,000</div>
+      <div class="verdict-cost-sub">vs. $850,000 list price</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
