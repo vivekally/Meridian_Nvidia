@@ -5,13 +5,14 @@ Do not deviate without explicit user approval.
 In QA mode, flag any code that doesn't match DESIGN.md.
 
 Key rules:
-- Headings: Fraunces variable serif (NOT Plus Jakarta Sans, NOT Inter, NOT system-ui)
-- Body: Schibsted Grotesk
-- Dollar amounts / financial figures: Geist Mono with tabular-nums, minimum 18px
-- Primary color: #0F6B30 forest green (NOT blue)
-- Amber (#B45309): urgency ONLY — permit warnings, flood zone flags, RRSP deadlines. Never casual use.
-- Background: #F5F0E8 warm parchment (NOT #F3F4F6 cool gray, NOT #FFFFFF stark white)
-- Brass (#A07840): confidence indicators and section dividers ONLY. Never overuse.
+- All text: DM Sans variable (NOT Fraunces, NOT Schibsted Grotesk, NOT Inter)
+- Dollar amounts / financial figures: Geist Mono with tabular-nums
+- Background: #171721 dark (Mercury exact). NOT warm parchment, NOT pure black.
+- Cards: #1E1E2A surface. Borders: rgba(175,178,206,0.36).
+- Accent/CTA: #5266EB indigo (Mercury exact). NOT green for interactive elements.
+- Green (#34D399): leverage/positive ONLY. Amber (#FBBF24): urgency ONLY. Red (#F87171): danger ONLY.
+- Buttons: 40px pill border-radius (Mercury exact).
+- Nav: backdrop-filter blur, semi-transparent background.
 
 ## Skill routing
 

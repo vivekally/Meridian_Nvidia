@@ -4,992 +4,273 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meridian — Design System Preview</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ============================================================
-   MERIDIAN DESIGN SYSTEM — "Due Diligence Room"
-   ============================================================ */
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Base — aged document, not gray SaaS */
-  --bg:              #F5F0E8;
-  --surface:         #FAF7F2;
-  --surface-raised:  #FFFFFF;
-  --border:          #DDD5C4;
-  --border-light:    #EDE8DF;
-
-  /* Primary */
-  --green:           #0F6B30;
-  --green-mid:       #15803D;
-  --green-hover:     #0A5625;
-  --green-wash:      #EAF4EE;
-  --green-text:      #052E16;
-
-  /* Urgency — intentional, not decorative */
-  --amber:           #B45309;
-  --amber-wash:      #FEF3C7;
-
-  /* Danger */
-  --red:             #991B1B;
-  --red-wash:        #FEE2E2;
-
-  /* Brass — confidence indicators, section dividers */
-  --brass:           #A07840;
-  --brass-light:     #F0E8D8;
-
-  /* Typography */
-  --ink:             #1C1208;
-  --ink-mid:         #4A3F2F;
-  --ink-muted:       #8A7B68;
-  --ink-faint:       #C4B89E;
-
-  /* Type families */
-  --font-display:    'Fraunces', Georgia, serif;
-  --font-body:       'Schibsted Grotesk', system-ui, sans-serif;
-  --font-mono:       'Geist Mono', 'Courier New', monospace;
-
-  /* Spacing */
-  --sp-2:   2px;
-  --sp-4:   4px;
-  --sp-8:   8px;
-  --sp-12:  12px;
-  --sp-16:  16px;
-  --sp-24:  24px;
-  --sp-32:  32px;
-  --sp-48:  48px;
-  --sp-64:  64px;
-  --sp-96:  96px;
-
-  /* Radius */
-  --r-sm:   4px;
-  --r-md:   8px;
-  --r-lg:   12px;
-  --r-full: 9999px;
+  --bg: #171721; --surface: #1E1E2A; --surface-raised: #272735;
+  --surface-frosted: rgba(112,115,147,0.22);
+  --border: rgba(175,178,206,0.36); --border-faint: rgba(175,178,206,0.14);
+  --text-primary: #EDEDE3; --text-secondary: #C3C3CC; --text-muted: #70707D;
+  --accent: #5266EB; --accent-tint: rgba(156,180,232,0.2); --accent-light: #CDDDFF;
+  --green: #34D399; --green-tint: rgba(52,211,153,0.12);
+  --amber: #FBBF24; --amber-tint: rgba(251,191,36,0.12);
+  --red: #F87171; --red-tint: rgba(248,113,113,0.12);
+  --font: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Courier New', monospace;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-pill: 40px;
+}
+.light-mode {
+  --bg: #F4F5F9; --surface: #FFFFFF; --surface-raised: #F4F5F9;
+  --surface-frosted: rgba(112,115,147,0.06); --border: rgba(112,115,147,0.22);
+  --border-faint: rgba(112,115,147,0.12); --text-primary: #13131E;
+  --text-secondary: #3D3D52; --text-muted: #70707D;
 }
 
-.dark-mode {
-  --bg:              #1A1610;
-  --surface:         #231F18;
-  --surface-raised:  #2D2820;
-  --border:          #3A3228;
-  --border-light:    #2F2920;
-  --green:           #16A34A;
-  --green-mid:       #22C55E;
-  --green-hover:     #4ADE80;
-  --green-wash:      #052E16;
-  --green-text:      #BBF7D0;
-  --amber:           #D97706;
-  --amber-wash:      #451A03;
-  --red:             #DC2626;
-  --red-wash:        #450A0A;
-  --brass:           #C89650;
-  --brass-light:     #2A1F0E;
-  --ink:             #F0EAE0;
-  --ink-mid:         #C4B89E;
-  --ink-muted:       #8A7B68;
-  --ink-faint:       #4A3F2F;
-}
+html { font-size: 16px; }
+body { background: var(--bg); color: var(--text-primary); font-family: var(--font); font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 
-html { font-size: 14px; }
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-body);
-  line-height: 1.6;
-  transition: background 0.25s ease, color 0.25s ease;
-}
+.bar { position: sticky; top: 0; z-index: 100; background: rgba(23,23,33,0.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-faint); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+.bar-title { font-size: 14px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+.bar-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.toggle { background: var(--accent-tint); border: none; border-radius: var(--r-pill); padding: 6px 16px; font-family: var(--font); font-size: 13px; font-weight: 420; color: var(--text-primary); cursor: pointer; }
+.toggle:hover { background: rgba(156,180,232,0.3); }
 
-/* ============================================================
-   PREVIEW CHROME
-   ============================================================ */
+.sec { max-width: 1100px; margin: 0 auto; padding: 64px 32px; }
+.sec + .sec { border-top: 1px solid var(--border-faint); }
+.tag { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 32px; }
 
-.preview-header {
-  background: var(--surface-raised);
-  border-bottom: 1px solid var(--border);
-  padding: var(--sp-16) var(--sp-32);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.preview-title {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--green);
-  font-variation-settings: 'opsz' 18;
-}
-.preview-subtitle { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+.row { margin-bottom: 40px; }
+.meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-family: var(--font-mono); }
 
-.mode-toggle {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 6px 14px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--ink-mid);
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-.mode-toggle:hover { border-color: var(--green); }
+.t-hero { font-family: var(--font-mono); font-size: 64px; font-weight: 600; color: var(--green); letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.t-h1 { font-size: 32px; font-weight: 480; letter-spacing: -0.02em; line-height: 1.2; }
+.t-h2 { font-size: 16px; font-weight: 480; line-height: 1.35; }
+.t-body { font-size: 15px; font-weight: 360; color: var(--text-secondary); line-height: 1.65; max-width: 600px; }
+.t-label { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
+.t-mono-lg { font-family: var(--font-mono); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.t-mono-md { font-family: var(--font-mono); font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.t-mono-sm { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); line-height: 1.6; }
 
-.preview-section {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: var(--sp-64) var(--sp-32);
-}
-.preview-section + .preview-section {
-  border-top: 1px solid var(--border-light);
-}
+.colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 32px; }
+.sw { border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--border-faint); }
+.sw-block { height: 56px; }
+.sw-info { background: var(--surface); padding: 8px 10px; }
+.sw-name { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+.sw-hex { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--brass);
-  margin-bottom: var(--sp-32);
-}
+.flex { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 28px; }
 
-/* ============================================================
-   1. TYPOGRAPHY SPECIMEN
-   ============================================================ */
+.btn { display: inline-flex; align-items: center; border: none; cursor: pointer; font-family: var(--font); }
+.btn-p { background: var(--accent); color: #fff; border-radius: var(--r-pill); padding: 9px 20px; font-size: 14px; font-weight: 500; }
+.btn-g { background: var(--accent-tint); color: var(--text-primary); border-radius: var(--r-pill); padding: 7px 16px; font-size: 13px; font-weight: 420; }
+.btn-o { background: transparent; color: var(--text-muted); border: 1px solid var(--border-faint); border-radius: var(--r-pill); padding: 6px 14px; font-size: 13px; font-weight: 420; }
 
-.type-row {
-  margin-bottom: var(--sp-48);
-}
-.type-meta {
-  font-size: 11px;
-  color: var(--ink-muted);
-  margin-bottom: var(--sp-8);
-  font-family: var(--font-mono);
-}
-.type-specimen { line-height: 1.15; }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--r-pill); font-size: 11px; font-weight: 500; border: 1px solid transparent; }
+.dot { width: 5px; height: 5px; border-radius: 50%; }
+.badge.hi { background: var(--green-tint); color: var(--green); border-color: rgba(52,211,153,0.2); }
+.badge.md { background: var(--amber-tint); color: var(--amber); border-color: rgba(251,191,36,0.2); }
+.badge.lo { background: var(--red-tint); color: var(--red); border-color: rgba(248,113,113,0.2); }
+.badge.un { background: rgba(82,102,235,0.12); color: var(--accent-light); border-color: rgba(82,102,235,0.2); }
+.badge.hi .dot { background: var(--green); }
+.badge.md .dot { background: var(--amber); }
+.badge.lo .dot { background: var(--red); }
+.badge.un .dot { background: var(--accent); }
 
-.t-display-xl {
-  font-family: var(--font-display);
-  font-size: 56px;
-  font-weight: 300;
-  color: var(--ink);
-  font-variation-settings: 'opsz' 90;
-}
-.t-display-lg {
-  font-family: var(--font-display);
-  font-size: 40px;
-  font-weight: 400;
-  color: var(--ink);
-  font-variation-settings: 'opsz' 60;
-}
-.t-display-md {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--ink);
-  font-variation-settings: 'opsz' 28;
-}
-.t-body {
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 400;
-  color: var(--ink-mid);
-  max-width: 600px;
-  line-height: 1.7;
-}
-.t-label {
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ink-muted);
-}
-.t-mono-xl {
-  font-family: var(--font-mono);
-  font-size: 36px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--green);
-}
-.t-mono-md {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.t-mono-sm {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mid);
-}
+.fi { background: var(--surface-frosted); border: 1px solid var(--border-faint); border-radius: var(--r-md); padding: 10px 14px; font-family: var(--font); font-size: 14px; font-weight: 420; color: var(--text-primary); outline: none; }
+.fi::placeholder { color: var(--text-muted); }
+.fi:focus { border-color: rgba(156,180,232,0.5); }
+.fi.mono { font-family: var(--font-mono); font-size: 13px; }
+.fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 200px; }
+.fl { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
 
-/* ============================================================
-   2. COLOR PALETTE
-   ============================================================ */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; max-width: 500px; }
+.card-t { font-size: 16px; font-weight: 480; margin-bottom: 8px; }
+.card-b { font-size: 14px; font-weight: 360; color: var(--text-secondary); line-height: 1.6; }
+.script { background: var(--surface-raised); border: 1px solid var(--border-faint); border-radius: var(--r-md); padding: 16px 18px; margin-top: 16px; }
+.script-l { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-light); opacity: 0.8; margin-bottom: 8px; }
+.script-t { font-size: 14px; font-weight: 360; font-style: italic; line-height: 1.6; }
+.script-a { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--green); margin-top: 8px; }
 
-.color-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: var(--sp-12);
-  margin-bottom: var(--sp-32);
-}
-.color-swatch {
-  border-radius: var(--r-md);
-  overflow: hidden;
-  border: 1px solid var(--border-light);
-}
-.swatch-block { height: 64px; }
-.swatch-meta {
-  background: var(--surface);
-  padding: var(--sp-8);
-}
-.swatch-name { font-size: 11px; font-weight: 600; color: var(--ink-mid); }
-.swatch-hex {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--ink-muted);
-  margin-top: 2px;
-}
+/* Mockup shell */
+.shell { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-xl); overflow: hidden; box-shadow: 0 16px 64px rgba(0,0,0,0.3); }
+.shell-nav { background: rgba(23,23,33,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+.shell-logo { font-size: 14px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.logo-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; }
+.shell-body { padding: 40px 32px; max-width: 700px; margin: 0 auto; }
 
-/* ============================================================
-   3. UI COMPONENTS
-   ============================================================ */
+.vcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 40px; position: relative; overflow: hidden; margin-bottom: 16px; }
+.vcard::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 400px; height: 200px; background: radial-gradient(ellipse, rgba(52,211,153,0.07) 0%, transparent 70%); pointer-events: none; }
+.vaddr { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.vaddr::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.vpre { font-size: 15px; font-weight: 360; color: var(--text-secondary); margin-bottom: 10px; }
+.vnum { font-family: var(--font-mono); font-size: 48px; font-weight: 600; color: var(--green); letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; margin-bottom: 6px; }
+.vsub { font-size: 16px; font-weight: 360; font-style: italic; color: var(--text-secondary); margin-bottom: 32px; }
+.vstats { display: flex; border-top: 1px solid var(--border-faint); padding-top: 20px; }
+.vstat { flex: 1; }
+.vstat + .vstat { border-left: 1px solid var(--border-faint); padding-left: 24px; }
+.vstat-l { font-size: 10px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.vstat-v { font-family: var(--font-mono); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.vstat-v.d { color: var(--red); }
+.vpill { position: absolute; top: 20px; right: 20px; background: var(--red-tint); color: var(--red); border: 1px solid rgba(248,113,113,0.25); border-radius: var(--r-pill); padding: 3px 10px; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
 
-.component-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-12);
-  align-items: flex-start;
-  margin-bottom: var(--sp-32);
-}
+.mflag { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+.mfs { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+.mfs.r { background: var(--red); } .mfs.a { background: var(--amber); }
+.mft { font-size: 14px; font-weight: 480; flex: 1; }
+.mfc { font-size: 11px; color: var(--text-muted); }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 20px;
-  border-radius: var(--r-md);
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.15s;
-}
-.btn-primary { background: var(--green); color: #fff; }
-.btn-primary:hover { background: var(--green-hover); }
-.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--ink-mid); }
-.btn-secondary:hover { border-color: var(--green); color: var(--green); }
-.btn-ghost { background: transparent; color: var(--ink-muted); padding: 10px 16px; }
-
-.confidence-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  border-radius: var(--r-full);
-  font-size: 11px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
-}
-.badge-high { background: var(--green-wash); color: var(--green-text); }
-.badge-medium { background: var(--amber-wash); color: var(--amber); }
-.badge-low { background: var(--red-wash); color: var(--red); }
-.badge-unknown { background: var(--brass-light); color: var(--brass); }
-
-.badge-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.badge-high .badge-dot { background: var(--green); }
-.badge-medium .badge-dot { background: var(--amber); }
-.badge-low .badge-dot { background: var(--red); }
-.badge-unknown .badge-dot { background: var(--brass); }
-
-.form-group { display: flex; flex-direction: column; gap: 4px; }
-.form-label { font-size: 12px; font-weight: 600; color: var(--ink-muted); letter-spacing: 0.03em; }
-.form-input {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 10px 14px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--ink);
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.form-input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(15,107,48,0.08);
-}
-.form-input::placeholder { color: var(--ink-faint); }
-
-/* ============================================================
-   4. MERIDIAN PRODUCT MOCKUP — VERDICT SCREEN
-   ============================================================ */
-
-.app-shell {
-  background: var(--bg);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 40px rgba(28,18,8,0.12);
-}
-
-.app-nav {
-  background: var(--surface-raised);
-  border-bottom: 1px solid var(--border);
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.app-logo {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--green);
-  font-variation-settings: 'opsz' 20;
-  flex-shrink: 0;
-}
-
-.nav-input-bar {
-  display: flex;
-  gap: 8px;
-  flex: 1;
-}
-.nav-input {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 8px 14px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--ink);
-  outline: none;
-}
-.nav-input.addr { flex: 2; }
-.nav-input.price { flex: 1; font-family: var(--font-mono); }
-.nav-btn {
-  background: var(--green);
-  color: #fff;
-  border: none;
-  border-radius: var(--r-md);
-  padding: 8px 18px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.app-body {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--sp-48) var(--sp-32);
-}
-
-/* Verdict hero */
-.verdict-hero {
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: var(--sp-48) var(--sp-48);
-  margin-bottom: var(--sp-32);
-  position: relative;
-}
-.verdict-address {
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-muted);
-  margin-bottom: var(--sp-16);
-}
-.verdict-leverage-label {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--ink-muted);
-  margin-bottom: var(--sp-8);
-}
-.verdict-leverage-number {
-  font-family: var(--font-display);
-  font-size: 56px;
-  font-weight: 300;
-  color: var(--green);
-  font-variation-settings: 'opsz' 90;
-  line-height: 1.05;
-  margin-bottom: var(--sp-12);
-}
-.verdict-tagline {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--ink-mid);
-  font-style: italic;
-  font-variation-settings: 'opsz' 18;
-  margin-bottom: var(--sp-24);
-}
-.verdict-costs {
-  display: flex;
-  gap: var(--sp-32);
-  padding-top: var(--sp-24);
-  border-top: 1px solid var(--border-light);
-}
-.verdict-cost-item {}
-.verdict-cost-label { font-size: 11px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.verdict-cost-value {
-  font-family: var(--font-mono);
-  font-size: 22px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.verdict-cost-value.danger { color: var(--red); }
-
-.verdict-pill {
-  position: absolute;
-  top: var(--sp-24);
-  right: var(--sp-24);
-  background: var(--green-wash);
-  color: var(--green);
-  border-radius: var(--r-full);
-  padding: 6px 14px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-
-/* Section divider */
-.section-divider {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-16);
-  margin: var(--sp-40) 0 var(--sp-24) 0;
-}
-.divider-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--brass);
-  white-space: nowrap;
-}
-.divider-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-/* Risk flag cards */
-.risk-flag {
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: var(--sp-24);
-  margin-bottom: var(--sp-16);
-  border-left: 3px solid;
-}
-.risk-flag.red { border-left-color: var(--red); }
-.risk-flag.amber { border-left-color: var(--amber); }
-.risk-flag.green { border-left-color: var(--green); }
-
-.risk-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--sp-16);
-  margin-bottom: var(--sp-12);
-}
-.risk-title {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--ink);
-  font-variation-settings: 'opsz' 18;
-  line-height: 1.3;
-}
-.risk-source-badges { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
-
-.risk-body {
-  font-size: 14px;
-  color: var(--ink-mid);
-  line-height: 1.65;
-  margin-bottom: var(--sp-16);
-}
-
-.negotiation-script {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--r-md);
-  padding: var(--sp-16);
-}
-.negotiation-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--brass);
-  margin-bottom: var(--sp-8);
-}
-.negotiation-text {
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-style: italic;
-  color: var(--ink);
-  line-height: 1.6;
-}
-.negotiation-leverage {
-  margin-top: var(--sp-8);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--green);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Cost breakdown table */
-.cost-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-.cost-table th {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-muted);
-  text-align: left;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.cost-table th:not(:first-child) { text-align: right; }
-.cost-table td {
-  padding: 12px 12px;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--ink-mid);
-}
-.cost-table td:not(:first-child) {
-  text-align: right;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 14px;
-}
-.cost-table tr.total td {
-  font-weight: 700;
-  color: var(--ink);
-  border-top: 1px solid var(--border);
-  border-bottom: none;
-  font-size: 15px;
-}
-.cost-table tr.total td:not(:first-child) {
-  font-size: 17px;
-  color: var(--red);
-}
-.cost-table td.category { font-weight: 500; color: var(--ink); }
-
-/* ============================================================
-   LAYOUT HELPERS
-   ============================================================ */
-
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-24); }
-.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-12); }
+/* Input screen */
+.iscreen { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); max-width: 500px; overflow: hidden; }
+.inav { background: rgba(23,23,33,0.8); padding: 14px 24px; border-bottom: 1px solid var(--border-faint); }
+.ibody { padding: 48px 40px; text-align: center; }
+.ihero { font-size: 28px; font-weight: 480; letter-spacing: -0.02em; margin-bottom: 8px; }
+.isub { font-size: 14px; font-weight: 360; color: var(--text-muted); max-width: 340px; margin: 0 auto 32px; }
+.ifields { display: flex; flex-direction: column; gap: 10px; max-width: 380px; margin: 0 auto; text-align: left; }
+.ifields .fi { width: 100%; padding: 12px 16px; font-size: 15px; }
+.ifields .btn-p { width: 100%; justify-content: center; padding: 12px; margin-top: 4px; text-align: center; }
+.srow { display: flex; gap: 24px; justify-content: center; margin-top: 32px; }
+.sitem { text-align: center; }
+.snum { font-family: var(--font-mono); font-size: 18px; font-weight: 600; color: var(--accent); }
+.sdesc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
 @media (max-width: 700px) {
-  .two-col, .three-col { grid-template-columns: 1fr; }
-  .verdict-leverage-number { font-size: 40px; }
-  .verdict-costs { flex-direction: column; gap: var(--sp-16); }
-  .app-body { padding: var(--sp-24) var(--sp-16); }
-  .verdict-hero { padding: var(--sp-24); }
+  .sec { padding: 40px 16px; }
+  .t-hero { font-size: 42px; }
+  .shell-body { padding: 24px 16px; }
+  .vnum { font-size: 36px; }
+  .vstats { flex-direction: column; gap: 16px; }
+  .vstat + .vstat { border: none; padding: 0; }
 }
 </style>
 </head>
 <body>
 
-<!-- PREVIEW NAV -->
-<div class="preview-header">
-  <div>
-    <div class="preview-title">Meridian Design System</div>
-    <div class="preview-subtitle">Due Diligence Room — v1.0 preview</div>
-  </div>
-  <button class="mode-toggle" onclick="document.body.classList.toggle('dark-mode'); this.textContent = document.body.classList.contains('dark-mode') ? '☀ Light mode' : '☾ Dark mode'">☾ Dark mode</button>
+<div class="bar">
+  <div><div class="bar-title">Meridian Design System</div><div class="bar-sub">Mercury.com design language</div></div>
+  <button class="toggle" onclick="document.documentElement.classList.toggle('light-mode'); this.textContent = document.documentElement.classList.contains('light-mode') ? '☾ Dark' : '☀ Light'">☀ Light</button>
 </div>
-
 
 <!-- 1. TYPOGRAPHY -->
-<div class="preview-section">
-  <div class="section-label">01 — Typography</div>
-
-  <div class="type-row">
-    <div class="type-meta">FRAUNCES VARIABLE — Hero verdicts & leverage numbers (wght 300, opsz 90)</div>
-    <div class="type-specimen t-display-xl">$65,000–$85,000</div>
-    <div class="type-specimen t-display-xl" style="color: var(--ink-mid); margin-top: 8px;">in negotiation leverage</div>
-  </div>
-
-  <div class="type-row">
-    <div class="type-meta">FRAUNCES VARIABLE — Section headings (wght 600, opsz 28)</div>
-    <div class="type-specimen t-display-md">Heritage Part IV — Active Designation</div>
-  </div>
-
-  <div class="type-row">
-    <div class="type-meta">SCHIBSTED GROTESK 400 — Body & explanations</div>
-    <div class="type-specimen t-body">This property carries a Part IV Heritage designation under the Ontario Heritage Act. This means any exterior alterations require municipal approval and can add 40–60% to renovation budgets. The designation was registered in 1987 and remains active in the city registry.</div>
-  </div>
-
-  <div class="type-row">
-    <div class="type-meta">SCHIBSTED GROTESK 600 — Labels & UI chrome</div>
-    <div class="type-specimen t-label">Confidence: HIGH · Source: Toronto Heritage Register · Updated: Jan 2026</div>
-  </div>
-
-  <div class="type-row">
-    <div class="type-meta">GEIST MONO 600 — Financial figures (tabular-nums, min 18px)</div>
-    <div class="type-specimen t-mono-xl">$1,247,340</div>
-    <div class="type-specimen t-mono-md" style="margin-top: 8px;">True 10-year cost of ownership</div>
-    <div class="type-specimen t-mono-sm" style="margin-top: 6px;">Land Transfer Tax: $38,950 · Mortgage (5yr×2 @ 6.2%): $748,200</div>
-  </div>
+<div class="sec">
+  <div class="tag">01 — Typography</div>
+  <div class="row"><div class="meta">GEIST MONO 600 — Hero leverage number (64px, tabular-nums)</div><div class="t-hero">$55,000–$75,000</div></div>
+  <div class="row"><div class="meta">DM SANS 480 — Page heading (32px)</div><div class="t-h1">Property risk assessment complete</div></div>
+  <div class="row"><div class="meta">DM SANS 480 — Card title (16px)</div><div class="t-h2">Heritage Part IV Designation — Active since 1987</div></div>
+  <div class="row"><div class="meta">DM SANS 360 — Body text (15px)</div><div class="t-body">This property is designated under the Ontario Heritage Act (Part IV). Any exterior alterations require City Heritage Permit approval, typically adding 6–18 months and $40,000–$60,000 to renovation budgets.</div></div>
+  <div class="row"><div class="meta">DM SANS 500 — Label (11px, uppercase, tracked)</div><div class="t-label">True 10-year cost · Confidence: high · Updated: Jan 2026</div></div>
+  <div class="row"><div class="meta">GEIST MONO 600 — Financial stat (20px)</div><div class="t-mono-lg">$1,847,230</div></div>
+  <div class="row"><div class="meta">GEIST MONO 500 — Table value (13px)</div><div class="t-mono-md">$74,820 &nbsp; $748,200 &nbsp; $38,950</div></div>
+  <div class="row"><div class="meta">GEIST MONO 400 — Reasoning trace (12px)</div><div class="t-mono-sm">Heritage Register: HTTP 200, last_updated 2026-01-15 → HIGH. Building Permits: 3 active + 7 cleared → HIGH.</div></div>
 </div>
 
-
-<!-- 2. COLOR PALETTE -->
-<div class="preview-section">
-  <div class="section-label">02 — Color System</div>
-
-  <div class="color-grid">
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #F5F0E8;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Background</div><div class="swatch-hex">#F5F0E8</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #FAF7F2;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Surface</div><div class="swatch-hex">#FAF7F2</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #FFFFFF;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Surface Raised</div><div class="swatch-hex">#FFFFFF</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #0F6B30;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Green Primary</div><div class="swatch-hex">#0F6B30</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #15803D;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Green Mid</div><div class="swatch-hex">#15803D</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #EAF4EE;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Green Wash</div><div class="swatch-hex">#EAF4EE</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #B45309;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Amber</div><div class="swatch-hex">#B45309</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #991B1B;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Red Danger</div><div class="swatch-hex">#991B1B</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #A07840;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Brass</div><div class="swatch-hex">#A07840</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #1C1208;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Ink</div><div class="swatch-hex">#1C1208</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #4A3F2F;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Ink Mid</div><div class="swatch-hex">#4A3F2F</div></div>
-    </div>
-    <div class="color-swatch">
-      <div class="swatch-block" style="background: #8A7B68;"></div>
-      <div class="swatch-meta"><div class="swatch-name">Ink Muted</div><div class="swatch-hex">#8A7B68</div></div>
-    </div>
+<!-- 2. COLORS + COMPONENTS -->
+<div class="sec">
+  <div class="tag">02 — Color System + Components</div>
+  <div class="colors">
+    <div class="sw"><div class="sw-block" style="background:#171721;"></div><div class="sw-info"><div class="sw-name">Background</div><div class="sw-hex">#171721</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#1E1E2A;"></div><div class="sw-info"><div class="sw-name">Surface</div><div class="sw-hex">#1E1E2A</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#272735;"></div><div class="sw-info"><div class="sw-name">Surface Raised</div><div class="sw-hex">#272735</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#5266EB;"></div><div class="sw-info"><div class="sw-name">Accent (CTA)</div><div class="sw-hex">#5266EB</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#34D399;"></div><div class="sw-info"><div class="sw-name">Green</div><div class="sw-hex">#34D399</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#FBBF24;"></div><div class="sw-info"><div class="sw-name">Amber</div><div class="sw-hex">#FBBF24</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#F87171;"></div><div class="sw-info"><div class="sw-name">Red</div><div class="sw-hex">#F87171</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#EDEDE3;"></div><div class="sw-info"><div class="sw-name">Text Primary</div><div class="sw-hex">#EDEDE3</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#C3C3CC;"></div><div class="sw-info"><div class="sw-name">Text Secondary</div><div class="sw-hex">#C3C3CC</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#70707D;"></div><div class="sw-info"><div class="sw-name">Text Muted</div><div class="sw-hex">#70707D</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:#CDDDFF;"></div><div class="sw-info"><div class="sw-name">Accent Light</div><div class="sw-hex">#CDDDFF</div></div></div>
+    <div class="sw"><div class="sw-block" style="background:rgba(175,178,206,0.36);"></div><div class="sw-info"><div class="sw-name">Border</div><div class="sw-hex">rgba(...0.36)</div></div></div>
   </div>
 
-  <!-- Confidence badges -->
-  <div style="margin-bottom: var(--sp-24);">
-    <div class="type-meta" style="margin-bottom: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">CONFIDENCE INDICATORS — Brass dot system</div>
-    <div class="component-row">
-      <span class="confidence-badge badge-high"><span class="badge-dot"></span>HIGH</span>
-      <span class="confidence-badge badge-medium"><span class="badge-dot"></span>MEDIUM</span>
-      <span class="confidence-badge badge-low"><span class="badge-dot"></span>LOW</span>
-      <span class="confidence-badge badge-unknown"><span class="badge-dot"></span>UNKNOWN</span>
-    </div>
+  <div class="meta" style="margin-bottom:12px;">CONFIDENCE BADGES</div>
+  <div class="flex">
+    <span class="badge hi"><span class="dot"></span>High confidence</span>
+    <span class="badge md"><span class="dot"></span>Medium confidence</span>
+    <span class="badge lo"><span class="dot"></span>Low confidence</span>
+    <span class="badge un"><span class="dot"></span>Unknown</span>
   </div>
 
-  <!-- Buttons -->
-  <div style="margin-bottom: var(--sp-24);">
-    <div class="type-meta" style="margin-bottom: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">BUTTONS</div>
-    <div class="component-row">
-      <button class="btn btn-primary">Analyze Property</button>
-      <button class="btn btn-secondary">Export Report</button>
-      <button class="btn btn-ghost">View sources ↓</button>
-    </div>
+  <div class="meta" style="margin-bottom:12px;">BUTTONS — 40px pill radius</div>
+  <div class="flex">
+    <button class="btn btn-p">Analyze Property</button>
+    <button class="btn btn-g">Re-analyze</button>
+    <button class="btn btn-o">Show reasoning ▾</button>
   </div>
 
-  <!-- Form inputs -->
-  <div class="two-col" style="max-width: 600px;">
-    <div class="form-group">
-      <label class="form-label">Toronto Address</label>
-      <input class="form-input" type="text" placeholder="401 Richmond St W, Toronto" value="401 Richmond St W, Toronto">
-    </div>
-    <div class="form-group">
-      <label class="form-label">List Price</label>
-      <input class="form-input" type="text" placeholder="$1,150,000" value="$1,150,000" style="font-family: var(--font-mono);">
+  <div class="meta" style="margin-bottom:12px;">FORM INPUTS</div>
+  <div style="display:flex;gap:12px;max-width:500px;flex-wrap:wrap;margin-bottom:28px;">
+    <div class="fg"><label class="fl">Toronto Address</label><input class="fi" value="401 Richmond St W, Toronto"></div>
+    <div class="fg" style="max-width:160px;"><label class="fl">List Price</label><input class="fi mono" value="$1,150,000"></div>
+  </div>
+
+  <div class="meta" style="margin-bottom:12px;">CARD + NEGOTIATION SCRIPT</div>
+  <div class="card">
+    <div class="card-t">Heritage Part IV Designation</div>
+    <div class="card-b">This property carries a Part IV heritage designation. Exterior alterations require municipal approval, adding 40–60% to renovation budgets.</div>
+    <div class="script">
+      <p class="script-l">Say this at the table</p>
+      <p class="script-t">"The Part IV heritage designation means permanent renovation constraints."</p>
+      <p class="script-a">→ Supports $40,000–$60,000 price reduction</p>
     </div>
   </div>
 </div>
 
-
-<!-- 3. PRODUCT MOCKUP — VERDICT SCREEN -->
-<div class="preview-section">
-  <div class="section-label">03 — Product Mockup: Verdict Screen</div>
-
-  <div class="app-shell">
-
-    <!-- Nav -->
-    <div class="app-nav">
-      <div class="app-logo">Meridian</div>
-      <div class="nav-input-bar">
-        <input class="nav-input addr" type="text" value="401 Richmond St W, Toronto" readonly>
-        <input class="nav-input price" type="text" value="$1,150,000" readonly>
-        <button class="nav-btn">Re-analyze</button>
+<!-- 3. VERDICT MOCKUP -->
+<div class="sec">
+  <div class="tag">03 — Product Mockup: Verdict Screen</div>
+  <div class="shell">
+    <div class="shell-nav">
+      <div class="shell-logo"><div class="logo-dot"><svg viewBox="0 0 14 14" width="14" height="14" fill="none"><circle cx="7" cy="7" r="5" stroke="rgba(237,237,243,0.5)" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="rgba(237,237,243,0.7)"/></svg></div>Meridian</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <input class="fi" value="401 Richmond St W" readonly style="font-size:12px;padding:5px 10px;width:160px;">
+        <input class="fi mono" value="$1,150,000" readonly style="font-size:11px;padding:5px 8px;width:90px;">
+        <button class="btn btn-g" style="font-size:11px;padding:5px 10px;">Re-analyze</button>
       </div>
     </div>
-
-    <!-- Body -->
-    <div class="app-body">
-
-      <!-- Verdict Hero -->
-      <div class="verdict-hero">
-        <div class="verdict-pill">3 MATERIAL RISKS</div>
-        <div class="verdict-address">401 Richmond St W, Toronto · List: $1,150,000</div>
-        <div class="verdict-leverage-label">You have negotiation leverage the seller doesn't know you know.</div>
-        <div class="verdict-leverage-number">$55,000–$75,000</div>
-        <div class="verdict-tagline">in documented price reduction opportunity</div>
-        <div class="verdict-costs">
-          <div class="verdict-cost-item">
-            <div class="verdict-cost-label">True 10-Year Cost</div>
-            <div class="verdict-cost-value danger">$1,847,230</div>
-          </div>
-          <div class="verdict-cost-item">
-            <div class="verdict-cost-label">vs. List Price</div>
-            <div class="verdict-cost-value">$1,150,000</div>
-          </div>
-          <div class="verdict-cost-item">
-            <div class="verdict-cost-label">Hidden Premium</div>
-            <div class="verdict-cost-value danger">+$697,230</div>
-          </div>
+    <div class="shell-body">
+      <div class="vcard">
+        <div class="vpill">3 material risks</div>
+        <p class="vaddr">401 Richmond St W · $1,150,000</p>
+        <p class="vpre">You have negotiation leverage the seller doesn't know you know.</p>
+        <div class="vnum">$55,000–$75,000</div>
+        <p class="vsub">in documented price reduction opportunity</p>
+        <div class="vstats">
+          <div class="vstat"><div class="vstat-l">True 10-Year Cost</div><div class="vstat-v d">$1,847,230</div></div>
+          <div class="vstat"><div class="vstat-l">List Price</div><div class="vstat-v">$1,150,000</div></div>
+          <div class="vstat"><div class="vstat-l">Hidden Premium</div><div class="vstat-v d">+$697,230</div></div>
         </div>
       </div>
-
-      <!-- Risk Flags -->
-      <div class="section-divider">
-        <div class="divider-label">Risk Flags</div>
-        <div class="divider-line"></div>
-      </div>
-
-      <!-- Flag 1: Heritage -->
-      <div class="risk-flag red">
-        <div class="risk-header">
-          <div class="risk-title">Heritage Part IV Designation — Active since 1987</div>
-          <div class="risk-source-badges">
-            <span class="confidence-badge badge-high"><span class="badge-dot"></span>HIGH</span>
-          </div>
-        </div>
-        <div class="risk-body">
-          This property is designated under the Ontario Heritage Act (Part IV). Any exterior alterations — including window replacements, facade repairs, or additions — require City Heritage Permit approval. Municipal approval typically adds 6–18 months and $40,000–$60,000 in scope costs to any exterior renovation.
-        </div>
-        <div class="negotiation-script">
-          <div class="negotiation-label">Say this at the table ↓</div>
-          <div class="negotiation-text">"The Part IV heritage designation means we're buying a property with permanent renovation constraints. I'd like to reflect the heritage approval premium in the purchase price."</div>
-          <div class="negotiation-leverage">→ Supports $40,000–$60,000 price reduction request</div>
-        </div>
-      </div>
-
-      <!-- Flag 2: Active Permits -->
-      <div class="risk-flag amber">
-        <div class="risk-header">
-          <div class="risk-title">3 Active Building Permits — Structural work unresolved</div>
-          <div class="risk-source-badges">
-            <span class="confidence-badge badge-high"><span class="badge-dot"></span>HIGH</span>
-          </div>
-        </div>
-        <div class="risk-body">
-          Three permits are currently open for structural, electrical, and plumbing work. Unresolved permits transfer with the property. The buyer inherits responsibility for completing inspections, resolving any outstanding orders, and potential stop-work orders. Two permits were opened in 2024 and have not received final inspection.
-        </div>
-        <div class="negotiation-script">
-          <div class="negotiation-label">Say this at the table ↓</div>
-          <div class="negotiation-text">"I'd like the seller to close all three outstanding permits as a condition of sale, or provide a holdback equal to the estimated completion cost."</div>
-          <div class="negotiation-leverage">→ Supports $15,000–$25,000 holdback or condition</div>
-        </div>
-      </div>
-
-      <!-- Flag 3: Flood Zone -->
-      <div class="risk-flag amber">
-        <div class="risk-header">
-          <div class="risk-title">TRCA Flood Plain — 1:100 year event zone</div>
-          <div class="risk-source-badges">
-            <span class="confidence-badge badge-medium"><span class="badge-dot"></span>MEDIUM</span>
-          </div>
-        </div>
-        <div class="risk-body">
-          The property sits within the TRCA's 1-in-100-year floodplain. This restricts basement finishing permits and may affect insurance premiums. Flood insurance riders currently add $1,800–$3,200/year in the Greater Toronto Area for properties in this zone.
-        </div>
-        <div class="negotiation-script">
-          <div class="negotiation-label">Say this at the table ↓</div>
-          <div class="negotiation-text">"The TRCA flood designation will add approximately $2,500/year in insurance and restrict our ability to finish the basement. I'd like to factor that into our offer."</div>
-          <div class="negotiation-leverage">→ Supports $8,000–$12,000 price reduction</div>
-        </div>
-      </div>
-
-      <!-- Cost Table -->
-      <div class="section-divider">
-        <div class="divider-label">10-Year Cost Breakdown</div>
-        <div class="divider-line"></div>
-      </div>
-
-      <div style="background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: var(--sp-32);">
-        <table class="cost-table">
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Annual</th>
-              <th>10-Year Total</th>
-              <th>Source</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="category">Mortgage payments (5yr×2 @ 6.2%)</td>
-              <td>$74,820</td>
-              <td>$748,200</td>
-              <td><span class="confidence-badge badge-high" style="font-size: 10px;"><span class="badge-dot"></span>HIGH</span></td>
-            </tr>
-            <tr>
-              <td class="category">Property tax (2.5% avg increase)</td>
-              <td>$8,450</td>
-              <td>$94,200</td>
-              <td><span class="confidence-badge badge-high" style="font-size: 10px;"><span class="badge-dot"></span>HIGH</span></td>
-            </tr>
-            <tr>
-              <td class="category">Land Transfer Tax (one-time)</td>
-              <td>—</td>
-              <td>$38,950</td>
-              <td><span class="confidence-badge badge-high" style="font-size: 10px;"><span class="badge-dot"></span>HIGH</span></td>
-            </tr>
-            <tr>
-              <td class="category">Heritage renovation premium</td>
-              <td>—</td>
-              <td>$50,000</td>
-              <td><span class="confidence-badge badge-medium" style="font-size: 10px;"><span class="badge-dot"></span>MED</span></td>
-            </tr>
-            <tr>
-              <td class="category">TRCA flood insurance premium</td>
-              <td>$2,500</td>
-              <td>$25,000</td>
-              <td><span class="confidence-badge badge-medium" style="font-size: 10px;"><span class="badge-dot"></span>MED</span></td>
-            </tr>
-            <tr>
-              <td class="category">General maintenance (1.5%/yr)</td>
-              <td>$17,250</td>
-              <td>$172,500</td>
-              <td><span class="confidence-badge badge-low" style="font-size: 10px;"><span class="badge-dot"></span>LOW</span></td>
-            </tr>
-            <tr>
-              <td class="category">Permit resolution costs (est.)</td>
-              <td>—</td>
-              <td>$20,000</td>
-              <td><span class="confidence-badge badge-unknown" style="font-size: 10px;"><span class="badge-dot"></span>UNK</span></td>
-            </tr>
-            <tr class="total">
-              <td class="category">True 10-Year Cost of Ownership</td>
-              <td>—</td>
-              <td>$1,847,230</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Agent reasoning trace (collapsed) -->
-      <div style="background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--r-md); padding: var(--sp-16); margin-bottom: var(--sp-48);">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--brass); text-transform: uppercase; letter-spacing: 0.1em;">Agent Reasoning Trace</span>
-            <span class="confidence-badge badge-unknown" style="font-size: 10px;"><span class="badge-dot"></span>4 sources queried</span>
-          </div>
-          <button class="btn btn-ghost" style="font-size: 12px; padding: 4px 10px;">How we know this ↓</button>
-        </div>
-      </div>
-
-    </div><!-- /app-body -->
-  </div><!-- /app-shell -->
-</div>
-
-
-<!-- 4. INPUT SCREEN MOCKUP -->
-<div class="preview-section">
-  <div class="section-label">04 — Input Screen (before analysis)</div>
-  <div class="app-shell" style="max-width: 600px;">
-    <div class="app-nav">
-      <div class="app-logo">Meridian</div>
-    </div>
-    <div style="padding: var(--sp-64) var(--sp-48); text-align: center;">
-      <div style="font-family: var(--font-display); font-size: 36px; font-weight: 300; color: var(--ink); font-variation-settings: 'opsz' 50; margin-bottom: var(--sp-8);">Know before you sign.</div>
-      <div style="font-family: var(--font-body); font-size: 15px; color: var(--ink-muted); max-width: 400px; margin: 0 auto var(--sp-40);">The true 10-year cost of any Toronto property. Hidden risks, hidden leverage.</div>
-      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 440px; margin: 0 auto;">
-        <div class="form-group">
-          <label class="form-label">Toronto Address</label>
-          <input class="form-input" type="text" placeholder="Start typing an address…" style="font-size: 15px; padding: 13px 16px;">
-        </div>
-        <div class="form-group">
-          <label class="form-label">List Price</label>
-          <input class="form-input" type="text" placeholder="$0" style="font-family: var(--font-mono); font-size: 15px; padding: 13px 16px;">
-        </div>
-        <button class="btn btn-primary" style="padding: 13px; font-size: 14px; justify-content: center; margin-top: 4px;">Analyze Property →</button>
-      </div>
-      <div style="margin-top: var(--sp-32); display: flex; gap: var(--sp-24); justify-content: center;">
-        <div style="text-align: center;">
-          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--green); font-variant-numeric: tabular-nums;">6</div>
-          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Open Data sources</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--green); font-variant-numeric: tabular-nums;">4</div>
-          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">AI reasoning agents</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--green); font-variant-numeric: tabular-nums;">10yr</div>
-          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">cost projection</div>
-        </div>
-      </div>
+      <div class="mflag"><div class="mfs r"></div><div class="mft">Heritage Part IV Designation — Active since 1987</div><span class="badge hi" style="font-size:10px;"><span class="dot"></span>High</span><span class="mfc">▾</span></div>
+      <div class="mflag"><div class="mfs a"></div><div class="mft">3 Active Building Permits — Structural work unresolved</div><span class="badge hi" style="font-size:10px;"><span class="dot"></span>High</span><span class="mfc">▾</span></div>
+      <div class="mflag"><div class="mfs a"></div><div class="mft">TRCA Flood Plain — 1:100 year event zone</div><span class="badge md" style="font-size:10px;"><span class="dot"></span>Medium</span><span class="mfc">▾</span></div>
     </div>
   </div>
 </div>
 
-
-<script>
-// Smooth transitions for mode toggle
-document.body.style.transition = 'background 0.25s ease, color 0.25s ease';
-</script>
+<!-- 4. INPUT SCREEN -->
+<div class="sec">
+  <div class="tag">04 — Product Mockup: Input Screen</div>
+  <div class="iscreen">
+    <div class="inav"><div class="shell-logo"><div class="logo-dot"><svg viewBox="0 0 14 14" width="14" height="14" fill="none"><circle cx="7" cy="7" r="5" stroke="rgba(237,237,243,0.5)" stroke-width="1.2"/><circle cx="7" cy="7" r="2" fill="rgba(237,237,243,0.7)"/></svg></div>Meridian</div></div>
+    <div class="ibody">
+      <div class="ihero">Know before you sign.</div>
+      <div class="isub">The true 10-year cost of any Toronto property. Hidden risks, hidden leverage.</div>
+      <div class="ifields">
+        <div class="fg"><label class="fl">Toronto Address</label><input class="fi" placeholder="Start typing an address..."></div>
+        <div class="fg"><label class="fl">List Price</label><input class="fi mono" placeholder="$0"></div>
+        <button class="btn btn-p">Analyze Property</button>
+      </div>
+      <div class="srow">
+        <div class="sitem"><div class="snum">6</div><div class="sdesc">Open Data sources</div></div>
+        <div class="sitem"><div class="snum">4</div><div class="sdesc">AI reasoning agents</div></div>
+        <div class="sitem"><div class="snum">10yr</div><div class="sdesc">cost projection</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
