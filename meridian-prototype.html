@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian — Know What You're Really Buying</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:               #171721;
+  --surface:          #1E1E2A;
+  --surface-raised:   #272735;
+  --surface-frosted:  rgba(112,115,147,0.22);
+  --border:           rgba(175,178,206,0.36);
+  --border-faint:     rgba(175,178,206,0.14);
+  --border-focus:     rgba(156,180,232,0.5);
+  --text-primary:     #EDEDE3;
+  --text-secondary:   #C3C3CC;
+  --text-muted:       #70707D;
+  --text-inverse:     #13131E;
+  --accent:           #5266EB;
+  --accent-tint:      rgba(156,180,232,0.2);
+  --accent-subtle:    rgba(82,102,235,0.12);
+  --accent-light:     #CDDDFF;
+  --green:            #34D399;
+  --green-tint:       rgba(52,211,153,0.12);
+  --amber:            #FBBF24;
+  --amber-tint:       rgba(251,191,36,0.12);
+  --red:              #F87171;
+  --red-tint:         rgba(248,113,113,0.12);
+  --font:             'DM Sans', system-ui, sans-serif;
+  --font-mono:        'Geist Mono', 'Courier New', monospace;
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   24px;
+  --r-pill: 40px;
+  --ease:   cubic-bezier(0,0,.6,1);
+  --dur:    0.5s;
+}
+
+.light-mode {
+  --bg:               #F4F5F9;
+  --surface:          #FFFFFF;
+  --surface-raised:   #F4F5F9;
+  --surface-frosted:  rgba(112,115,147,0.06);
+  --border:           rgba(112,115,147,0.22);
+  --border-faint:     rgba(112,115,147,0.12);
+  --text-primary:     #13131E;
+  --text-secondary:   #3D3D52;
+  --text-muted:       #70707D;
+}
+
+html { font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: rgba(23,23,33,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-faint);
+  transition: background var(--dur) var(--ease);
+}
+.light-mode .nav { background: rgba(244,245,249,0.85); }
+
+.nav-left { display: flex; align-items: center; gap: 8px; }
+.nav-logo-mark {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--border);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.nav-logo-mark svg { width: 16px; height: 16px; }
+.nav-wordmark {
+  font-size: 14px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-primary);
+}
+
+.nav-right { display: flex; align-items: center; gap: 8px; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 8px 18px;
+  font-family: var(--font); font-size: 14px; font-weight: 500;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-tint); color: var(--text-primary);
+  border: none; border-radius: var(--r-pill); padding: 7px 16px;
+  font-family: var(--font); font-size: 13px; font-weight: 420;
+  cursor: pointer; white-space: nowrap; transition: background 0.2s;
+}
+.btn-ghost:hover { background: rgba(156,180,232,0.3); }
+
+.mode-btn {
+  background: transparent;
+  border: 1px solid var(--border-faint);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: var(--font);
+}
+.mode-btn:hover { border-color: var(--border); color: var(--text-secondary); }
+
+/* ============================================================
+   SCREENS
+   ============================================================ */
+.screen { display: none; min-height: 100vh; padding-top: 72px; }
+.screen.active { display: block; }
+
+/* ============================================================
+   SCREEN 1: LANDING
+   ============================================================ */
+.landing-hero {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 120px 32px 80px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-subtle);
+  border: 1px solid rgba(82,102,235,0.2);
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
+  color: var(--accent-light);
+  margin-bottom: 32px;
+}
+.hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 480;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+.hero-title em {
+  font-style: normal;
+  color: var(--green);
+}
+
+.hero-sub {
+  font-size: 18px;
+  font-weight: 360;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto 48px;
+}
+
+.hero-input-group {
+  display: flex;
+  gap: 8px;
+  max-width: 520px;
+  margin: 0 auto 16px;
+}
+
+.hero-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 420;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.hero-input::placeholder { color: var(--text-muted); }
+.hero-input:focus { border-color: var(--border-focus); }
+.hero-input.mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  max-width: 160px;
+  flex: none;
+}
+
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 14px 28px;
+  font-family: var(--font); font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.hero-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.hero-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+/* Feature cards */
+.features {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 24px;
+  transition: border-color 0.2s;
+}
+.feature-card:hover { border-color: rgba(175,178,206,0.5); }
+.feature-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.feature-icon.green-bg { background: var(--green-tint); color: var(--green); }
+.feature-icon.amber-bg { background: var(--amber-tint); color: var(--amber); }
+.feature-icon.accent-bg { background: var(--accent-subtle); color: var(--accent-light); }
+.feature-title {
+  font-size: 15px; font-weight: 480; margin-bottom: 8px; color: var(--text-primary);
+}
+.feature-desc {
+  font-size: 14px; font-weight: 360; color: var(--text-muted); line-height: 1.55;
+}
+
+/* Trust bar */
+.trust-bar {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 32px 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 420; color: var(--text-muted);
+}
+.trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); opacity: 0.6; }
+
+/* ============================================================
+   SCREEN 2: ANALYSIS
+   ============================================================ */
+.analysis-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 96px 32px;
+  text-align: center;
+}
+
+.analysis-address {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+}
+.analysis-title {
+  font-size: 24px; font-weight: 480; letter-spacing: -0.02em;
+  margin-bottom: 48px; color: var(--text-primary);
+}
+
+.agent-steps { text-align: left; }
+
+.agent-step {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-faint);
+  opacity: 0.3;
+  transition: opacity 0.4s var(--ease);
+}
+.agent-step.active { opacity: 1; }
+.agent-step.done { opacity: 0.6; }
+
+.agent-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  color: var(--text-muted); flex-shrink: 0;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+.agent-step.active .agent-step-num {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.agent-step.done .agent-step-num {
+  background: var(--green-tint);
+  border-color: rgba(52,211,153,0.3);
+  color: var(--green);
+}
+
+.agent-step-content { flex: 1; padding-top: 3px; }
+.agent-step-name {
+  font-size: 14px; font-weight: 480; color: var(--text-primary); margin-bottom: 4px;
+}
+.agent-step-status {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); line-height: 1.5;
+  min-height: 18px;
+}
+.agent-step.active .agent-step-status { color: var(--text-secondary); }
+
+.agent-step-time {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+  margin-top: 6px; flex-shrink: 0;
+}
+
+/* Pulse animation for active step */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(82,102,235,0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(82,102,235,0); }
+  100% { box-shadow: 0 0 0 0 rgba(82,102,235,0); }
+}
+.agent-step.active .agent-step-num { animation: pulse-ring 1.5s infinite; }
+
+.analysis-footer {
+  margin-top: 48px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.analysis-footer span {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   SCREEN 3: VERDICT (ported from ui_verdict_screen.html)
+   ============================================================ */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+}
+
+/* Nav inputs (verdict screen) */
+.nav-inputs {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1; max-width: 560px; margin: 0 32px;
+}
+.nav-input {
+  flex: 1;
+  background: var(--surface-frosted);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--r-md);
+  padding: 8px 14px;
+  font-family: var(--font); font-size: 14px; font-weight: 420;
+  color: var(--text-primary); outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  min-width: 0;
+}
+.nav-input::placeholder { color: var(--text-muted); }
+.nav-input:focus { border-color: var(--border-focus); background: rgba(112,115,147,0.15); }
+.nav-input.mono { font-family: var(--font-mono); font-size: 13px; max-width: 140px; flex: none; }
+
+/* Verdict card */
+.verdict-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 48px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--dur) var(--ease);
+}
+.verdict-card::before {
+  content: '';
+  position: absolute; top: -80px; left: 50%;
+  transform: translateX(-50%);
+  width: 400px; height: 200px;
+  background: radial-gradient(ellipse, rgba(52,211,153,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.verdict-address {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+}
+.verdict-address::before {
+  content: ''; display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--green);
+}
+.verdict-preamble { font-size: 16px; font-weight: 360; color: var(--text-secondary); margin-bottom: 12px; }
+.verdict-number {
+  font-family: var(--font-mono); font-size: 64px; font-weight: 600;
+  color: var(--green); letter-spacing: -0.03em; line-height: 1.0;
+  font-variant-numeric: tabular-nums; margin-bottom: 10px;
+}
+.verdict-sub { font-size: 18px; font-weight: 360; color: var(--text-secondary); font-style: italic; margin-bottom: 40px; }
+.verdict-stats { display: flex; gap: 0; border-top: 1px solid var(--border-faint); padding-top: 28px; }
+.verdict-stat { flex: 1; padding-right: 32px; }
+.verdict-stat + .verdict-stat { padding-left: 32px; padding-right: 32px; border-left: 1px solid var(--border-faint); }
+.verdict-stat:last-child { padding-right: 0; }
+.stat-label { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.stat-value { font-family: var(--font-mono); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--text-primary); }
+.stat-value.danger { color: var(--red); }
+.risk-pill {
+  position: absolute; top: 24px; right: 24px;
+  background: var(--red-tint); color: var(--red);
+  border: 1px solid rgba(248,113,113,0.25);
+  border-radius: var(--r-pill); padding: 4px 12px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* Section label */
+.section-label { display: flex; align-items: center; gap: 12px; margin: 32px 0 12px; }
+.section-label-text { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+.section-label-line { flex: 1; height: 1px; background: var(--border-faint); }
+
+/* Flag cards */
+.flag-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 8px; transition: background var(--dur) var(--ease); }
+.flag-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 24px; cursor: pointer; user-select: none; }
+.flag-header:hover .flag-title { color: var(--text-primary); }
+.flag-left { display: flex; align-items: flex-start; gap: 14px; }
+.flag-stripe { width: 3px; height: 20px; border-radius: 2px; flex-shrink: 0; margin-top: 2px; }
+.red .flag-stripe   { background: var(--red); }
+.amber .flag-stripe { background: var(--amber); }
+.green .flag-stripe { background: var(--green); }
+.flag-title { font-size: 16px; font-weight: 480; color: var(--text-primary); line-height: 1.35; transition: color 0.2s; }
+.flag-badges { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--r-pill); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; border: 1px solid transparent; }
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.badge.high   { background: rgba(52,211,153,0.12); color: #34D399; border-color: rgba(52,211,153,0.2); }
+.badge.medium { background: rgba(251,191,36,0.12); color: #FBBF24; border-color: rgba(251,191,36,0.2); }
+.badge.low    { background: rgba(248,113,113,0.12); color: #F87171; border-color: rgba(248,113,113,0.2); }
+.badge.unknown { background: var(--accent-subtle); color: var(--accent-light); border-color: rgba(82,102,235,0.2); }
+.badge.high .badge-dot   { background: #34D399; }
+.badge.medium .badge-dot { background: #FBBF24; }
+.badge.low .badge-dot    { background: #F87171; }
+.badge.unknown .badge-dot { background: var(--accent); }
+.flag-chevron { color: var(--text-muted); font-size: 12px; transition: transform 0.2s; flex-shrink: 0; margin-top: 4px; }
+.flag-card.open .flag-chevron { transform: rotate(180deg); }
+.flag-body { display: none; padding: 0 24px 24px; padding-left: calc(24px + 3px + 14px); }
+.flag-card.open .flag-body { display: block; }
+.flag-description { font-size: 15px; font-weight: 360; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px; }
+.script-block { background: var(--surface-raised); border: 1px solid var(--border-faint); border-radius: var(--r-md); padding: 16px 18px; }
+.script-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 8px; opacity: 0.8; }
+.script-text { font-size: 14px; font-weight: 360; font-style: italic; color: var(--text-primary); line-height: 1.6; margin-bottom: 10px; }
+.script-amount { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--green); font-variant-numeric: tabular-nums; }
+
+/* Cost table */
+.table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 8px; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--surface-raised); border-bottom: 1px solid var(--border-faint); }
+thead th { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); text-align: left; padding: 12px 20px; }
+thead th:not(:first-child) { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--border-faint); transition: background 0.15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface-frosted); }
+tbody td { padding: 14px 20px; font-size: 14px; font-weight: 360; color: var(--text-secondary); vertical-align: middle; }
+tbody td:not(:first-child) { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+td.cat { font-weight: 480; color: var(--text-primary); }
+tr.total { background: var(--surface-raised); border-top: 1px solid var(--border); }
+tr.total td { font-weight: 500; padding-top: 16px; padding-bottom: 16px; }
+tr.total td.cat { font-size: 15px; color: var(--text-primary); }
+tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; color: var(--red); }
+
+/* Reasoning trace */
+.trace-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 8px; }
+.trace-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.trace-header:hover { background: var(--surface-frosted); }
+.trace-header-left { display: flex; align-items: center; gap: 10px; }
+.trace-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.03em; }
+.trace-toggle-btn { background: none; border: none; font-family: var(--font); font-size: 13px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+.trace-toggle-btn:hover { color: var(--text-secondary); }
+.trace-body { display: none; border-top: 1px solid var(--border-faint); }
+.trace-body.open { display: block; }
+.trace-entry { padding: 16px 24px; border-bottom: 1px solid var(--border-faint); }
+.trace-entry:last-child { border-bottom: none; }
+.trace-agent-name { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 6px; opacity: 0.7; }
+.trace-agent-text { font-family: var(--font-mono); font-size: 12px; font-weight: 400; color: var(--text-muted); line-height: 1.6; }
+
+/* Footer */
+.landing-footer {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 32px 48px;
+  text-align: center;
+  border-top: 1px solid var(--border-faint);
+  padding-top: 32px;
+}
+.footer-text { font-size: 12px; color: var(--text-muted); }
+.footer-text a { color: var(--accent-light); text-decoration: none; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .hero-title { font-size: 32px; }
+  .hero-input-group { flex-direction: column; }
+  .hero-input.mono { max-width: 100%; }
+  .features { grid-template-columns: 1fr; }
+  .trust-bar { gap: 16px; }
+}
+@media (max-width: 640px) {
+  .nav { padding: 12px 16px; }
+  .nav-inputs { display: none; }
+  .page { padding: 28px 16px 64px; }
+  .verdict-card { padding: 28px 24px; }
+  .verdict-number { font-size: 42px; }
+  .verdict-stats { flex-direction: column; gap: 20px; }
+  .verdict-stat, .verdict-stat + .verdict-stat { padding: 0; border: none; }
+  thead th:nth-child(2), tbody td:nth-child(2) { display: none; }
+  .landing-hero { padding: 80px 20px 60px; }
+  .analysis-page { padding: 64px 20px; }
+}
+
+/* ============================================================
+   TRANSITIONS
+   ============================================================ */
+.screen-fade-in {
+  animation: fadeIn 0.4s var(--ease) both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     NAV (adapts per screen)
+     ============================================================ -->
+<nav class="nav" role="banner" id="main-nav">
+  <div class="nav-left">
+    <div class="nav-logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="6" stroke="rgba(237,237,243,0.6)" stroke-width="1.5"/>
+        <circle cx="8" cy="8" r="2.5" fill="rgba(237,237,243,0.8)"/>
+      </svg>
+    </div>
+    <span class="nav-wordmark">Meridian</span>
+  </div>
+
+  <!-- Verdict-screen nav inputs (hidden on other screens) -->
+  <div class="nav-inputs" id="nav-verdict-inputs" style="display:none;">
+    <input class="nav-input" type="text" id="nav-address" value="401 Richmond St W, Toronto" placeholder="Toronto address" aria-label="Address" autocomplete="off">
+    <input class="nav-input mono" type="text" id="nav-price" value="$1,150,000" placeholder="List price" aria-label="List price">
+  </div>
+
+  <div class="nav-right">
+    <button class="btn-ghost" id="nav-re-analyze" style="display:none;" onclick="goToScreen('landing')">New analysis</button>
+    <button class="mode-btn" id="mode-toggle" onclick="toggleMode()" type="button" aria-label="Toggle theme">&#9788;</button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     SCREEN 1: LANDING
+     ============================================================ -->
+<section class="screen active" id="screen-landing">
+
+  <div class="landing-hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Built for NVIDIA Spark Hack Toronto
+    </div>
+
+    <h1 class="hero-title">
+      Know what you're <em>really</em> buying<br>before you sign
+    </h1>
+
+    <p class="hero-sub">
+      Meridian scans 5 public datasets to find hidden risks that list price never
+      shows, then turns them into negotiation leverage with dollar amounts.
+    </p>
+
+    <div class="hero-input-group">
+      <input class="hero-input" type="text" id="hero-address"
+             placeholder="Enter a Toronto address" aria-label="Toronto address"
+             value="401 Richmond St W, Toronto" autocomplete="off">
+      <input class="hero-input mono" type="text" id="hero-price"
+             placeholder="List price" aria-label="List price" value="$1,150,000">
+    </div>
+
+    <button class="hero-cta" onclick="startAnalysis()">
+      Analyze this property
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <p class="hero-hint">Free. No signup. Runs locally on NVIDIA DGX Spark.</p>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon green-bg">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1v16M1 9h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <h3 class="feature-title">Hidden cost detection</h3>
+      <p class="feature-desc">Heritage designations, flood zones, active permits, development pressure. Risks that add $50K+ to your real cost.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon amber-bg">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v6l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/></svg>
+      </div>
+      <h3 class="feature-title">10-year cost projection</h3>
+      <p class="feature-desc">Mortgage, taxes, insurance, maintenance, and every hidden premium calculated to the dollar over a decade.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon accent-bg">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 13l5-5 3 3 6-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="feature-title">Negotiation scripts</h3>
+      <p class="feature-desc">For every risk flag, a ready-to-use sentence you can say at the table, with the dollar leverage to back it up.</p>
+    </div>
+  </div>
+
+  <div class="trust-bar">
+    <div class="trust-item"><span class="trust-dot"></span> 5 Toronto open data sources</div>
+    <div class="trust-item"><span class="trust-dot"></span> Llama 3.1 8B via NVIDIA NIM</div>
+    <div class="trust-item"><span class="trust-dot"></span> Runs 100% locally on DGX Spark</div>
+    <div class="trust-item"><span class="trust-dot"></span> Per-source confidence badges</div>
+  </div>
+
+  <footer class="landing-footer">
+    <p class="footer-text">Meridian is a hackathon prototype. Not financial advice. Built by <a href="#">Vivek Ally</a> for NVIDIA Spark Hack Toronto 2026.</p>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SCREEN 2: ANALYSIS
+     ============================================================ -->
+<section class="screen" id="screen-analysis">
+  <div class="analysis-page screen-fade-in">
+    <p class="analysis-address" id="analysis-address-label">401 Richmond St W, Toronto</p>
+    <h2 class="analysis-title">Analyzing property risks</h2>
+
+    <div class="agent-steps">
+      <div class="agent-step" id="step-1">
+        <div class="agent-step-num">1</div>
+        <div class="agent-step-content">
+          <div class="agent-step-name">Planning Agent</div>
+          <div class="agent-step-status" id="step-1-status">Waiting...</div>
+        </div>
+        <div class="agent-step-time" id="step-1-time"></div>
+      </div>
+      <div class="agent-step" id="step-2">
+        <div class="agent-step-num">2</div>
+        <div class="agent-step-content">
+          <div class="agent-step-name">Retrieval Agent</div>
+          <div class="agent-step-status" id="step-2-status">Waiting...</div>
+        </div>
+        <div class="agent-step-time" id="step-2-time"></div>
+      </div>
+      <div class="agent-step" id="step-3">
+        <div class="agent-step-num">3</div>
+        <div class="agent-step-content">
+          <div class="agent-step-name">Analysis Agent</div>
+          <div class="agent-step-status" id="step-3-status">Waiting...</div>
+        </div>
+        <div class="agent-step-time" id="step-3-time"></div>
+      </div>
+      <div class="agent-step" id="step-4">
+        <div class="agent-step-num">4</div>
+        <div class="agent-step-content">
+          <div class="agent-step-name">Synthesis Agent</div>
+          <div class="agent-step-status" id="step-4-status">Waiting...</div>
+        </div>
+        <div class="agent-step-time" id="step-4-time"></div>
+      </div>
+    </div>
+
+    <p class="analysis-footer">
+      Powered by <span>Llama 3.1 8B</span> on <span>NVIDIA DGX Spark</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCREEN 3: VERDICT
+     ============================================================ -->
+<section class="screen" id="screen-verdict">
+  <main class="page screen-fade-in" role="main">
+
+    <section class="verdict-card" aria-label="Negotiation summary">
+      <div class="risk-pill" aria-label="3 material risks found">3 material risks</div>
+      <p class="verdict-address">401 Richmond St W, Toronto &middot; $1,150,000</p>
+      <p class="verdict-preamble">You have negotiation leverage the seller doesn't know you know.</p>
+      <div class="verdict-number" aria-label="Negotiation leverage: $55,000 to $75,000">$55,000&ndash;$75,000</div>
+      <p class="verdict-sub">in documented price reduction opportunity</p>
+      <div class="verdict-stats" role="list">
+        <div class="verdict-stat" role="listitem">
+          <div class="stat-label">True 10-Year Cost</div>
+          <div class="stat-value danger">$1,847,230</div>
+        </div>
+        <div class="verdict-stat" role="listitem">
+          <div class="stat-label">List Price</div>
+          <div class="stat-value">$1,150,000</div>
+        </div>
+        <div class="verdict-stat" role="listitem">
+          <div class="stat-label">Hidden Premium</div>
+          <div class="stat-value danger">+$697,230</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-label" role="separator">
+      <span class="section-label-text">Risk flags</span>
+      <div class="section-label-line"></div>
+    </div>
+
+    <article class="flag-card red" aria-label="Heritage designation risk">
+      <div class="flag-header" onclick="toggleFlag(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFlag(this)" aria-expanded="true">
+        <div class="flag-left">
+          <div class="flag-stripe" aria-hidden="true"></div>
+          <h2 class="flag-title">Heritage Part IV Designation — Active since 1987</h2>
+        </div>
+        <div class="flag-badges">
+          <span class="badge high"><span class="badge-dot"></span>High confidence</span>
+          <span class="flag-chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="flag-body">
+        <p class="flag-description">This property is designated under the Ontario Heritage Act (Part IV). Any exterior alterations — window replacements, facade repairs, additions — require City Heritage Permit approval. Approvals typically add 6-18 months and $40,000-$60,000 to any exterior renovation budget.</p>
+        <div class="script-block">
+          <p class="script-eyebrow">Say this at the table</p>
+          <p class="script-text">"The Part IV heritage designation means we're buying a property with permanent renovation constraints. I'd like to reflect the heritage approval premium in the purchase price."</p>
+          <p class="script-amount">&rarr; Supports $40,000-$60,000 price reduction request</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="flag-card amber" aria-label="Active building permits risk">
+      <div class="flag-header" onclick="toggleFlag(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFlag(this)" aria-expanded="false">
+        <div class="flag-left">
+          <div class="flag-stripe" aria-hidden="true"></div>
+          <h2 class="flag-title">3 Active Building Permits — Structural work unresolved</h2>
+        </div>
+        <div class="flag-badges">
+          <span class="badge high"><span class="badge-dot"></span>High confidence</span>
+          <span class="flag-chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="flag-body">
+        <p class="flag-description">Three permits are currently open for structural, electrical, and plumbing work. Unresolved permits transfer with the property. The buyer inherits responsibility for inspections, outstanding orders, and potential stop-work orders.</p>
+        <div class="script-block">
+          <p class="script-eyebrow">Say this at the table</p>
+          <p class="script-text">"I'd like the seller to close all three outstanding permits as a condition of sale, or provide a holdback equal to the estimated completion cost."</p>
+          <p class="script-amount">&rarr; Supports $15,000-$25,000 holdback or condition</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="flag-card amber" aria-label="TRCA flood zone risk">
+      <div class="flag-header" onclick="toggleFlag(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFlag(this)" aria-expanded="false">
+        <div class="flag-left">
+          <div class="flag-stripe" aria-hidden="true"></div>
+          <h2 class="flag-title">TRCA Flood Plain — 1:100 year event zone</h2>
+        </div>
+        <div class="flag-badges">
+          <span class="badge medium"><span class="badge-dot"></span>Medium confidence</span>
+          <span class="flag-chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="flag-body">
+        <p class="flag-description">The property sits within the TRCA's 1-in-100-year floodplain. This restricts basement finishing permits and affects insurance premiums. Flood insurance riders add $1,800-$3,200/year for properties in this zone.</p>
+        <div class="script-block">
+          <p class="script-eyebrow">Say this at the table</p>
+          <p class="script-text">"The TRCA flood designation will add approximately $2,500/year in insurance and restrict our ability to finish the basement. I'd like to factor that into our offer."</p>
+          <p class="script-amount">&rarr; Supports $8,000-$12,000 price reduction</p>
+        </div>
+      </div>
+    </article>
+
+    <div class="section-label" role="separator">
+      <span class="section-label-text">10-Year cost breakdown</span>
+      <div class="section-label-line"></div>
+    </div>
+
+    <div class="table-card" role="region" aria-label="Cost breakdown">
+      <table>
+        <thead><tr>
+          <th scope="col">Category</th>
+          <th scope="col">Annual</th>
+          <th scope="col">10-Year total</th>
+          <th scope="col">Confidence</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="cat">Mortgage payments (5yr x 2 at 6.2%)</td><td>$74,820</td><td>$748,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+          <tr><td class="cat">Property tax (2.5% avg increase)</td><td>$8,450</td><td>$94,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+          <tr><td class="cat">Land Transfer Tax (one-time)</td><td>&mdash;</td><td>$38,950</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+          <tr><td class="cat">Heritage renovation premium</td><td>&mdash;</td><td>$50,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
+          <tr><td class="cat">TRCA flood insurance premium</td><td>$2,500</td><td>$25,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
+          <tr><td class="cat">General maintenance (1.5%/yr)</td><td>$17,250</td><td>$172,500</td><td><span class="badge low"><span class="badge-dot"></span>Low</span></td></tr>
+          <tr><td class="cat">Permit resolution costs (est.)</td><td>&mdash;</td><td>$20,000</td><td><span class="badge unknown"><span class="badge-dot"></span>Unknown</span></td></tr>
+          <tr class="total"><td class="cat">True 10-year cost of ownership</td><td>&mdash;</td><td>$1,148,850</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-label" role="separator">
+      <span class="section-label-text">Agent reasoning</span>
+      <div class="section-label-line"></div>
+    </div>
+
+    <div class="trace-card" role="region" aria-label="Agent reasoning trace">
+      <div class="trace-header" onclick="toggleTrace()" role="button" tabindex="0" aria-expanded="false" aria-controls="trace-body" onkeydown="if(event.key==='Enter'||event.key===' ')toggleTrace()">
+        <div class="trace-header-left">
+          <span class="trace-label">How Meridian reached this verdict</span>
+          <span class="badge unknown" style="font-size:11px;"><span class="badge-dot"></span>4 sources &middot; Llama 3.1 8B</span>
+        </div>
+        <button class="trace-toggle-btn" tabindex="-1" aria-hidden="true">Show reasoning <span style="font-size:10px;">&#9662;</span></button>
+      </div>
+      <div class="trace-body" id="trace-body">
+        <div class="trace-entry">
+          <p class="trace-agent-name">Agent 1 — Planning</p>
+          <p class="trace-agent-text">Property type: detached house. Queried: Heritage Register, Building Permits (active + cleared), Development Applications, TRCA Flood Zone. Skipped: RentSafeTO (not a condo).</p>
+        </div>
+        <div class="trace-entry">
+          <p class="trace-agent-name">Agent 2 — Retrieval</p>
+          <p class="trace-agent-text">Heritage Register: HTTP 200, last_updated 2026-01-15 → HIGH. Permits: HTTP 200, 3 active + 7 cleared → HIGH. Dev Applications: HTTP 200, 0 active → HIGH. TRCA Flood Zone: HTTP 200, no extract_date → MEDIUM.</p>
+        </div>
+        <div class="trace-entry">
+          <p class="trace-agent-name">Agent 3 — Analysis</p>
+          <p class="trace-agent-text">No contradictions detected. Heritage status corroborated by permit history. Cost breakdown: deterministic math. Confidence HIGH on mortgage, tax, LTT. MEDIUM on heritage premium (range estimate). LOW on maintenance.</p>
+        </div>
+        <div class="trace-entry">
+          <p class="trace-agent-name">Agent 4 — Synthesis</p>
+          <p class="trace-agent-text">Leverage = heritage ($40K-$60K) + permits ($15K-$25K) + flood PV ($8K-$12K) = $63K-$97K. Presented as $55K-$75K conservative middle range. Verdict: YELLOW — material risks, not a dealbreaker if leverage is applied.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</section>
+
+<script>
+// Screen management
+function goToScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+
+  const navInputs = document.getElementById('nav-verdict-inputs');
+  const reAnalyze = document.getElementById('nav-re-analyze');
+
+  if (name === 'verdict') {
+    navInputs.style.display = 'flex';
+    reAnalyze.style.display = 'inline-flex';
+  } else {
+    navInputs.style.display = 'none';
+    reAnalyze.style.display = name === 'analysis' ? 'none' : 'none';
+  }
+
+  window.scrollTo(0, 0);
+}
+
+// Analysis flow
+function startAnalysis() {
+  const address = document.getElementById('hero-address').value || '401 Richmond St W, Toronto';
+  const price = document.getElementById('hero-price').value || '$1,150,000';
+
+  document.getElementById('analysis-address-label').textContent = address;
+  document.getElementById('nav-address').value = address;
+  document.getElementById('nav-price').value = price;
+
+  // Reset steps
+  for (let i = 1; i <= 4; i++) {
+    const step = document.getElementById('step-' + i);
+    step.className = 'agent-step';
+    document.getElementById('step-' + i + '-status').textContent = 'Waiting...';
+    document.getElementById('step-' + i + '-time').textContent = '';
+  }
+
+  goToScreen('analysis');
+
+  const steps = [
+    { id: 1, status: 'Classifying property type...', done: 'Detached house → querying 4 of 5 sources (skipped RentSafeTO)', time: '1.2s' },
+    { id: 2, status: 'Fetching Heritage Register, Permits, Dev Apps, TRCA...', done: '4/4 sources returned · 3 flags detected', time: '3.8s' },
+    { id: 3, status: 'Cross-referencing findings, calculating 10-year costs...', done: '0 contradictions · cost breakdown complete · 3 risk flags scored', time: '2.1s' },
+    { id: 4, status: 'Generating negotiation leverage and buyer report...', done: 'Leverage: $55K–$75K · 3 scripts ready · verdict: YELLOW', time: '1.9s' },
+  ];
+
+  let delay = 400;
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      const el = document.getElementById('step-' + s.id);
+      el.className = 'agent-step active';
+      document.getElementById('step-' + s.id + '-status').textContent = s.status;
+    }, delay);
+
+    delay += 1200 + Math.random() * 800;
+
+    setTimeout(() => {
+      const el = document.getElementById('step-' + s.id);
+      el.className = 'agent-step done';
+      document.getElementById('step-' + s.id + '-status').textContent = s.done;
+      document.getElementById('step-' + s.id + '-time').textContent = s.time;
+      document.getElementById('step-' + s.id + '-num').textContent = '✓';
+    }, delay);
+
+    delay += 300;
+
+    if (i === steps.length - 1) {
+      setTimeout(() => goToScreen('verdict'), delay + 600);
+    }
+  });
+}
+
+// Flag accordion
+function toggleFlag(header) {
+  const card = header.closest('.flag-card');
+  const isOpen = card.classList.toggle('open');
+  header.setAttribute('aria-expanded', String(isOpen));
+}
+
+// Open first flag by default on verdict screen
+document.querySelector('#screen-verdict .flag-card').classList.add('open');
+
+// Trace accordion
+function toggleTrace() {
+  const body = document.getElementById('trace-body');
+  const header = body.previousElementSibling;
+  const isOpen = body.classList.toggle('open');
+  header.setAttribute('aria-expanded', String(isOpen));
+  const btn = header.querySelector('.trace-toggle-btn');
+  if (btn) btn.innerHTML = isOpen ? 'Hide reasoning <span style="font-size:10px;">&#9652;</span>' : 'Show reasoning <span style="font-size:10px;">&#9662;</span>';
+}
+
+// Theme toggle
+function toggleMode() {
+  const isLight = document.documentElement.classList.toggle('light-mode');
+  document.getElementById('mode-toggle').textContent = isLight ? '☾' : '☀';
+  document.querySelector('.nav').style.background = isLight
+    ? 'rgba(244,245,249,0.85)' : 'rgba(23,23,33,0.8)';
+}
+</script>
+
+</body>
+</html>
