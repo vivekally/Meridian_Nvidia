@@ -15,32 +15,33 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Dark mode is the default */
 :root {
-  --bg:             #F5F0E8;
-  --surface:        #FAF7F2;
-  --surface-raised: #FFFFFF;
-  --border:         #DDD5C4;
-  --border-light:   #EDE8DF;
+  --bg:             #1A1610;
+  --surface:        #231F18;
+  --surface-raised: #2D2820;
+  --border:         #3A3228;
+  --border-light:   #2F2920;
 
-  --green:          #0F6B30;
-  --green-mid:      #15803D;
-  --green-hover:    #0A5625;
-  --green-wash:     #EAF4EE;
-  --green-text:     #052E16;
+  --green:          #16A34A;
+  --green-mid:      #22C55E;
+  --green-hover:    #4ADE80;
+  --green-wash:     #052E16;
+  --green-text:     #BBF7D0;
 
-  --amber:          #B45309;
-  --amber-wash:     #FEF3C7;
+  --amber:          #D97706;
+  --amber-wash:     #451A03;
 
-  --red:            #991B1B;
-  --red-wash:       #FEE2E2;
+  --red:            #DC2626;
+  --red-wash:       #450A0A;
 
-  --brass:          #A07840;
-  --brass-light:    #F0E8D8;
+  --brass:          #C89650;
+  --brass-light:    #2A1F0E;
 
-  --ink:            #1C1208;
-  --ink-mid:        #4A3F2F;
+  --ink:            #F0EAE0;
+  --ink-mid:        #C4B89E;
   --ink-muted:      #8A7B68;
-  --ink-faint:      #C4B89E;
+  --ink-faint:      #4A3F2F;
 
   --font-display:   'Fraunces', Georgia, serif;
   --font-body:      'Schibsted Grotesk', system-ui, sans-serif;
@@ -52,29 +53,28 @@
   --r-full: 9999px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg:             #1A1610;
-    --surface:        #231F18;
-    --surface-raised: #2D2820;
-    --border:         #3A3228;
-    --border-light:   #2F2920;
-    --green:          #16A34A;
-    --green-mid:      #22C55E;
-    --green-hover:    #4ADE80;
-    --green-wash:     #052E16;
-    --green-text:     #BBF7D0;
-    --amber:          #D97706;
-    --amber-wash:     #451A03;
-    --red:            #DC2626;
-    --red-wash:       #450A0A;
-    --brass:          #C89650;
-    --brass-light:    #2A1F0E;
-    --ink:            #F0EAE0;
-    --ink-mid:        #C4B89E;
-    --ink-muted:      #8A7B68;
-    --ink-faint:      #4A3F2F;
-  }
+/* Light mode override */
+.light-mode {
+  --bg:             #F5F0E8;
+  --surface:        #FAF7F2;
+  --surface-raised: #FFFFFF;
+  --border:         #DDD5C4;
+  --border-light:   #EDE8DF;
+  --green:          #0F6B30;
+  --green-mid:      #15803D;
+  --green-hover:    #0A5625;
+  --green-wash:     #EAF4EE;
+  --green-text:     #052E16;
+  --amber:          #B45309;
+  --amber-wash:     #FEF3C7;
+  --red:            #991B1B;
+  --red-wash:       #FEE2E2;
+  --brass:          #A07840;
+  --brass-light:    #F0E8D8;
+  --ink:            #1C1208;
+  --ink-mid:        #4A3F2F;
+  --ink-muted:      #8A7B68;
+  --ink-faint:      #C4B89E;
 }
 
 html { font-size: 14px; }
@@ -150,6 +150,19 @@ body {
   flex-shrink: 0;
 }
 .nav-btn:hover { background: var(--green-hover); }
+
+.mode-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 7px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+  line-height: 1;
+}
+.mode-btn:hover { border-color: var(--green); }
 
 /* MAIN */
 .main {
@@ -532,6 +545,7 @@ tr.total td.cat { color: var(--ink); font-family: var(--font-body); font-size: 1
            aria-label="List price">
   </div>
   <button class="nav-btn" type="button" aria-label="Re-analyze this property">Re-analyze</button>
+  <button class="mode-btn" id="mode-toggle" type="button" onclick="toggleMode()" aria-label="Toggle light/dark mode">☀</button>
 </nav>
 
 <!-- MAIN CONTENT -->
@@ -860,6 +874,11 @@ initPretext();
 // ==========================================================
 // UI INTERACTIONS
 // ==========================================================
+
+window.toggleMode = function() {
+  const isLight = document.documentElement.classList.toggle('light-mode');
+  document.getElementById('mode-toggle').textContent = isLight ? '☾' : '☀';
+};
 
 window.toggleTrace = function() {
   const body = document.getElementById('trace-body');
