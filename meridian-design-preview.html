@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian — Design System Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   MERIDIAN DESIGN SYSTEM — "Due Diligence Room"
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Base — aged document, not gray SaaS */
+  --bg:              #F5F0E8;
+  --surface:         #FAF7F2;
+  --surface-raised:  #FFFFFF;
+  --border:          #DDD5C4;
+  --border-light:    #EDE8DF;
+
+  /* Primary */
+  --green:           #0F6B30;
+  --green-mid:       #15803D;
+  --green-hover:     #0A5625;
+  --green-wash:      #EAF4EE;
+  --green-text:      #052E16;
+
+  /* Urgency — intentional, not decorative */
+  --amber:           #B45309;
+  --amber-wash:      #FEF3C7;
+
+  /* Danger */
+  --red:             #991B1B;
+  --red-wash:        #FEE2E2;
+
+  /* Brass — confidence indicators, section dividers */
+  --brass:           #A07840;
+  --brass-light:     #F0E8D8;
+
+  /* Typography */
+  --ink:             #1C1208;
+  --ink-mid:         #4A3F2F;
+  --ink-muted:       #8A7B68;
+  --ink-faint:       #C4B89E;
+
+  /* Type families */
+  --font-display:    'Fraunces', Georgia, serif;
+  --font-body:       'Schibsted Grotesk', system-ui, sans-serif;
+  --font-mono:       'Geist Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --sp-2:   2px;
+  --sp-4:   4px;
+  --sp-8:   8px;
+  --sp-12:  12px;
+  --sp-16:  16px;
+  --sp-24:  24px;
+  --sp-32:  32px;
+  --sp-48:  48px;
+  --sp-64:  64px;
+  --sp-96:  96px;
+
+  /* Radius */
+  --r-sm:   4px;
+  --r-md:   8px;
+  --r-lg:   12px;
+  --r-full: 9999px;
+}
+
+.dark-mode {
+  --bg:              #1A1610;
+  --surface:         #231F18;
+  --surface-raised:  #2D2820;
+  --border:          #3A3228;
+  --border-light:    #2F2920;
+  --green:           #16A34A;
+  --green-mid:       #22C55E;
+  --green-hover:     #4ADE80;
+  --green-wash:      #052E16;
+  --green-text:      #BBF7D0;
+  --amber:           #D97706;
+  --amber-wash:      #451A03;
+  --red:             #DC2626;
+  --red-wash:        #450A0A;
+  --brass:           #C89650;
+  --brass-light:     #2A1F0E;
+  --ink:             #F0EAE0;
+  --ink-mid:         #C4B89E;
+  --ink-muted:       #8A7B68;
+  --ink-faint:       #4A3F2F;
+}
+
+html { font-size: 14px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ============================================================
+   PREVIEW CHROME
+   ============================================================ */
+
+.preview-header {
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--border);
+  padding: var(--sp-16) var(--sp-32);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.preview-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--green);
+  font-variation-settings: 'opsz' 18;
+}
+.preview-subtitle { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+
+.mode-toggle {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.mode-toggle:hover { border-color: var(--green); }
+
+.preview-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--sp-64) var(--sp-32);
+}
+.preview-section + .preview-section {
+  border-top: 1px solid var(--border-light);
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass);
+  margin-bottom: var(--sp-32);
+}
+
+/* ============================================================
+   1. TYPOGRAPHY SPECIMEN
+   ============================================================ */
+
+.type-row {
+  margin-bottom: var(--sp-48);
+}
+.type-meta {
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-bottom: var(--sp-8);
+  font-family: var(--font-mono);
+}
+.type-specimen { line-height: 1.15; }
+
+.t-display-xl {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 300;
+  color: var(--ink);
+  font-variation-settings: 'opsz' 90;
+}
+.t-display-lg {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
+  color: var(--ink);
+  font-variation-settings: 'opsz' 60;
+}
+.t-display-md {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variation-settings: 'opsz' 28;
+}
+.t-body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-mid);
+  max-width: 600px;
+  line-height: 1.7;
+}
+.t-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+.t-mono-xl {
+  font-family: var(--font-mono);
+  font-size: 36px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--green);
+}
+.t-mono-md {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.t-mono-sm {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mid);
+}
+
+/* ============================================================
+   2. COLOR PALETTE
+   ============================================================ */
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--sp-12);
+  margin-bottom: var(--sp-32);
+}
+.color-swatch {
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+.swatch-block { height: 64px; }
+.swatch-meta {
+  background: var(--surface);
+  padding: var(--sp-8);
+}
+.swatch-name { font-size: 11px; font-weight: 600; color: var(--ink-mid); }
+.swatch-hex {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   3. UI COMPONENTS
+   ============================================================ */
+
+.component-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-12);
+  align-items: flex-start;
+  margin-bottom: var(--sp-32);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--r-md);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--green); color: #fff; }
+.btn-primary:hover { background: var(--green-hover); }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--ink-mid); }
+.btn-secondary:hover { border-color: var(--green); color: var(--green); }
+.btn-ghost { background: transparent; color: var(--ink-muted); padding: 10px 16px; }
+
+.confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+}
+.badge-high { background: var(--green-wash); color: var(--green-text); }
+.badge-medium { background: var(--amber-wash); color: var(--amber); }
+.badge-low { background: var(--red-wash); color: var(--red); }
+.badge-unknown { background: var(--brass-light); color: var(--brass); }
+
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.badge-high .badge-dot { background: var(--green); }
+.badge-medium .badge-dot { background: var(--amber); }
+.badge-low .badge-dot { background: var(--red); }
+.badge-unknown .badge-dot { background: var(--brass); }
+
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--ink-muted); letter-spacing: 0.03em; }
+.form-input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(15,107,48,0.08);
+}
+.form-input::placeholder { color: var(--ink-faint); }
+
+/* ============================================================
+   4. MERIDIAN PRODUCT MOCKUP — VERDICT SCREEN
+   ============================================================ */
+
+.app-shell {
+  background: var(--bg);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 40px rgba(28,18,8,0.12);
+}
+
+.app-nav {
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.app-logo {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green);
+  font-variation-settings: 'opsz' 20;
+  flex-shrink: 0;
+}
+
+.nav-input-bar {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+.nav-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+}
+.nav-input.addr { flex: 2; }
+.nav-input.price { flex: 1; font-family: var(--font-mono); }
+.nav-btn {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 8px 18px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-body {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--sp-48) var(--sp-32);
+}
+
+/* Verdict hero */
+.verdict-hero {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-48) var(--sp-48);
+  margin-bottom: var(--sp-32);
+  position: relative;
+}
+.verdict-address {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: var(--sp-16);
+}
+.verdict-leverage-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-bottom: var(--sp-8);
+}
+.verdict-leverage-number {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 300;
+  color: var(--green);
+  font-variation-settings: 'opsz' 90;
+  line-height: 1.05;
+  margin-bottom: var(--sp-12);
+}
+.verdict-tagline {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink-mid);
+  font-style: italic;
+  font-variation-settings: 'opsz' 18;
+  margin-bottom: var(--sp-24);
+}
+.verdict-costs {
+  display: flex;
+  gap: var(--sp-32);
+  padding-top: var(--sp-24);
+  border-top: 1px solid var(--border-light);
+}
+.verdict-cost-item {}
+.verdict-cost-label { font-size: 11px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.verdict-cost-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.verdict-cost-value.danger { color: var(--red); }
+
+.verdict-pill {
+  position: absolute;
+  top: var(--sp-24);
+  right: var(--sp-24);
+  background: var(--green-wash);
+  color: var(--green);
+  border-radius: var(--r-full);
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* Section divider */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-16);
+  margin: var(--sp-40) 0 var(--sp-24) 0;
+}
+.divider-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--brass);
+  white-space: nowrap;
+}
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Risk flag cards */
+.risk-flag {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-24);
+  margin-bottom: var(--sp-16);
+  border-left: 3px solid;
+}
+.risk-flag.red { border-left-color: var(--red); }
+.risk-flag.amber { border-left-color: var(--amber); }
+.risk-flag.green { border-left-color: var(--green); }
+
+.risk-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-16);
+  margin-bottom: var(--sp-12);
+}
+.risk-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variation-settings: 'opsz' 18;
+  line-height: 1.3;
+}
+.risk-source-badges { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+
+.risk-body {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.65;
+  margin-bottom: var(--sp-16);
+}
+
+.negotiation-script {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-md);
+  padding: var(--sp-16);
+}
+.negotiation-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass);
+  margin-bottom: var(--sp-8);
+}
+.negotiation-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.6;
+}
+.negotiation-leverage {
+  margin-top: var(--sp-8);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--green);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cost breakdown table */
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.cost-table th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.cost-table th:not(:first-child) { text-align: right; }
+.cost-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--ink-mid);
+}
+.cost-table td:not(:first-child) {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+}
+.cost-table tr.total td {
+  font-weight: 700;
+  color: var(--ink);
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+  font-size: 15px;
+}
+.cost-table tr.total td:not(:first-child) {
+  font-size: 17px;
+  color: var(--red);
+}
+.cost-table td.category { font-weight: 500; color: var(--ink); }
+
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-24); }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-12); }
+
+@media (max-width: 700px) {
+  .two-col, .three-col { grid-template-columns: 1fr; }
+  .verdict-leverage-number { font-size: 40px; }
+  .verdict-costs { flex-direction: column; gap: var(--sp-16); }
+  .app-body { padding: var(--sp-24) var(--sp-16); }
+  .verdict-hero { padding: var(--sp-24); }
+}
+</style>
+</head>
+<body>
+
+<!-- PREVIEW NAV -->
+<div class="preview-header">
+  <div>
+    <div class="preview-title">Meridian Design System</div>
+    <div class="preview-subtitle">Due Diligence Room — v1.0 preview</div>
+  </div>
+  <button class="mode-toggle" onclick="document.body.classList.toggle('dark-mode'); this.textContent = document.body.classList.contains('dark-mode') ? '☀ Light mode' : '☾ Dark mode'">☾ Dark mode</button>
+</div>
+
+
+<!-- 1. TYPOGRAPHY -->
+<div class="preview-section">
+  <div class="section-label">01 — Typography</div>
+
+  <div class="type-row">
+    <div class="type-meta">FRAUNCES VARIABLE — Hero verdicts & leverage numbers (wght 300, opsz 90)</div>
+    <div class="type-specimen t-display-xl">$65,000–$85,000</div>
+    <div class="type-specimen t-display-xl" style="color: var(--ink-mid); margin-top: 8px;">in negotiation leverage</div>
+  </div>
+
+  <div class="type-row">
+    <div class="type-meta">FRAUNCES VARIABLE — Section headings (wght 600, opsz 28)</div>
+    <div class="type-specimen t-display-md">Heritage Part IV — Active Designation</div>
+  </div>
+
+  <div class="type-row">
+    <div class="type-meta">SCHIBSTED GROTESK 400 — Body & explanations</div>
+    <div class="type-specimen t-body">This property carries a Part IV Heritage designation under the Ontario Heritage Act. This means any exterior alterations require municipal approval and can add 40–60% to renovation budgets. The designation was registered in 1987 and remains active in the city registry.</div>
+  </div>
+
+  <div class="type-row">
+    <div class="type-meta">SCHIBSTED GROTESK 600 — Labels & UI chrome</div>
+    <div class="type-specimen t-label">Confidence: HIGH · Source: Toronto Heritage Register · Updated: Jan 2026</div>
+  </div>
+
+  <div class="type-row">
+    <div class="type-meta">GEIST MONO 600 — Financial figures (tabular-nums, min 18px)</div>
+    <div class="type-specimen t-mono-xl">$1,247,340</div>
+    <div class="type-specimen t-mono-md" style="margin-top: 8px;">True 10-year cost of ownership</div>
+    <div class="type-specimen t-mono-sm" style="margin-top: 6px;">Land Transfer Tax: $38,950 · Mortgage (5yr×2 @ 6.2%): $748,200</div>
+  </div>
+</div>
+
+
+<!-- 2. COLOR PALETTE -->
+<div class="preview-section">
+  <div class="section-label">02 — Color System</div>
+
+  <div class="color-grid">
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #F5F0E8;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Background</div><div class="swatch-hex">#F5F0E8</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #FAF7F2;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Surface</div><div class="swatch-hex">#FAF7F2</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #FFFFFF;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Surface Raised</div><div class="swatch-hex">#FFFFFF</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #0F6B30;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Green Primary</div><div class="swatch-hex">#0F6B30</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #15803D;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Green Mid</div><div class="swatch-hex">#15803D</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #EAF4EE;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Green Wash</div><div class="swatch-hex">#EAF4EE</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #B45309;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Amber</div><div class="swatch-hex">#B45309</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #991B1B;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Red Danger</div><div class="swatch-hex">#991B1B</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #A07840;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Brass</div><div class="swatch-hex">#A07840</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #1C1208;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Ink</div><div class="swatch-hex">#1C1208</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #4A3F2F;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Ink Mid</div><div class="swatch-hex">#4A3F2F</div></div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-block" style="background: #8A7B68;"></div>
+      <div class="swatch-meta"><div class="swatch-name">Ink Muted</div><div class="swatch-hex">#8A7B68</div></div>
+    </div>
+  </div>
+
+  <!-- Confidence badges -->
+  <div style="margin-bottom: var(--sp-24);">
+    <div class="type-meta" style="margin-bottom: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">CONFIDENCE INDICATORS — Brass dot system</div>
+    <div class="component-row">
+      <span class="confidence-badge badge-high"><span class="badge-dot"></span>HIGH</span>
+      <span class="confidence-badge badge-medium"><span class="badge-dot"></span>MEDIUM</span>
+      <span class="confidence-badge badge-low"><span class="badge-dot"></span>LOW</span>
+      <span class="confidence-badge badge-unknown"><span class="badge-dot"></span>UNKNOWN</span>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div style="margin-bottom: var(--sp-24);">
+    <div class="type-meta" style="margin-bottom: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);">BUTTONS</div>
+    <div class="component-row">
+      <button class="btn btn-primary">Analyze Property</button>
+      <button class="btn btn-secondary">Export Report</button>
+      <button class="btn btn-ghost">View sources ↓</button>
+    </div>
+  </div>
+
+  <!-- Form inputs -->
+  <div class="two-col" style="max-width: 600px;">
+    <div class="form-group">
+      <label class="form-label">Toronto Address</label>
+      <input class="form-input" type="text" placeholder="401 Richmond St W, Toronto" value="401 Richmond St W, Toronto">
+    </div>
+    <div class="form-group">
+      <label class="form-label">List Price</label>
+      <input class="form-input" type="text" placeholder="$1,150,000" value="$1,150,000" style="font-family: var(--font-mono);">
+    </div>
+  </div>
+</div>
+
+
+<!-- 3. PRODUCT MOCKUP — VERDICT SCREEN -->
+<div class="preview-section">
+  <div class="section-label">03 — Product Mockup: Verdict Screen</div>
+
+  <div class="app-shell">
+
+    <!-- Nav -->
+    <div class="app-nav">
+      <div class="app-logo">Meridian</div>
+      <div class="nav-input-bar">
+        <input class="nav-input addr" type="text" value="401 Richmond St W, Toronto" readonly>
+        <input class="nav-input price" type="text" value="$1,150,000" readonly>
+        <button class="nav-btn">Re-analyze</button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="app-body">
+
+      <!-- Verdict Hero -->
+      <div class="verdict-hero">
+        <div class="verdict-pill">3 MATERIAL RISKS</div>
+        <div class="verdict-address">401 Richmond St W, Toronto · List: $1,150,000</div>
+        <div class="verdict-leverage-label">You have negotiation leverage the seller doesn't know you know.</div>
+        <div class="verdict-leverage-number">$55,000–$75,000</div>
+        <div class="verdict-tagline">in documented price reduction opportunity</div>
+        <div class="verdict-costs">
+          <div class="verdict-cost-item">
+            <div class="verdict-cost-label">True 10-Year Cost</div>
+            <div class="verdict-cost-value danger">$1,847,230</div>
+          </div>
+          <div class="verdict-cost-item">
+            <div class="verdict-cost-label">vs. List Price</div>
+            <div class="verdict-cost-value">$1,150,000</div>
+          </div>
+          <div class="verdict-cost-item">
+            <div class="verdict-cost-label">Hidden Premium</div>
+            <div class="verdict-cost-value danger">+$697,230</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk Flags -->
+      <div class="section-divider">
+        <div class="divider-label">Risk Flags</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Flag 1: Heritage -->
+      <div class="risk-flag red">
+        <div class="risk-header">
+          <div class="risk-title">Heritage Part IV Designation — Active since 1987</div>
+          <div class="risk-source-badges">
+            <span class="confidence-badge badge-high"><span class="badge-dot"></span>HIGH</span>
+          </div>
+        </div>
+        <div class="risk-body">
+          This property is designated under the Ontario Heritage Act (Part IV). Any exterior alterations — including window replacements, facade repairs, or additions — require City Heritage Permit approval. Municipal approval typically adds 6–18 months and $40,000–$60,000 in scope costs to any exterior renovation.
+        </div>
+        <div class="negotiation-script">
+          <div class="negotiation-label">Say this at the table ↓</div>
+          <div class="negotiation-text">"The Part IV heritage designation means we're buying a property with permanent renovation constraints. I'd like to reflect the heritage approval premium in the purchase price."</div>
+          <div class="negotiation-leverage">→ Supports $40,000–$60,000 price reduction request</div>
+        </div>
+      </div>
+
+      <!-- Flag 2: Active Permits -->
+      <div class="risk-flag amber">
+        <div class="risk-header">
+          <div class="risk-title">3 Active Building Permits — Structural work unresolved</div>
+          <div class="risk-source-badges">
+            <span class="confidence-badge badge-high"><span class="badge-dot"></span>HIGH</span>
+          </div>
+        </div>
+        <div class="risk-body">
+          Three permits are currently open for structural, electrical, and plumbing work. Unresolved permits transfer with the property. The buyer inherits responsibility for completing inspections, resolving any outstanding orders, and potential stop-work orders. Two permits were opened in 2024 and have not received final inspection.
+        </div>
+        <div class="negotiation-script">
+          <div class="negotiation-label">Say this at the table ↓</div>
+          <div class="negotiation-text">"I'd like the seller to close all three outstanding permits as a condition of sale, or provide a holdback equal to the estimated completion cost."</div>
+          <div class="negotiation-leverage">→ Supports $15,000–$25,000 holdback or condition</div>
+        </div>
+      </div>
+
+      <!-- Flag 3: Flood Zone -->
+      <div class="risk-flag amber">
+        <div class="risk-header">
+          <div class="risk-title">TRCA Flood Plain — 1:100 year event zone</div>
+          <div class="risk-source-badges">
+            <span class="confidence-badge badge-medium"><span class="badge-dot"></span>MEDIUM</span>
+          </div>
+        </div>
+        <div class="risk-body">
+          The property sits within the TRCA's 1-in-100-year floodplain. This restricts basement finishing permits and may affect insurance premiums. Flood insurance riders currently add $1,800–$3,200/year in the Greater Toronto Area for properties in this zone.
+        </div>
+        <div class="negotiation-script">
+          <div class="negotiation-label">Say this at the table ↓</div>
+          <div class="negotiation-text">"The TRCA flood designation will add approximately $2,500/year in insurance and restrict our ability to finish the basement. I'd like to factor that into our offer."</div>
+          <div class="negotiation-leverage">→ Supports $8,000–$12,000 price reduction</div>
+        </div>
+      </div>
+
+      <!-- Cost Table -->
+      <div class="section-divider">
+        <div class="divider-label">10-Year Cost Breakdown</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <div style="background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: var(--sp-32);">
+        <table class="cost-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Annual</th>
+              <th>10-Year Total</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="category">Mortgage payments (5yr×2 @ 6.2%)</td>
+              <td>$74,820</td>
+              <td>$748,200</td>
+              <td><span class="confidence-badge badge-high" style="font-size: 10px;"><span class="badge-dot"></span>HIGH</span></td>
+            </tr>
+            <tr>
+              <td class="category">Property tax (2.5% avg increase)</td>
+              <td>$8,450</td>
+              <td>$94,200</td>
+              <td><span class="confidence-badge badge-high" style="font-size: 10px;"><span class="badge-dot"></span>HIGH</span></td>
+            </tr>
+            <tr>
+              <td class="category">Land Transfer Tax (one-time)</td>
+              <td>—</td>
+              <td>$38,950</td>
+              <td><span class="confidence-badge badge-high" style="font-size: 10px;"><span class="badge-dot"></span>HIGH</span></td>
+            </tr>
+            <tr>
+              <td class="category">Heritage renovation premium</td>
+              <td>—</td>
+              <td>$50,000</td>
+              <td><span class="confidence-badge badge-medium" style="font-size: 10px;"><span class="badge-dot"></span>MED</span></td>
+            </tr>
+            <tr>
+              <td class="category">TRCA flood insurance premium</td>
+              <td>$2,500</td>
+              <td>$25,000</td>
+              <td><span class="confidence-badge badge-medium" style="font-size: 10px;"><span class="badge-dot"></span>MED</span></td>
+            </tr>
+            <tr>
+              <td class="category">General maintenance (1.5%/yr)</td>
+              <td>$17,250</td>
+              <td>$172,500</td>
+              <td><span class="confidence-badge badge-low" style="font-size: 10px;"><span class="badge-dot"></span>LOW</span></td>
+            </tr>
+            <tr>
+              <td class="category">Permit resolution costs (est.)</td>
+              <td>—</td>
+              <td>$20,000</td>
+              <td><span class="confidence-badge badge-unknown" style="font-size: 10px;"><span class="badge-dot"></span>UNK</span></td>
+            </tr>
+            <tr class="total">
+              <td class="category">True 10-Year Cost of Ownership</td>
+              <td>—</td>
+              <td>$1,847,230</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Agent reasoning trace (collapsed) -->
+      <div style="background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--r-md); padding: var(--sp-16); margin-bottom: var(--sp-48);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--brass); text-transform: uppercase; letter-spacing: 0.1em;">Agent Reasoning Trace</span>
+            <span class="confidence-badge badge-unknown" style="font-size: 10px;"><span class="badge-dot"></span>4 sources queried</span>
+          </div>
+          <button class="btn btn-ghost" style="font-size: 12px; padding: 4px 10px;">How we know this ↓</button>
+        </div>
+      </div>
+
+    </div><!-- /app-body -->
+  </div><!-- /app-shell -->
+</div>
+
+
+<!-- 4. INPUT SCREEN MOCKUP -->
+<div class="preview-section">
+  <div class="section-label">04 — Input Screen (before analysis)</div>
+  <div class="app-shell" style="max-width: 600px;">
+    <div class="app-nav">
+      <div class="app-logo">Meridian</div>
+    </div>
+    <div style="padding: var(--sp-64) var(--sp-48); text-align: center;">
+      <div style="font-family: var(--font-display); font-size: 36px; font-weight: 300; color: var(--ink); font-variation-settings: 'opsz' 50; margin-bottom: var(--sp-8);">Know before you sign.</div>
+      <div style="font-family: var(--font-body); font-size: 15px; color: var(--ink-muted); max-width: 400px; margin: 0 auto var(--sp-40);">The true 10-year cost of any Toronto property. Hidden risks, hidden leverage.</div>
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 440px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Toronto Address</label>
+          <input class="form-input" type="text" placeholder="Start typing an address…" style="font-size: 15px; padding: 13px 16px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">List Price</label>
+          <input class="form-input" type="text" placeholder="$0" style="font-family: var(--font-mono); font-size: 15px; padding: 13px 16px;">
+        </div>
+        <button class="btn btn-primary" style="padding: 13px; font-size: 14px; justify-content: center; margin-top: 4px;">Analyze Property →</button>
+      </div>
+      <div style="margin-top: var(--sp-32); display: flex; gap: var(--sp-24); justify-content: center;">
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--green); font-variant-numeric: tabular-nums;">6</div>
+          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Open Data sources</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--green); font-variant-numeric: tabular-nums;">4</div>
+          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">AI reasoning agents</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--green); font-variant-numeric: tabular-nums;">10yr</div>
+          <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">cost projection</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Smooth transitions for mode toggle
+document.body.style.transition = 'background 0.25s ease, color 0.25s ease';
+</script>
+
+</body>
+</html>
