@@ -10,10 +10,13 @@
 ---
 
 ## Aesthetic Direction
-- **Direction:** Due Diligence Room
-- **Decoration level:** Intentional — warm parchment base, document-like brass dividers, purposeful confidence indicators. Not a SaaS dashboard.
-- **Mood:** A private law firm memo meets a Bloomberg terminal. Institutional gravity + human warmth. Serious but not cold. The product was prepared FOR the user by someone who knows more than the seller's agent.
-- **Anti-patterns:** No 3-column icon grids. No gradient buttons. No cool-gray (#F3F4F6) backgrounds. No skeleton screens. The report appears as a composed artifact — like it was printed and handed to you.
+- **Direction:** Due Diligence Room — Dark Edition
+- **Decoration level:** Intentional — near-black base, near-invisible card borders, purposeful brass/green accents. Not a SaaS dashboard, not a generic dark theme.
+- **Mood:** A private law firm memo meets Bloomberg Terminal meets Apple product page. Institutional gravity. High contrast. The product feels like it was made by someone who knows more than the seller's agent — and it shows.
+- **Primary inspiration:**
+  - **Apple iPhone 17 Pro** (apple.com/ca/iphone-17-pro): Near-pure black base, massive display type, near-zero borders, maximum contrast ink-on-black, tight letter-spacing, cinematic whitespace between sections.
+  - **Mercury** (mercury.com): Deep navy-dark surfaces with barely-visible elevation, very muted secondary text, refined fintech polish, floating nav with blur.
+- **Anti-patterns:** No warm gray cards. No visible card border grids. No skeleton screens. No washed-out text. No decoration for its own sake.
 - **EUREKA:** Every real estate tool in this category (Opendoor, Zillow, Redfin) is designed for sellers or browsers, not buyers doing due diligence. Meridian has no direct category precedent. Lean into this: document-first, verdict-first, not app-first.
 
 ---
@@ -40,7 +43,7 @@
 ### Scale
 | Level | Size | Weight | Font | Usage |
 |-------|------|--------|------|-------|
-| Hero | 56px | 300 | Fraunces (opsz 90) | Leverage number |
+| Hero | 72px | 300 | Fraunces (opsz 90) | Leverage number (Apple-scale) |
 | H1 | 40px | 400 | Fraunces (opsz 60) | Page title |
 | H2 | 28px | 600 | Fraunces (opsz 28) | Section title, flag name |
 | H3 | 20px | 600 | Fraunces (opsz 20) | Card title |
@@ -57,46 +60,76 @@
 ## Color
 
 - **Approach:** Restrained — one primary accent (green), one urgency color (amber), danger (red), one distinctive detail color (brass). Color is meaningful, never decorative.
+- **Default mode:** Dark. Light mode is available via toggle.
 
 ```css
+/* DARK MODE (default) — inspired by Apple.com + Mercury.com */
 :root {
-  /* Base — warm parchment document, not cool SaaS gray */
+  /* Base — near-pure black, just a breath of warmth (not cold blue-black) */
+  --bg:              #0A0907;
+  --surface:         #121009;
+  --surface-raised:  #1A1714;
+  --border:          #252118;  /* near-invisible — Apple-style */
+  --border-light:    #1B1814;
+
+  /* Green — more vibrant on dark (Apple accent energy) */
+  --green:           #22C55E;
+  --green-mid:       #4ADE80;
+  --green-hover:     #16A34A;
+  --green-wash:      #052E16;
+  --green-text:      #DCFCE7;
+
+  /* Urgency — brighter on dark backgrounds */
+  --amber:           #F59E0B;
+  --amber-wash:      #3D1A00;
+
+  /* Danger */
+  --red:             #F87171;
+  --red-wash:        #3A0808;
+
+  /* Brass — gold-toned, visible on near-black */
+  --brass:           #D4A853;
+  --brass-light:     #211708;
+
+  /* Typography — maximum contrast (Apple: #F5F5F7) */
+  --ink:             #F5F0EB;
+  --ink-mid:         #A89F94;
+  --ink-muted:       #5C5650;
+  --ink-faint:       #2E2A26;
+}
+
+/* LIGHT MODE (toggle) — warm parchment document */
+.light-mode {
   --bg:              #F5F0E8;
   --surface:         #FAF7F2;
   --surface-raised:  #FFFFFF;
   --border:          #DDD5C4;
   --border-light:    #EDE8DF;
-
-  /* Primary — forest green, richer/darker than typical fintech */
   --green:           #0F6B30;
-  --green-mid:       #15803D;  /* hover states */
+  --green-mid:       #15803D;
   --green-hover:     #0A5625;
-  --green-wash:      #EAF4EE;  /* tint backgrounds */
-  --green-text:      #052E16;  /* text on green surfaces */
-
-  /* Urgency — FHSA deadlines, RRSP warnings, permit issues. Never casual. */
+  --green-wash:      #EAF4EE;
+  --green-text:      #052E16;
   --amber:           #B45309;
   --amber-wash:      #FEF3C7;
-
-  /* Danger — existential risk flags */
   --red:             #991B1B;
   --red-wash:        #FEE2E2;
-
-  /* Brass — confidence indicators, section dividers, subtle iconography */
-  /* Evokes legal nameplates and institutional hardware. Never overuse. */
   --brass:           #A07840;
   --brass-light:     #F0E8D8;
-
-  /* Typography */
-  --ink:             #1C1208;  /* warm near-black, not cool #111827 */
+  --ink:             #1C1208;
   --ink-mid:         #4A3F2F;
   --ink-muted:       #8A7B68;
   --ink-faint:       #C4B89E;
 }
 ```
 
-### Dark mode
-Reduce saturation 10–20% on all accent colors. Parchment base inverts to `#1A1610`. Surface to `#231F18`. Brass lightens to `#C89650`.
+### Dark mode design principles (Apple + Mercury inspired)
+- **Near-pure black base** (`#0A0907`) — not navy, not warm gray. One step above pure black.
+- **Near-invisible borders** — card separation comes from subtle background elevation, not border lines.
+- **Vibrant accents** — on dark backgrounds, green/amber/red need to be brighter to maintain impact.
+- **Maximum ink contrast** — primary text at `#F5F0EB` (near-white), not muted.
+- **Floating nav** — backdrop-filter blur, semi-transparent background (Mercury pattern).
+- **Typography goes bigger** — Apple's approach: display type at 72px+ for hero numbers, tight tracking.
 
 ### Confidence indicator system
 | Level | Color | Dot | Meaning |
@@ -189,6 +222,9 @@ Blue is the universal "info" color — every fintech tool uses it. Brass evokes 
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2026-05-30 | Initial system created by /design-consultation | Competitive research found no visual precedent for buyer's-advocate fintech — leaned into document/legal-brief aesthetic |
+| 2026-05-30 | Dark mode made default; palette darkened to near-black | Inspired by Apple iPhone 17 Pro (pure-black, cinematic) + Mercury.com (elevated surfaces, muted text, floating nav) |
+| 2026-05-30 | Hero leverage number increased 56px → 72px | Apple-scale display type — the dollar amount is the product's emotional payload, it must dominate |
+| 2026-05-30 | Accent colors brightened (green #22C55E, amber #F59E0B) | Vibrant accents are required on near-black backgrounds for visual impact |
 | 2026-05-30 | Schibsted Grotesk replaces Plus Jakarta Sans | Institutional grotesque reads "document," not "startup" — aligns with "like hiring a lawyer" memorable thing |
 | 2026-05-30 | Warm parchment (#F5F0E8) replaces cool gray (#F3F4F6) | Every competitor is cool-gray SaaS; parchment makes Meridian read as a prepared document |
 | 2026-05-30 | Brass accent (#A07840) added | Evokes legal/institutional nameplates; replaces blue for confidence indicators; one memorable distinctive element |

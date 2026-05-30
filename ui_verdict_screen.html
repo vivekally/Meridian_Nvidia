@@ -15,33 +15,33 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Dark mode is the default */
+/* Dark mode is the default — inspired by Apple.com + Mercury.com */
 :root {
-  --bg:             #1A1610;
-  --surface:        #231F18;
-  --surface-raised: #2D2820;
-  --border:         #3A3228;
-  --border-light:   #2F2920;
+  --bg:             #0A0907;
+  --surface:        #121009;
+  --surface-raised: #1A1714;
+  --border:         #252118;
+  --border-light:   #1B1814;
 
-  --green:          #16A34A;
-  --green-mid:      #22C55E;
-  --green-hover:    #4ADE80;
+  --green:          #22C55E;
+  --green-mid:      #4ADE80;
+  --green-hover:    #16A34A;
   --green-wash:     #052E16;
-  --green-text:     #BBF7D0;
+  --green-text:     #DCFCE7;
 
-  --amber:          #D97706;
-  --amber-wash:     #451A03;
+  --amber:          #F59E0B;
+  --amber-wash:     #3D1A00;
 
-  --red:            #DC2626;
-  --red-wash:       #450A0A;
+  --red:            #F87171;
+  --red-wash:       #3A0808;
 
-  --brass:          #C89650;
-  --brass-light:    #2A1F0E;
+  --brass:          #D4A853;
+  --brass-light:    #211708;
 
-  --ink:            #F0EAE0;
-  --ink-mid:        #C4B89E;
-  --ink-muted:      #8A7B68;
-  --ink-faint:      #4A3F2F;
+  --ink:            #F5F0EB;
+  --ink-mid:        #A89F94;
+  --ink-muted:      #5C5650;
+  --ink-faint:      #2E2A26;
 
   --font-display:   'Fraunces', Georgia, serif;
   --font-body:      'Schibsted Grotesk', system-ui, sans-serif;
@@ -87,10 +87,12 @@ body {
   min-height: 100vh;
 }
 
-/* NAV */
+/* NAV — Mercury-style: floating, blurred, semi-transparent */
 .nav {
-  background: var(--surface-raised);
-  border-bottom: 1px solid var(--border);
+  background: rgba(10, 9, 7, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   padding: 12px 24px;
   display: flex;
   align-items: center;
@@ -98,7 +100,10 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 1px 3px rgba(28,18,8,0.06);
+}
+.light-mode .nav {
+  background: rgba(245, 240, 232, 0.82);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 .nav-logo {
@@ -171,13 +176,13 @@ body {
   padding: 40px 24px 80px;
 }
 
-/* VERDICT HERO */
+/* VERDICT HERO — Apple-style: content floats, minimal chrome */
 .verdict-hero {
   background: var(--surface-raised);
   border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 40px 44px;
-  margin-bottom: 28px;
+  border-radius: 16px;
+  padding: 48px 52px;
+  margin-bottom: 32px;
   position: relative;
 }
 
@@ -215,24 +220,29 @@ body {
 
 .verdict-leverage {
   font-family: var(--font-display);
-  font-size: 56px;
+  font-size: 72px;
   font-weight: 300;
   color: var(--green);
-  font-variation-settings: 'opsz' 90;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 120;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 60px rgba(34,197,94,0.25);
   /* Pretext will manage height on resize */
+}
+.light-mode .verdict-leverage {
+  text-shadow: none;
 }
 
 .verdict-tagline {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 400;
   font-style: italic;
   color: var(--ink-mid);
-  font-variation-settings: 'opsz' 18;
-  margin-top: 8px;
-  margin-bottom: 28px;
+  font-variation-settings: 'opsz' 20;
+  letter-spacing: -0.01em;
+  margin-top: 10px;
+  margin-bottom: 32px;
 }
 
 .verdict-costs {
@@ -257,10 +267,11 @@ body {
 }
 .verdict-cost-value {
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
+  letter-spacing: -0.02em;
 }
 .verdict-cost-value.danger { color: var(--red); }
 
@@ -286,13 +297,13 @@ body {
   background: var(--border);
 }
 
-/* RISK FLAGS */
+/* RISK FLAGS — near-invisible border, accent left stripe */
 .flag-card {
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-left: 3px solid;
-  border-radius: var(--r-lg);
-  padding: 24px;
+  border-radius: 16px;
+  padding: 28px;
   margin-bottom: 12px;
 }
 .flag-card.risk-red   { border-left-color: var(--red); }
@@ -360,10 +371,13 @@ body {
 }
 
 .script-card {
-  background: var(--surface);
+  background: rgba(255,255,255,0.03);
   border: 1px solid var(--border-light);
-  border-radius: var(--r-md);
-  padding: 16px;
+  border-radius: 12px;
+  padding: 18px;
+}
+.light-mode .script-card {
+  background: var(--surface);
 }
 .script-label {
   font-family: var(--font-mono);
