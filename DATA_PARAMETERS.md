@@ -3,6 +3,8 @@
 > Comprehensive inventory of every data point Meridian uses (or can use) to compute the true 10-year cost of owning residential property in Toronto. Cross-referenced against Toronto Open Data (open.toronto.ca), TRCA ArcGIS, federal/provincial tax rules, and industry benchmarks.
 >
 > Last updated: 2026-05-30
+>
+> Aligned with: `meridian_spec_final.txt` v3 and `Meridian Data Flow.pdf`
 
 ---
 
@@ -11,18 +13,104 @@
 Each parameter includes:
 
 - **Data source** — where the data comes from, with CKAN dataset slug or API endpoint
+- **Signal type** — `observed` (Layer 1: direct dataset match), `inferred` (Layer 2: computed from multiple observed signals), or `simulated` (Layer 3: projection scenario)
 - **Records** — approximate dataset size
 - **Refresh** — how often the source updates
 - **Cost impact** — estimated dollar effect on 10-year ownership cost
-- **Confidence** — how reliably Meridian can quantify this parameter (0–100%)
+- **Confidence** — how reliably Meridian can quantify this parameter (High / Medium / Low per spec)
 - **V1/V2/V3** — which product version includes this parameter
 
-Confidence scoring rules (aligned with Agent 2 retrieval logic):
-- 90–100%: deterministic math or direct government data with timestamps
-- 75–89%: live API with clean data, minor interpretation needed
-- 60–74%: data available but requires spatial inference or proxy logic
-- 40–59%: modeled estimate, multiple assumptions
-- Below 40%: speculative, macro-dependent
+Every signal output must follow the spec's standardized structure:
+```json
+{
+  "signal_name":   "string",
+  "signal_type":   "observed | inferred | simulated",
+  "value":         "string",
+  "confidence":    "High | Medium | Low",
+  "source":        "string",
+  "data_coverage": "string",
+  "message":       "string"
+}
+```
+
+**Wording rules (apply everywhere):** Never use "red flag," "hard red flag," "major issues," or "high special assessment risk." Use "elevated review recommended," "further due diligence recommended," and "elevated maintenance complexity signal" instead. Never include "$3,500" or "insurance loading" in flood zone outputs.
+
+---
+
+## User Input Parameters
+
+These are provided by the buyer, not retrieved from data sources. They drive downstream logic across all tiers.
+
+### I1. Address
+
+| Field | Value |
+|-------|-------|
+| Type | User input |
+| Format | Free-text Toronto address string |
+| Used by | Agent 1 (geocoding → lat/lon), all spatial lookups |
+| Version | V1 |
+
+Resolved via `address-points-municipal-toronto-one-address-repository` (CKAN, 525,435 records, weekly refresh) for geocoding. Nominatim is fallback only.
+
+---
+
+### I2. List Price
+
+| Field | Value |
+|-------|-------|
+| Type | User input |
+| Format | CAD dollar amount |
+| Used by | LTT calculation, CMHC premium, mortgage scenarios, assessed value estimate |
+| Version | V1 |
+
+---
+
+### I3. Buyer Profile
+
+| Field | Value |
+|-------|-------|
+| Type | User input |
+| Options | `first-time` / `investor` / `downsizer` |
+| Used by | Tax rate selection, LTT rebates, FHSA/HBP flagging, property tax relief programs |
+| Version | V1 |
+
+Drives critical branching:
+- `first-time` → apply LTT rebates ($8,475), flag FHSA ($40K) + RRSP HBP ($60K), flag assumable mortgage opportunity, use `RATE_RESIDENTIAL`
+- `investor` → use `RATE_MULTI_RES` (0.01208792, ~57% higher), flag VHT obligations, no rebates
+- `downsizer` → use `RATE_RESIDENTIAL`, flag property tax relief programs
+
+---
+
+### I4. Down Payment Percentage
+
+| Field | Value |
+|-------|-------|
+| Type | User input |
+| Default | 20% |
+| Used by | CMHC premium logic (required if <20%), mortgage principal calculation |
+| Version | V1 |
+
+---
+
+### I5. Mortgage Rate
+
+| Field | Value |
+|-------|-------|
+| Type | User input |
+| Default | 4.79% (current benchmark) |
+| Used by | Mortgage scenario modeling (base/bear/bull) |
+| Version | V1 |
+
+---
+
+### I6. Amortization Period
+
+| Field | Value |
+|-------|-------|
+| Type | User input |
+| Default | 25 years |
+| Used by | Mortgage payment calculation, CMHC surcharge (>25yr adds 0.20%) |
+| Version | V1 |
 
 ---
 
@@ -35,17 +123,25 @@ Confidence scoring rules (aligned with Agent 2 retrieval logic):
 
 | Field | Value |
 |-------|-------|
+| Signal type | `observed` |
 | Source | `heritage-register` — Toronto Open Data CKAN |
 | Format | SHP (Shapefile), WGS84 |
-| Records | ~10,000 properties |
+| Records | ~12,320 properties |
 | Refresh | Quarterly (last: May 21, 2026) |
-| Cost impact | **$40,000–$60,000** renovation premium per exterior project |
-| Confidence | **95%** |
+| Cost impact | Renovation delays and restriction premium (no fixed levy in Toronto) |
+| Confidence | **High** |
+| Data coverage | May 2026 snapshot — 12,320 properties, CKAN API |
 | Version | V1 |
 
 **What it captures:** Properties designated or listed under the Ontario Heritage Act. Part IV = individual designation. Part V = within a Heritage Conservation District. Listed = on the register but not yet designated (still triggers 60-day demolition delay).
 
-**Why it's a hidden cost:** Any exterior alteration (windows, facade, roof, additions) requires City Heritage Permit approval. Typical approval timeline: 6–18 months. Typical cost premium: 40–60% over standard renovation. Buyers see the list price but not the permanent renovation constraint.
+**Why it's a hidden cost:** Any exterior alteration (windows, facade, roof, additions) requires City Heritage Permit approval. Typical approval timeline: 6–18 months. Buyers see the list price but not the permanent renovation constraint.
+
+**Tiered output (per spec section 4):**
+- Part IV → "Elevated review recommended. This property is fully heritage designated. Renovations require heritage permit review — budget for delays and potential restrictions on exterior alterations."
+- Part V → "This property is in a heritage conservation district. Neighbourhood-level heritage restrictions apply."
+- Listed → "This property is on the Heritage Register but not yet formally designated. Lower risk, worth monitoring."
+- No match → no flag
 
 **Query logic:** Spatial point-in-polygon against heritage register shapefile. Match on address or nearest point within 25m tolerance.
 
@@ -123,76 +219,137 @@ Confidence scoring rules (aligned with Agent 2 retrieval logic):
 
 ---
 
-### 5. Development Applications (500m Radius)
+### 5. Neighbourhood Intensification Signal (Development Applications, 500m Radius)
 
 | Field | Value |
 |-------|-------|
+| Signal type | `inferred` |
 | Source | `development-applications` — Toronto Open Data CKAN |
 | Format | CSV, XML, JSON |
-| Records | 26,254 |
+| Records | 26,254 (2008–2026, X/Y coordinates 97% complete) |
 | Refresh | **Daily** (last: May 30, 2026) |
-| Cost impact | Future property tax pressure + construction disruption |
-| Confidence | **80%** |
+| Cost impact | Future neighbourhood character, density, and property value changes |
+| Confidence | **Medium** |
+| Data coverage | 2026 (live CKAN API) — 26,254 total applications 2008–2026 |
 | Version | V1 |
 
-**What it captures:** All active and inactive Community Planning and Committee of Adjustment applications since January 2008. Includes rezoning, site plan, minor variance, consent, and Official Plan amendment applications.
+**What it captures:** All active and inactive Community Planning and Committee of Adjustment applications since January 2008.
 
-**Why it's a hidden cost:** High density of development applications within 500m signals neighbourhood intensification. Consequences:
-- Rising assessed property values = higher property taxes
-- Years of construction noise and disruption
-- Changed neighbourhood character (shadowing, traffic, density)
-- Potential positive: increased transit investment and amenities
+**Filter BEFORE counting (per spec section 6):**
+```python
+active_statuses = ["Under Review", "Application Received",
+                   "Council Approved", "NOAC Issued"]
+relevant_types  = ["OZ", "SA"]   # zoning amendments + site plan approvals
+# EXCLUDE all STATUS == "Closed" — removes 18,504 resolved records
+```
 
-**Query logic:** Geocode property → radius query (500m) → count active applications → classify by type (residential intensification, mixed-use, commercial). 10+ active applications within 500m = "development pressure" flag.
+**Normalize by ward area** to fix downtown/suburban bias:
+```python
+density_per_km2 = active_count / ward_area_km2
+# Ward boundary areas: open.toronto.ca/dataset/ward-profiles
+```
+
+**Tiered output (per spec section 6):**
+- Low (0–4 active OZ/SA within 500m) → pass, no flag
+- Medium (5–9) → "Neighbourhood showing early intensification signals. This may affect future neighbourhood character, density, and property values."
+- High (10+) → "High neighbourhood intensification signal detected. Significant redevelopment activity is occurring nearby. This may affect future neighbourhood character, density, and property values."
+
+**Never include:** direct tax increase predictions, MPAC reassessment predictions, or property value change certainties.
 
 ---
 
-### 6. TRCA Flood Zone
+### 6. TRCA Flood Zone Exposure
 
 | Field | Value |
 |-------|-------|
-| Source | TRCA Conservation Authority ArcGIS REST API |
+| Signal type | `observed` |
+| Source | TRCA Floodline Dataset — ArcGIS REST API |
 | Fallback | Local GeoJSON: `data/trca_floodplain_toronto.geojson` |
 | Format | ArcGIS Feature Service / GeoJSON |
 | Records | Toronto-wide flood plain polygons |
-| Refresh | Varies (no extract_date in API response) |
-| Cost impact | **$1,800–$3,200/yr** flood insurance premium + basement restrictions |
-| Confidence | **75%** |
+| Refresh | 2026 (live ArcGIS API) |
+| Cost impact | Insurance implications vary by insurer and property (no fixed dollar figure) |
+| Confidence | **High** |
+| Data coverage | 2026 (live ArcGIS API) |
 | Version | V1 |
 
-**What it captures:** TRCA regulatory flood plain boundaries — areas at risk of flooding from rivers (Don, Humber, Rouge, etc.) in a 1-in-100-year storm event.
+**What it captures:** TRCA regulatory flood plain boundaries — areas at risk of flooding from rivers (Don, Humber, Rouge, etc.).
 
-**Why it's a hidden cost:** Two concrete impacts:
-1. Flood insurance riders are effectively mandatory in-zone: $1,800–$3,200/yr additional premium
-2. City restricts basement finishing permits in flood-regulated areas, capping renovation upside
+**API call (per spec section 3):**
+```
+url = "https://services1.arcgis.com/pMeXFF5bmbv34Alm/arcgis/rest/
+       services/Floodline_TRCA_Polygon/FeatureServer/0/query"
+params = {
+  "geometry":        "{longitude},{latitude}",
+  "geometryType":    "esriGeometryPoint",
+  "spatialRel":      "esriSpatialRelIntersects",
+  "returnCountOnly": "true",
+  "f":               "json"
+}
+in_flood_zone = response.json()["count"] > 0
+```
 
-Over 10 years, flood insurance alone adds $18,000–$32,000. Basement restriction reduces usable square footage value.
-
-**Query logic:** Point-in-polygon against flood plain boundaries. If property falls within regulatory flood line, flag it.
-
-**Confidence rationale:** 75% because TRCA data lacks an `extract_date` field, so recency cannot be verified programmatically. Direct TRCA confirmation recommended before signing.
+**Tiered output (per spec — NO dollar figures, NO "insurance loading"):**
+- Elevated → property intersects TRCA flood polygon → "Flood Exposure: Elevated. This property intersects a TRCA flood-risk area. Insurance implications vary significantly by insurer and property characteristics. Verify coverage and premiums directly with your insurer."
+- Moderate → property within 100m of polygon boundary → "Flood Exposure: Moderate. This property is near a TRCA flood-risk area. Verify flood risk and insurance implications with your insurer."
+- Low → no intersection → no flag shown
 
 ---
 
-### 7. RentSafeTO Building Evaluation Scores
+### 7. Building Health (dual-path: RentSafeTO or Permit History)
+
+**This parameter has two paths depending on property type (per spec section 5).**
+
+#### Path A: Rental Apartments (3+ storeys, 10+ units) — RentSafeTO
 
 | Field | Value |
 |-------|-------|
+| Signal type | `observed` |
 | Source | `apartment-building-evaluation` — Toronto Open Data CKAN |
 | Format | CSV, XML, JSON |
-| Records | 5,341 (2023–current) + 11,760 (pre-2023) |
+| Records | 5,340 (2023–current) |
 | Refresh | **Daily** (last: May 30, 2026) |
-| Cost impact | Special assessment risk proxy: **$10,000–$50,000+** |
-| Confidence | **85%** |
-| Version | V1 (condo/apartment properties only) |
+| Confidence | **Medium** |
+| Data coverage | 2025 — 5,340 records |
+| Version | V1 |
 
-**What it captures:** Inspection scores across 50 evaluation categories for Toronto rental buildings (3+ storeys, 10+ units). Categories include mechanical systems, common areas, security, parking, exterior grounds. Each category scored 1–3 (1 = lowest).
+**Score distribution:**
+- 170 buildings below 70 (3% of stock — elevated review recommended)
+- 1,237 score 70–85 (further due diligence recommended)
+- 3,932 score 85+ (pass)
 
-**Why it's a hidden cost:** Low evaluation scores are the strongest available proxy for deferred maintenance in apartment and condo buildings. Buildings scoring poorly on mechanical systems and structural categories are statistically likely to face special assessments within 3–5 years. Special assessments can range from $10,000 to $50,000+ per unit for major capital projects (elevator replacement, garage repair, balcony remediation, cladding).
+**Score logic:**
+- Below 70 → "Elevated review recommended."
+- 70–85 → "Further due diligence recommended."
+- 85+ → pass, no flag
 
-**Query logic:** Match property address to registered buildings. If found, retrieve latest evaluation. Compute average score across all 50 categories. Flag if average <2.0 or if any structural/mechanical category scores 1.
+**UI disclaimer (always show):** "No RentSafeTO score available does not indicate lower risk — condos, co-ops, and smaller buildings are not covered by this program."
 
-**Applicability:** Only for buildings registered under RentSafeTO. Agent 1 (Planning) skips this source for freehold houses and low-rise buildings.
+#### Path B: All Other Property Types — Structural Permit History
+
+| Field | Value |
+|-------|-------|
+| Signal type | `observed` |
+| Source | `building-permits-active-permits` + `building-permits-cleared-permits` — CKAN |
+| Records | 228,573 active + 401,265 cleared |
+| Refresh | **Daily** |
+| Confidence | **Medium** |
+| Version | V1 |
+
+**Filter BEFORE flagging (per spec) — only surface permits where:**
+```python
+PERMIT_TYPE contains: "structural", "unsafe", "major repair", "emergency"
+# DO NOT flag: routine, cosmetic, or interior permits
+
+structural_active  = [p for p in active_permits  if is_structural(p)]
+structural_cleared = [p for p in cleared_permits if is_structural(p)
+                      and within_last_10_years(p)]
+```
+
+**Logic:**
+- `len(structural_active) > 0` → "Active structural permit found. Review permit details before purchase."
+- `len(structural_cleared) >= 3` → "Further due diligence recommended — this property has a notable structural permit history."
+- Otherwise → pass, no flag
 
 ---
 
@@ -246,52 +403,101 @@ Toronto MLTT brackets (as of April 1, 2026):
 
 | Field | Value |
 |-------|-------|
-| Source | City of Toronto published rates + MPAC assessment baseline |
-| Reference | `current-value-assessment-cva-tax-impact-residential-properties` (CKAN, 2019) |
+| Signal type | `simulated` |
+| Source | City of Toronto 2026 + MPAC methodology (hardcoded) |
+| Reference | toronto.ca/services-payments/property-taxes-utilities/property-tax/property-tax-rates-and-fees |
 | Records | N/A (deterministic calculation) |
 | Refresh | Annual (rate set by City budget) |
 | Cost impact | **$60,000–$100,000+** over 10 years |
-| Confidence | **90%** |
+| Confidence | **High** (rate) / **Medium** (assessed value estimate) |
+| Data coverage | Tax rate confirmed 2026; MPAC values frozen at Jan 1 2016 |
 | Version | V1 |
 
-**What it captures:** Annual property tax computed from assessed value and the combined residential tax rate (municipal + education + City Building Fund).
+**Constants (per spec section 2):**
+```python
+RATE_RESIDENTIAL = 0.00767311
+# 2026 confirmed: City 0.605295% + Education 0.153000% + City Building Fund 0.009016%
 
-**Key parameters:**
-- 2025 residential rate: ~0.754% of assessed value
-- 2026 projected increase: ~2.2% (per CBC/City budget)
-- Annual escalator assumption: 2.5% (Toronto historical average)
-- MPAC assessment base: frozen at January 1, 2016 valuations
+RATE_MULTI_RES   = 0.01208792
+# investor / multi-residential 2026 (~57% higher than residential)
 
-**Why it's a hidden cost:** Toronto's rate looks low compared to other Ontario cities, but applied to Toronto price points ($800K–$1.5M+), the absolute dollar amount is significant. The real hidden risk is the MPAC reassessment freeze — when reassessments resume, properties that appreciated significantly since 2016 will see a tax shock. This is the single most uncertain long-run cost driver.
+ANNUAL_GROWTH    = 0.035
+# based on 9.5% (2024), 6.9% (2025), 2.2% (2026)
+```
+
+**Rate selection by buyer profile:**
+- first-time / downsizer / owner-occupied → `RATE_RESIDENTIAL`
+- investor → `RATE_MULTI_RES`
+
+**Assessed value — property-type-specific multipliers (per spec):**
+MPAC values are frozen at 2016. Do NOT use list_price directly. Output as range +/-15% and label as Medium confidence.
+
+```python
+if property_type == "condo":             multiplier = 0.90
+elif property_type == "condo_townhouse": multiplier = 0.80
+elif property_type == "semi_detached":   multiplier = 0.65
+elif property_type == "detached_urban":  multiplier = 0.70
+elif property_type == "detached_suburban": multiplier = 0.55
+else:                                    multiplier = 0.70  # fallback
+
+AV_mid  = list_price * multiplier
+AV_low  = AV_mid * 0.85
+AV_high = AV_mid * 1.15
+```
+
+**Calculation:**
+```python
+annual_property_tax   = AV_mid * RATE
+ten_year_property_tax = annual_property_tax * ((pow(1 + ANNUAL_GROWTH, 10) - 1) / ANNUAL_GROWTH)
+```
+
+**UI disclaimer (always show):** "Estimated using property-type proxy. Actual taxes depend on your MPAC assessed value. MPAC values are frozen at January 1, 2016. 10-year projection is an illustrative scenario based on recent rate trends — not a confirmed forecast."
 
 ---
 
-### 10. Mortgage Cost (3-Scenario Model)
+### 10. Mortgage Cost Layer
 
 | Field | Value |
 |-------|-------|
-| Source | Deterministic math |
+| Signal type | `simulated` |
+| Source | Deterministic math — Government of Canada (hardcoded) |
 | Records | N/A |
 | Refresh | N/A |
 | Cost impact | **$400,000–$750,000** over 10 years (largest single cost) |
-| Confidence | **95%** |
+| Confidence | **High** (math) / **Medium** (rate scenarios) |
+| Data coverage | Current as of 2026 |
 | Version | V1 |
 
-**What it captures:** Monthly mortgage payments under three interest rate scenarios applied to a standard 25-year amortization with 20% down payment.
+**Rate renewal scenarios — 3 paths over 10 years (2 renewal cycles):**
+| Scenario | Rate change | Use case |
+|----------|------------|----------|
+| Base | Rate stays flat | Expected path |
+| Bear | +1.5% at each renewal | Rate shock |
+| Bull | -0.5% at each renewal | Rate relief |
 
-**Three scenarios:**
-| Scenario | Rate | Use case |
-|----------|------|----------|
-| Base | Current 5-year fixed (~5.14%) | Expected path |
-| Bear | Current + 1.5% (~6.64%) | Rate shock at renewal |
-| Bull | Current - 1.0% (~4.14%) | Rate relief |
-
-**CMHC premium logic:** If down payment <20% on a home ≤$1.5M, add mortgage default insurance premium (0.60–4.50% of mortgage amount) to the loan. Provincial sales tax on the premium is payable at closing.
+**CMHC premium logic:** If down payment <20% on a home ≤$1.5M, add mortgage default insurance premium (0.60–4.50% of mortgage amount) to the loan. Provincial sales tax on the premium is payable at closing. Surcharge of 0.20% for amortizations >25 years.
 
 **Down payment rules (Canada):**
 - 5% on first $500,000
 - 10% on $500,001–$1,500,000
 - 20% minimum for homes over $1,500,000 (no CMHC available)
+
+**Sub-signals within mortgage layer (per spec section 7):**
+
+**10a. Assumable Mortgage Flag**
+Surface when `buyer_profile === "first-time"`. If the seller has a favorable locked-in rate, the buyer may negotiate to assume the mortgage — direct negotiation leverage.
+
+**10b. Prepayment Penalty Signal (IRD Formula)**
+Standard Interest Rate Differential formula: input seller's remaining term + current rate → estimated penalty → negotiation leverage signal. If the seller faces a large penalty to break their mortgage, they have less room to negotiate on price.
+
+**10c. Amortization Accelerator**
+Show the buyer how much they save by increasing payment frequency (monthly → bi-weekly → weekly) or making lump-sum payments. Quantifies the value of prepayment privileges.
+
+**10d. FHSA Flag** (first-time buyers only)
+Up to $40,000 tax-free. $8,000/yr contribution limit, tax-deductible in, tax-free out. Surface when `buyer_profile === "first-time"`.
+
+**10e. RRSP Home Buyers' Plan Flag** (first-time buyers only)
+Up to $60,000/person ($120,000/couple) tax-free RRSP withdrawal. Repayable over 15 years. Surface when `buyer_profile === "first-time"`.
 
 ---
 
@@ -490,19 +696,126 @@ Toronto MLTT brackets (as of April 1, 2026):
 
 ---
 
-## Tier 3: Transit & Lifestyle Cost Parameters
-
-**Version:** V2/V3 (post-hackathon)
-
-### 21. TTC Transit Proximity (Transit Dividend)
+### 21. Heritage Formerly Listed Properties
 
 | Field | Value |
 |-------|-------|
+| Signal type | `observed` |
+| Source | `heritage-formerly-listed` — Toronto Open Data CKAN |
+| Format | SHP |
+| Records | ~3,700 properties |
+| Refresh | Annual (last: July 3, 2025) |
+| Cost impact | Neighbourhood character change signal |
+| Confidence | **Medium** |
+| Version | V1.5 |
+
+**What it captures:** Properties REMOVED from the Heritage Register due to Bill 23 (Ontario Heritage Act amendment imposing a 2-year listing deadline). Properties not designated within the deadline are delisted and cannot be re-listed for 5 years.
+
+**Why it matters:** A formerly-listed property near yours could now be demolished or significantly altered — changing neighbourhood character. Also: if YOUR property was formerly listed, it means heritage protection was considered but not applied, which is useful context for renovation planning.
+
+---
+
+### 22. Residential Fire Inspection Results
+
+| Field | Value |
+|-------|-------|
+| Signal type | `observed` |
+| Source | `residential-fire-inspection-results` — Toronto Open Data CKAN |
+| Format | CSV, SHP, GeoJSON, GPKG |
+| Records | 124,414 |
+| Refresh | **Daily** (last: May 2, 2026) |
+| Cost impact | Fire code violations = building safety signal |
+| Confidence | **High** |
+| Version | V1.5 |
+
+**What it captures:** Fire Prevention inspection results for high-rise residential properties since January 2017. Building-level data showing compliance status with Ontario Fire Code. Includes both properties with violations and those passing.
+
+**Why it matters:** Far more precise than `fire-incidents` (which is aggregated to intersection). A building with fire code violations signals infrastructure neglect, higher insurance premiums, and potential remediation costs. For condo buyers, violations may indicate management/board issues.
+
+---
+
+### 23. Committee of Adjustment Applications
+
+| Field | Value |
+|-------|-------|
+| Signal type | `observed` |
+| Source | `committee-of-adjustment-applications` — Toronto Open Data CKAN |
+| Format | CSV, XML, JSON |
+| Records | 2,954 active + 33,030 closed (since 2017) |
+| Refresh | **Daily** (last: May 30, 2026) |
+| Cost impact | Zoning change signal — affects property and neighbours |
+| Confidence | **Medium** |
+| Version | V2 |
+
+**What it captures:** Applications for minor variances to zoning by-laws and consents. Covers all four regional panels (Etobicoke York, North York, Toronto & East York, Scarborough).
+
+**Why it matters:** Active CoA applications on the property itself mean pending zoning changes. Active applications nearby signal that neighbours are seeking variances (adding units, changing use, exceeding height) that could affect your property. Complements development applications (#5) with finer-grained zoning variance data.
+
+---
+
+### 24. Preliminary Zoning Reviews
+
+| Field | Value |
+|-------|-------|
+| Signal type | `observed` |
+| Source | `preliminary-zoning-reviews` — Toronto Open Data CKAN |
+| Format | CSV, XML, JSON |
+| Records | 220,052 |
+| Refresh | **Daily** (last: May 30, 2026) |
+| Cost impact | Use change signal |
+| Confidence | **Medium** |
+| Version | V2 |
+
+**What it captures:** Zoning certificate requests, zoning use reviews, business license compliance, and liquor license reviews. Tracks whether specific locations are being evaluated for new or changed uses.
+
+**Why it matters:** High volume of zoning reviews near a property signals potential use changes (commercial, retail, licensed establishments) that could affect livability and property values.
+
+---
+
+### 25. Property Tax Relief and Rebate Programs
+
+| Field | Value |
+|-------|-------|
+| Signal type | `observed` |
+| Source | City of Toronto — hardcoded program rules |
+| Reference | toronto.ca/services-payments/property-taxes-utilities/property-tax/ |
+| Cost impact | Potential tax savings (varies by program) |
+| Confidence | **High** |
+| Version | V1.5 |
+
+**What it captures:** Tax relief programs beyond the LTT first-time buyer rebate. Surfaced based on buyer profile.
+
+**Programs to flag:**
+- First-time buyer LTT rebates (already in #8): $8,475 combined
+- FHSA: up to $40,000 tax-free (already in #10d)
+- RRSP HBP: up to $60,000 (already in #10e)
+- Property tax deferrals (seniors, low-income)
+- Tax reductions for new multi-residential builds (15% reduction under special subclass)
+- Small business property tax subclass (15% reduction — `small-business-property-tax-subclass-eligible-properties`, 28,222 records)
+
+**Surface ALL of the following when `buyer_profile === "first-time"` (per spec):**
+- LTT rebate: $8,475 combined
+- FHSA: up to $40,000 tax-free
+- RRSP HBP: up to $60,000
+- Assumable mortgage flag
+- Property Tax Relief and Rebates page link
+
+---
+
+## Tier 3: Transit & Lifestyle Cost Parameters
+
+**Version:** V1.5 (Transit Dividend) / V2/V3 (remaining)
+
+### 26. TTC Transit Proximity (Transit Dividend)
+
+| Field | Value |
+|-------|-------|
+| Signal type | `simulated` |
 | Source | `ttc-routes-and-schedules` — CKAN (GTFS format) |
 | Refresh | Every 6 weeks (last: May 23, 2026) |
 | Cost impact | **$8,000–$12,000/yr** transport cost differential |
-| Confidence | **85%** |
-| Version | V3 |
+| Confidence | **High** |
+| Version | **V1.5** (promoted from V3 — already shown in PDF frontend) |
 
 **What it captures:** Complete TTC route definitions, stop locations, stop patterns, and schedules in standard GTFS format. Covers subway, streetcar, and bus.
 
@@ -512,7 +825,7 @@ Toronto MLTT brackets (as of April 1, 2026):
 
 ---
 
-### 22. TTC Subway Station Ridership
+### 27. TTC Subway Station Ridership
 
 | Field | Value |
 |-------|-------|
@@ -528,7 +841,7 @@ Toronto MLTT brackets (as of April 1, 2026):
 
 ---
 
-### 23. Motor Vehicle Collisions (KSI)
+### 28. Motor Vehicle Collisions (KSI)
 
 | Field | Value |
 |-------|-------|
@@ -545,7 +858,7 @@ Toronto MLTT brackets (as of April 1, 2026):
 
 ---
 
-### 24. Noise Exemption Permits
+### 29. Noise Exemption Permits
 
 | Field | Value |
 |-------|-------|
@@ -562,7 +875,7 @@ Toronto MLTT brackets (as of April 1, 2026):
 
 ---
 
-### 25. Short-Term Rental Activity
+### 30. Short-Term Rental Activity
 
 | Field | Value |
 |-------|-------|
@@ -584,7 +897,7 @@ Toronto MLTT brackets (as of April 1, 2026):
 **Version:** V1 (LTT + mortgage), V2 (FHSA/HBP), V3 (full optimizer)
 **Source:** Federal/provincial government rules, CMHC, industry benchmarks
 
-### 26. CMHC Mortgage Insurance Premium
+### 31. CMHC Mortgage Insurance Premium
 
 | Field | Value |
 |-------|-------|
@@ -611,7 +924,7 @@ Surcharge for amortizations >25 years: additional 0.20%.
 
 ---
 
-### 27. First Home Savings Account (FHSA)
+### 32. First Home Savings Account (FHSA)
 
 | Field | Value |
 |-------|-------|
@@ -629,7 +942,7 @@ Surcharge for amortizations >25 years: additional 0.20%.
 
 ---
 
-### 28. RRSP Home Buyers' Plan (HBP)
+### 33. RRSP Home Buyers' Plan (HBP)
 
 | Field | Value |
 |-------|-------|
@@ -646,7 +959,7 @@ Surcharge for amortizations >25 years: additional 0.20%.
 
 ---
 
-### 29. Vacant Home Tax (VHT)
+### 34. Vacant Home Tax (VHT)
 
 | Field | Value |
 |-------|-------|
@@ -662,7 +975,7 @@ Surcharge for amortizations >25 years: additional 0.20%.
 
 ---
 
-### 30. Home Insurance Baseline
+### 35. Home Insurance Baseline
 
 | Field | Value |
 |-------|-------|
@@ -684,44 +997,86 @@ Meridian can model a range using Open Data inputs but cannot compute exact premi
 
 ---
 
-### 31. Property Tax Reassessment Risk (MPAC)
+### 36. Maintenance Complexity Signal (Composite — per spec section 8)
 
 | Field | Value |
 |-------|-------|
-| Source | MPAC policy + market data |
-| Cost impact | **20–40% tax increase** when reassessment resumes |
-| Confidence | **50%** |
-| Version | V2 |
+| Signal type | `inferred` |
+| Source | Composite of permit history + RentSafeTO + flood + heritage |
+| Cost impact | Risk inference — not a dollar estimate |
+| Confidence | **Low** (ALWAYS display Low — never upgrade) |
+| Version | V1 |
 
-- Current assessed values frozen at January 1, 2016 levels
-- Market values in many Toronto neighbourhoods have increased 50–100%+ since 2016
-- When MPAC reassessments resume (timing unknown), assessed values will jump
-- Properties that appreciated most will see the largest tax increases
-- Phase-in over 4 years is typical but not guaranteed
+No public dataset exists for condo special assessment history (condo corporation records, status certificates, and reserve fund studies are private documents). This is risk inference, not factual history. Never claim otherwise.
 
-This is the single highest-uncertainty parameter in the model. Meridian should present it as a scenario, not a prediction.
+**Signals used (all already in stack):**
+- Building age → earliest permit date from Building Permits dataset
+- Active structural permits → Building Permits active (filtered)
+- Permit frequency → Building Permits cleared, structural count over 10 years
+- RentSafeTO score → section 7 Path A (if applicable)
+- Heritage designation → section 1
+- Flood zone exposure → section 6
+
+**Output tiers:** Low / Medium / Elevated
+
+**Output format (per spec):**
+```json
+{
+  "signal_name": "Maintenance Complexity Signal",
+  "signal_type": "inferred",
+  "value":       "Elevated",
+  "label":       "Elevated maintenance complexity signal",
+  "factors":     ["Older building age", "Multiple structural permits",
+                  "Flood zone exposure"],
+  "disclaimer":  "This is an inferred signal and not evidence of a
+                  historical special assessment.",
+  "confidence":  "Low"
+}
+```
+
+**Wording rules:** NEVER output "High special assessment risk." USE INSTEAD: "Elevated maintenance complexity signal." Always show disclaimer. Always show confidence as Low.
 
 ---
 
-### 32. Condo Maintenance Fee Trajectory
+### 37. Future Tax Pressure Signal (Composite — per spec section 9)
 
 | Field | Value |
 |-------|-------|
-| Source | Building age proxy + RentSafeTO scores |
-| Cost impact | **3–8% annual increase** for aging buildings |
-| Confidence | **65%** |
-| Version | V2 |
+| Signal type | `inferred` |
+| Source | Composite of development density + permit activity + heritage/zoning |
+| Cost impact | Neighbourhood change signal — not a tax prediction |
+| Confidence | **Low** (ALWAYS display Low — never upgrade) |
+| Version | V1 |
 
-No direct Open Data source for condo fees. Meridian uses:
-- Building age (from `apartment-building-registration`, #20) as primary predictor
-- RentSafeTO evaluation scores (#7) as condition signal
-- Cleared permit history (#4) as maintenance pattern indicator
+NOT labelled "projected reassessment." MPAC reassessments are policy-driven, frozen at 2016 values, and unpredictable.
 
-Rule of thumb: buildings 20+ years old with below-average RentSafeTO scores face 6–8% annual fee increases. New buildings: 3–4%.
+**Signals used:**
+- Development application density within 500m → parameter #5
+- Recent permit activity → Building Permits active + cleared
+- Heritage and zoning constraints → parameters #1 + intake agent
+
+**Output tiers:** Low / Medium / High
+
+**Output format (per spec):**
+```json
+{
+  "signal_name":   "Future Tax Pressure Signal",
+  "signal_type":   "inferred",
+  "value":         "High",
+  "confidence":    "Low",
+  "message":       "Neighbourhood intensification signal detected.
+                    Significant redevelopment activity nearby may
+                    affect future neighbourhood character and values.",
+  "disclaimer":    "This is a neighbourhood signal, not an MPAC
+                    reassessment prediction."
+}
+```
+
+**Wording rules:** Frame as "neighbourhood reassessment risk signal." NEVER frame as MPAC prediction or tax guarantee.
 
 ---
 
-### 33. Utilities Estimate
+### 38. Utilities Estimate
 
 | Field | Value |
 |-------|-------|
@@ -738,7 +1093,7 @@ No per-property utility data available on Toronto Open Data. Model from:
 
 ---
 
-### 34. Maintenance Reserve
+### 39. Maintenance Reserve
 
 | Field | Value |
 |-------|-------|
@@ -759,7 +1114,7 @@ Industry guideline: 1–3% of property value per year. Adjust using:
 
 **Version:** V3 (Decision Engine)
 
-### 35. Down Payment Opportunity Cost
+### 40. Down Payment Opportunity Cost
 
 | Field | Value |
 |-------|-------|
@@ -772,7 +1127,7 @@ What the down payment would earn if invested in a diversified portfolio instead 
 
 ---
 
-### 36. Rent Trajectory (Comparable Unit)
+### 41. Rent Trajectory (Comparable Unit)
 
 | Field | Value |
 |-------|-------|
@@ -785,7 +1140,7 @@ Projected rent for a comparable unit over 10 years with 3% annual increase (Toro
 
 ---
 
-### 37. Interest Rate Renewal Risk
+### 42. Interest Rate Renewal Risk
 
 | Field | Value |
 |-------|-------|
@@ -798,7 +1153,7 @@ The biggest single uncertainty for any leveraged buyer. Meridian stress-tests at
 
 ---
 
-### 38. Neighbourhood Appreciation Trajectory
+### 43. Neighbourhood Appreciation Trajectory
 
 | Field | Value |
 |-------|-------|
@@ -811,13 +1166,48 @@ Combine neighbourhood demographics (income, education, population growth), devel
 
 ---
 
+## RAG Corpus (Agent 4 Retrieval Documents — per spec)
+
+Agent 4 (synthesis) retrieves from these documents conditionally based on which flags are active:
+
+| Trigger | Retrieval query | Document |
+|---------|----------------|----------|
+| Heritage flag active | "heritage designation renovation restrictions Toronto" | Ontario Heritage Act (ontario.ca/laws/statute/90o18) |
+| Flood flag active | "TRCA flood zone insurance implications Toronto" | TRCA Living with Flooding guide (trca.ca/conservation/flood-risk-management) |
+| `buyer_profile === "first-time"` | "FHSA RRSP home buyers plan eligibility 2026" | CRA FHSA guide + CRA HBP guide |
+| Maintenance signal === "Elevated" | "condo reserve fund special assessment Ontario" | MPAC Understanding Your Assessment guide |
+| Tax pressure === "High" | "Toronto development application zoning amendment implications" | Toronto Zoning By-law 569-2013 |
+
+Full corpus paths defined in spec under `/rag_corpus/` with legislation, programs, assessment, zoning, flood, mortgage (OSFI B-20), and heritage categories.
+
+---
+
+## V2 Roadmap Parameters (per spec — out of scope for hackathon)
+
+These are mentioned in the spec's V2 roadmap and should be tracked for future implementation:
+
+| Parameter | Source | Notes |
+|-----------|--------|-------|
+| evidence_strength float (0.0–1.0) | Computed | Replaces High/Medium/Low with continuous score |
+| MPAC-calibrated regression | MPAC + postal prefix | Property-type-specific assessed value model |
+| Permit classification engine | Building permits | Proactive vs. distress repair classification |
+| Address normalization layer | Address Points | Condo unit matching, geocoding confidence score |
+| Z-score normalization for dev density | Development apps | City-mean and std computed from full dataset |
+| TSSA elevator violations | TSSA portal (external) | For condo buildings — infrastructure neglect signal |
+| Utility rate forecasts | Energy data | `annual-energy-consumption` (CKAN, city buildings only) |
+| Condo litigation signals | Court records (external) | No public dataset; would need CanLII scraping |
+| Insurance market signals | Industry data (external) | No public dataset |
+| Rent vs. buy comparison | CMHC rental survey | Requires rental price data source |
+
+---
+
 ## Data Source Summary
 
 ### Toronto Open Data CKAN Datasets Used
 
 | # | Dataset Slug | Records | Refresh | Tier |
 |---|-------------|---------|---------|------|
-| 1 | `heritage-register` | ~10,000 | Quarterly | T1 |
+| 1 | `heritage-register` | ~12,320 | Quarterly | T1 |
 | 2 | `heritage-conservation-districts` | ~30 | Quarterly | T1 |
 | 3 | `building-permits-active-permits` | 228,573 | Daily | T1 |
 | 4 | `building-permits-cleared-permits` | 401,265 | Daily | T1 |
@@ -833,14 +1223,19 @@ Combine neighbourhood demographics (income, education, population growth), devel
 | 14 | `fire-incidents` | 36,564 | Annual | T2 |
 | 15 | `development-pipeline` | 2,411 | Semi-annual | T2 |
 | 16 | `neighbourhood-intensification-estimates-to-2051` | Ward-level | One-time | T2 |
-| 17 | `address-points-municipal-toronto-one-address-repository` | 525,435 | Weekly | Infra |
-| 18 | `property-boundaries` | 498,499 | Daily | Infra |
-| 19 | `ttc-routes-and-schedules` | All routes | 6 weeks | T3 |
-| 20 | `ttc-ridership-subway-scarborough-rt-station-usage` | All stations | Annual | T3 |
-| 21 | `motor-vehicle-collisions-involving-killed-or-seriously-injured-persons` | 20,519 | Daily | T3 |
-| 22 | `noise-exemption-permits` | 3,685 | Weekly | T3 |
-| 23 | `short-term-rental-program-data` | 768 | Monthly | T3 |
-| 24 | `neighbourhood-profiles` | 2,383 | Census cycle | T3 |
+| 17 | `heritage-formerly-listed` | ~3,700 | Annual | T2 |
+| 18 | `residential-fire-inspection-results` | 124,414 | Daily | T2 |
+| 19 | `committee-of-adjustment-applications` | 35,984 | Daily | T2 |
+| 20 | `preliminary-zoning-reviews` | 220,052 | Daily | T2 |
+| 21 | `small-business-property-tax-subclass-eligible-properties` | 28,222 | Annual | T2 |
+| 22 | `address-points-municipal-toronto-one-address-repository` | 525,435 | Weekly | Infra |
+| 23 | `property-boundaries` | 498,499 | Daily | Infra |
+| 24 | `ttc-routes-and-schedules` | All routes | 6 weeks | T1.5 |
+| 25 | `ttc-ridership-subway-scarborough-rt-station-usage` | All stations | Annual | T3 |
+| 26 | `motor-vehicle-collisions-involving-killed-or-seriously-injured-persons` | 20,519 | Daily | T3 |
+| 27 | `noise-exemption-permits` | 3,685 | Weekly | T3 |
+| 28 | `short-term-rental-program-data` | 768 | Monthly | T3 |
+| 29 | `neighbourhood-profiles` | 2,383 | Census cycle | T3 |
 
 ### External Data Sources
 
@@ -868,16 +1263,21 @@ All datasets queryable via `action/package_show?id=<slug>` for metadata and `act
 
 ## Build Priority for Hackathon
 
-### Must-have (V1 core — 10 parameters)
-Parameters 1–10. These ARE Meridian V1. All data sources verified live.
+### Must-have (V1 core — 10 parameters + 6 inputs + 2 composite signals)
+- Input parameters I1–I6 (address, list price, buyer profile, down payment, rate, amortization)
+- Parameters 1–10 (heritage, HCDs, active permits, cleared permits, dev apps, flood, building health, LTT, property tax, mortgage layer including sub-signals 10a–10e)
+- Parameters 36–37 (maintenance complexity signal, future tax pressure signal — composite inferred signals)
 
-### Should-have (V1.5 cherry-picks — pick 2–3)
-- **#11 Building violations** — 30 min build, same CKAN pattern, strong red-flag
-- **#2 Heritage Conservation Districts** — 30 min build, spatial join, complements #1
+### Should-have (V1.5 cherry-picks)
+- **#21 Heritage Formerly Listed** — 15 min build, same heritage shapefile pattern
+- **#22 Residential Fire Inspections** — 30 min build, 124K records, building-level precision
+- **#25 Property Tax Relief Programs** — 30 min build, hardcoded rules by buyer profile
+- **#26 Transit Dividend** — 1 hr build, GTFS data ready, already shown in PDF frontend
+- **#11 Building violations** — 30 min build, same CKAN pattern
 - **#15 Basement flooding areas** — 30 min build, complements TRCA flood data
 
 ### Nice-to-have (V2 — post-hackathon)
-Parameters 12–20, 26–34. Require spatial joins, proxy models, or cross-source inference.
+Parameters 12–20, 23–24, 31–39. Require spatial joins, proxy models, or cross-source inference. Plus V2 roadmap items (TSSA, condo litigation, permit classification engine).
 
 ### Future (V3 — product)
-Parameters 21–25, 35–38. Require external data, macro assumptions, or Flinks integration.
+Parameters 27–30, 40–43. Require external data, macro assumptions, or Flinks integration.
