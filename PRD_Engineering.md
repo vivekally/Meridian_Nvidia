@@ -6,6 +6,8 @@
 **Hardware:** ASUS GX10 (DGX Spark), 128GB unified memory, Blackwell GPU
 **Status:** Pre-build. All planning docs, UI prototype, and data research complete. No application code written.
 
+> **Superseded notice:** `PRD_Backend_Build.md` is the single source of truth for §2–§10 of this document. Where the two conflict, `PRD_Backend_Build.md` wins. Sections below that differ from it are annotated inline.
+
 ---
 
 ## 1. Product Summary
@@ -35,6 +37,8 @@ Every output signal is tagged with one of three types:
 
 ### 2.2 Agent Pipeline
 
+> **Locked (PRD_Backend_Build.md §0 D1, §1):** The topology below supersedes this section. Agent 1 has two sub-steps — deterministic intake + **LLM planning call #1** (property classification + query plan). Agent 2 honors `query=false` SKIPs from Agent 1. Agent 3 is deterministic (no LLM). Agent 4 is LLM call #2. Total = 2 LLM calls per report.
+
 ```
 ┌─────────────────────────────────────────┐
 │  USER INPUT                             │
@@ -43,41 +47,33 @@ Every output signal is tagged with one of three types:
 └──────────────┬──────────────────────────┘
                │
 ┌──────────────▼──────────────────────────┐
-│  AGENT 1 — INTAKE (deterministic)       │
-│  Resolves address → lat/lon, parcel,    │
-│  ward, inferred property type           │
+│  AGENT 1 — INTAKE + PLANNING            │
+│  intake.py (deterministic): geocode     │
+│    via Address Points CKAN only         │
+│  planning.py (LLM call #1): classify    │
+│    property type, emit QueryPlan[]      │
+│    with per-source query/skip           │
+└──────────────┬──────────────────────────┘
+               │ QueryPlan (sources to query / SKIP)
+┌──────────────▼──────────────────────────┐
+│  AGENT 2 — DATA RETRIEVAL (determ.)     │
+│  Async parallel httpx fanout to ONLY    │
+│  sources Agent 1 marked query=true.     │
+│  5s timeout per source. NO LLM          │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│  AGENT 3 — ANALYSIS + COST (determ.)    │
+│  LTT, property tax, mortgage, signals,  │
+│  composite signals. ALL DOLLAR MATH.    │
 │  NO LLM                                 │
 └──────────────┬──────────────────────────┘
                │
 ┌──────────────▼──────────────────────────┐
-│  AGENT 2 — DATA RETRIEVAL (deterministic)│
-│  Async parallel httpx fanout to all     │
-│  data sources. 5s timeout per source.   │
-│  Each result annotated with confidence. │
-│  NO LLM                                 │
-│                                         │
-│  ┌─────────┬──────────┬─────────┐       │
-│  │Heritage │RentSafeTO│Dev Apps │       │
-│  │ CKAN    │  CKAN    │  CKAN   │       │
-│  ├─────────┼──────────┼─────────┤       │
-│  │Permits  │  LTT     │TRCA    │       │
-│  │ CKAN    │Hardcoded │ArcGIS  │       │
-│  └─────────┴──────────┴─────────┘       │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│  AGENT 3 — COST COMPUTATION (determ.)   │
-│  LTT calc, property tax projection,    │
-│  mortgage scenarios, risk-weighted      │
-│  loadings, composite inferred signals   │
-│  NO LLM                                 │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│  AGENT 4 — SYNTHESIS (LLM)              │
-│  Mistral Medium 3.5 (256k) or          │
-│  Qwen 3 7B — local on GB10 via NIM     │
-│  Conditional RAG retrieval              │
+│  AGENT 4 — SYNTHESIS (LLM call #2)      │
+│  Llama 3.1 8B via NIM (local default)   │
+│  or Claude (quality toggle).            │
+│  Conditional RAG retrieval.             │
 │  Plain-language report + negotiation    │
 │  leverage per flag                      │
 └──────────────┬──────────────────────────┘
@@ -90,7 +86,7 @@ Every output signal is tagged with one of three types:
 └─────────────────────────────────────────┘
 ```
 
-**Key constraint:** Agents 1–3 are pure Python. No LLM calls. Only Agent 4 uses the LLM. This keeps the cost computation deterministic and auditable.
+**Key constraint:** The LLM (Agents 1, 4, chat) never produces a dollar figure. All dollar math lives in deterministic `cost/*` code. This keeps the cost computation auditable.
 
 ### 2.3 Standardized Signal Output
 
@@ -102,7 +98,7 @@ class Signal:
     signal_name: str                                    # e.g. "Heritage Designation"
     signal_type: Literal["observed", "inferred", "simulated"]
     value: str                                          # e.g. "Part IV designated"
-    confidence: Literal["High", "Medium", "Low"]
+    confidence: Literal["High", "Medium", "Low", "Unknown"]  # Unknown = timeout/4xx/5xx
     source: str                                         # e.g. "Toronto Heritage Register"
     data_coverage: str                                  # e.g. "May 2026 snapshot — 12,320 properties"
     message: str                                        # plain-language output shown to user
@@ -181,7 +177,7 @@ TRCA_PARAMS = {
 in_flood_zone = response.json()["count"] > 0
 ```
 
-**Fallback:** If ArcGIS fails, load `data/trca_floodplain_toronto.geojson` and do local point-in-polygon via GeoPandas.
+**Fallback:** If ArcGIS fails, load `data/trca_flood.geojson` and do local point-in-polygon via **shapely** (not GeoPandas — avoids GDAL/Fiona install pain on fresh GB10). See `sources/geo.py`.
 
 ### 4.3 Agent 2 Confidence Rules
 
@@ -217,8 +213,10 @@ ONTARIO_LTT_BRACKETS = [
     {"up_to": float("inf"), "rate": 0.025},
 ]
 
-# Toronto MLTT mirrors Ontario for properties under $3M
-TORONTO_MLTT_BRACKETS = ONTARIO_LTT_BRACKETS
+# Toronto MLTT — full 8-bracket schedule (NOT a mirror of Ontario above $2M)
+TORONTO_MLTT = [(55_000,0.005),(250_000,0.010),(400_000,0.015),
+                (2_000_000,0.020),(3_000_000,0.025),(4_000_000,0.035),
+                (5_000_000,0.045),(float("inf"),0.055)]
 
 ONTARIO_FTB_REBATE = 4_000
 TORONTO_FTB_REBATE = 4_475
@@ -292,7 +290,9 @@ ten_year_tax = annual_tax * ((pow(1 + ANNUAL_GROWTH, 10) - 1) / ANNUAL_GROWTH)
 
 **Signal type:** `observed` | **Confidence:** Medium
 
-#### Path A: Rental apartments (3+ storeys, 10+ units) — RentSafeTO
+#### Path A: Condo / commercial\_mixed / high-rise residential — RentSafeTO
+
+> **Locked (PRD_Backend_Build.md §7.2):** RentSafeTO is queried **only** when Agent 1 classifies the property as `condo`, `commercial_mixed`, or high-rise residential. SKIP for detached, semi-detached, and townhouse.
 
 | Score | Message |
 |-------|---------|
@@ -445,6 +445,8 @@ else:                          tier = "Low"
 
 ## 6. Wording Rules
 
+> **Locked (PRD_Backend_Build.md §11):** The full wording rules including mandatory disclaimers (MPAC, RentSafeTO, composites, report metadata) are in PRD_Backend_Build.md §11. The table below is a summary; the locked source includes `wording.validate()` which must catch every banned phrase in tests.
+
 Apply these substitutions across ALL agent outputs, UI text, and prompt templates:
 
 | Find | Replace with |
@@ -476,10 +478,9 @@ When `buyer_profile == "first-time"`, surface ALL:
 
 ### 8.1 Model
 
-**Primary:** Mistral Medium 3.5 (256k context window, local on GB10 via NIM)
-**Fallback:** Qwen 3 7B
+> **Locked (PRD_Backend_Build.md §0 D2):** Mistral Medium 3.5 and Qwen 3 7B are superseded. The locked default is **`meta/llama-3.1-8b-instruct`** via OpenAI-compatible NIM at `localhost:8000/v1`. Setting `MERIDIAN_LLM_PROVIDER=quality` switches to Claude. One `LLMClient`, two backends, provider-agnostic prompts.
 
-Decision at Hour 1: benchmark latency. If single call <5s for 300 tokens, use primary. If >15s, merge Agent 3 + Agent 4 into a single prompt.
+Decision at Hour 1: NIM latency benchmark. If >15s/300 tokens → cap Agent 4 `max_tokens=800`; consider Nemotron only if memory + latency allow.
 
 ### 8.2 Prompt Structure
 
@@ -542,6 +543,8 @@ Retrieve from `/rag_corpus/` only when the corresponding flag is active:
 ---
 
 ## 9. Inter-Agent Data Contracts
+
+> **Locked (PRD_Backend_Build.md §5):** The complete typed dataclasses — including `Signal`, `QueryPlan`, `RetrievalResult`, `AnalysisResult`, `CostBreakdown`, `Verdict`, `NegotiationLeverage`, `TraceEvent`, and the full `Report` backend→frontend contract — are defined in PRD_Backend_Build.md §5. The JSON examples below illustrate the shape but the dataclasses are the authoritative schema.
 
 ### 9.1 Agent 1 → Agent 2
 
@@ -654,14 +657,17 @@ Retrieve from `/rag_corpus/` only when the corresponding flag is active:
 
 ## 10. Error Handling
 
+> **Locked (PRD_Backend_Build.md §14):** The extended error handling table with 7 failure paths and degradation behavior is the authoritative reference. The summary below is kept for orientation only.
+
 | Error | Handler | Behavior |
 |-------|---------|----------|
-| `json.JSONDecodeError` on CKAN response | Log warning | Set source confidence = UNKNOWN, continue pipeline |
-| `FileNotFoundError` on TRCA GeoJSON | Log error | Set flood confidence = UNKNOWN, continue |
-| Empty LLM response (Agent 4) | Retry once | If still empty: "Unable to synthesize — check NIM container" |
-| `json.JSONDecodeError` on LLM output | Strip markdown fences | Retry JSON parse, then fall back to plain-text extraction |
-| `httpx.ConnectError` on NIM | Surface immediately | "NIM container not responding. Start with: nvidia-nim start" |
-| `httpx.TimeoutException` on CKAN | Set UNKNOWN | Continue with other sources, note timeout in reasoning trace |
+| `json.JSONDecodeError` on CKAN response | Log warning | Set source confidence = Unknown, continue pipeline |
+| `FileNotFoundError` on TRCA GeoJSON | Log error | Set flood confidence = Unknown, continue |
+| Agent 1 parse fail ×2 | Default plan (query all but RentSafeTO) | Honest reasoning_trace, pipeline continues |
+| Agent 4 empty / parse fail ×2 | Templated report from AnalysisResult | Correct numbers, plainer prose — never crashes |
+| `httpx.ConnectError` on NIM | Surface immediately | "Local model not responding. Start the NIM container." |
+| `httpx.TimeoutException` on CKAN | Set Unknown | Continue gather, other sources unaffected |
+| Geocode miss | confidence=Unknown, lat/lon None | Degraded report, spatial checks skipped |
 
 ---
 
@@ -700,44 +706,9 @@ Working 3-screen prototype with chat panel: [`meridian-prototype.html`](./meridi
 
 ## 12. Build Schedule (24 Hours)
 
-### Phase 1: Foundation (Hours 0–8)
+> **Locked (PRD_Backend_Build.md §17):** The hour-by-hour build sequence in PRD_Backend_Build.md §17 is the authoritative reference. Key differences from the original phase breakdown: `models.py` + `cost/*` + unit tests come at Hours 1–2 (before sources), and Hour 0–1 NIM benchmark is **BLOCKING** for the whole schedule.
 
-| Hour | Task | Gate |
-|------|------|------|
-| 0–1 | NIM latency benchmark | **BLOCKING.** If >15s/300 tokens → merge Agents 3+4 |
-| 1–3 | Address Points CKAN autocomplete + geocoding | |
-| 3–5 | CKAN API wrapper (heritage, permits, dev apps, RentSafeTO) | Each endpoint tested individually |
-| 5–6 | TRCA ArcGIS flood zone + GeoJSON fallback | |
-| 6–7 | LTT calculator + property tax + mortgage scenarios | |
-| 7–8 | Pre-cache 3 demo properties | **GATE:** 3 cached properties in `data/demo_cache/` |
-
-### Phase 2: Agent Reasoning (Hours 8–14)
-
-| Hour | Task | Gate |
-|------|------|------|
-| 8–10 | Agent 1 intake (property type classification, query plan) | |
-| 10–12 | Agent 3 cost computation + composite signals | |
-| 12–14 | Agent 4 synthesis prompt with negotiation leverage | **GATE:** `python run_pipeline.py --demo` passes end-to-end |
-
-### Phase 3: UI + Integration (Hours 14–20)
-
-| Hour | Task |
-|------|------|
-| 14–16 | Streamlit app, address input with autocomplete |
-| 16–18 | Reasoning trace display (`st.status()` expanding sections) |
-| 18–19 | Confidence badges per source |
-| 19–20 | Verdict card + cost table + flag cards |
-
-### Phase 3b: Error Rescues (Hours 19–21)
-
-Wire all 5 error handlers from Section 10.
-
-### Phase 4: Polish + Buffer (Hours 21–24)
-
-| Task | Gate |
-|------|------|
-| Run 3 demo properties end-to-end (cached + live) | All 3 produce different risk profiles |
-| Test 3+ random Toronto addresses | Geocoding robustness |
+See [`PRD_Backend_Build.md §17`](./PRD_Backend_Build.md) for the full 24-hour sequence with gates.
 | Time pitch + demo | **GATE:** Under 4 minutes total |
 | OPTIONAL: RAPIDS cuDF spatial acceleration | Only if 2+ hours buffer |
 

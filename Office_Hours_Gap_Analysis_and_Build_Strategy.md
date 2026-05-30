@@ -75,6 +75,8 @@ The "Pitch Script (Final)" opens with statistics. The "Demo Strategy" section sa
 
 ## Recommended Approach: Visible Agent Reasoning
 
+> **Superseded (PRD_Backend_Build.md §0 D1):** The proposed topology below was the gap-analysis recommendation. The locked decision differs in one key place: **Agent 3 is deterministic (no LLM)** — all dollar math is pure Python. Agent 1 includes the LLM planning call; Agent 4 is the second and final LLM call. The "PROPOSED" diagram below is historical context; build to PRD_Backend_Build.md §1.
+
 ### Architecture Change
 
 ```
@@ -84,7 +86,7 @@ CURRENT (from idea doc):
   Agent 3: Cost Computation (deterministic math)
   Agent 4: LLM Synthesis (Llama 3.1 8B)
 
-PROPOSED:
+PROPOSED (this doc — partially superseded, see note above):
   Agent 1: Planning Agent (LLM-powered)
     - Receives address + any known property metadata
     - DECIDES which data sources to query and WHY
@@ -95,7 +97,7 @@ PROPOSED:
     - Returns structured results with data quality metadata
     - Flags timeouts/failures explicitly
     
-  Agent 3: Analysis Agent (LLM-powered)
+  Agent 3: Analysis Agent (LLM-powered) ← SUPERSEDED: Agent 3 is deterministic
     - Receives structured data + Agent 1's plan
     - Detects contradictions, patterns, correlations
     - Computes costs (deterministic math wrapped in reasoning)

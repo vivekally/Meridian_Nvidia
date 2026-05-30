@@ -30,7 +30,7 @@ Every agent boundary is a clean handoff via JSON contract, which means each agen
 
 ## Accepted Scope (added to this plan)
 
-- **Address autocomplete + geocoding:** Toronto Address Points CKAN dataset serves BOTH autocomplete AND primary geocoding (returns lat/lon). Nominatim is fallback only for addresses not found in Address Points. This eliminates the Nominatim public endpoint policy risk (policy bans demo use without self-hosting).
+- **Address autocomplete + geocoding:** Toronto Address Points CKAN dataset serves BOTH autocomplete AND primary geocoding (returns lat/lon). **Nominatim is removed entirely** — not a fallback (public-endpoint policy bans demo use; Address Points miss → geocode_confidence=Unknown, spatial checks skipped). See PRD_Backend_Build.md §7.1.
 - **List price input:** `st.number_input('List price ($)', min_value=100000, step=50000)` alongside address field. Required for LTT and mortgage calculations. 5-minute fix.
 - **Agent 2 executes query plan:** Agent 2 reads Agent 1's `query_plan[]` and skips sources marked SKIP. RentSafeTO is only queried when Agent 1 identifies property as condo or high-rise residential. This makes the planning genuinely adaptive, not theatrical.
 - **Negotiation leverage framing:** Agent 4 synthesis prompt addition: "For each RED flag, include one sentence of negotiation leverage with a dollar range from the cost breakdown. Use ranges, never point estimates."
@@ -47,7 +47,7 @@ Every agent boundary is a clean handoff via JSON contract, which means each agen
 
 **Clarification:** Agent 2 is pure orchestration code (no LLM call). It is the async parallel fetch layer built in Phase 1 (Hours 2-5). It is NOT a separate LLM prompt.
 
-**Property types Agent 1 classifies:** detached house, semi-detached/townhouse, condo (high-rise or low-rise), commercial/mixed-use. RentSafeTO is queried only for condo and high-rise residential.
+**Property types Agent 1 classifies:** `detached_urban`, `detached_suburban`, `semi_detached`, `condo`, `condo_townhouse`, `commercial_mixed` (6 canonical types per PRD_Backend_Build.md §7.2). RentSafeTO is queried only for `condo` and `commercial_mixed`/high-rise residential.
 
 **Confidence annotation rules:**
 - HIGH = HTTP 200 + `last_updated` / `extract_date` field present in CKAN response
