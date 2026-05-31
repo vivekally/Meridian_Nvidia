@@ -116,108 +116,6 @@
 .light-mode .btn-ghost { color: #1A1F2E; background: rgba(130,110,80,0.08); }
 .light-mode .nav-wordmark { color: #1A1F2E; }
 
-/* ---- Chat panel light mode ---- */
-.light-mode .chat-panel {
-  background: rgba(255,255,255,0.96);
-  border-color: rgba(130,110,80,0.20);
-  box-shadow: 0 16px 64px rgba(0,0,0,0.12);
-}
-.light-mode .chat-header { background: rgba(245,242,235,0.90); }
-.light-mode .chat-header-name { color: #1A1F2E; }
-.light-mode .chat-header-status { color: #0F8A5F; }
-.light-mode .chat-avatar { background: rgba(82,102,235,0.10); border-color: rgba(82,102,235,0.20); }
-.light-mode .chat-avatar svg { color: #4A56C8; }
-.light-mode .chat-close { color: #6B6F7A; }
-.light-mode .chat-close:hover { color: #1A1F2E; }
-.light-mode .chat-msg.ai .chat-bubble {
-  background: rgba(245,242,235,0.95);
-  border-color: rgba(130,110,80,0.15);
-  color: #3A3F52;
-}
-.light-mode .chat-bubble strong { color: #1A1F2E; }
-.light-mode .chat-bubble .mono-inline { color: #0F8A5F; }
-.light-mode .chat-msg-time { color: #8A8E9A; }
-.light-mode .chat-suggestion {
-  background: rgba(82,102,235,0.08);
-  border-color: rgba(82,102,235,0.25);
-  color: #3A4ABF;
-}
-.light-mode .chat-suggestion:hover {
-  background: rgba(82,102,235,0.15);
-  border-color: rgba(82,102,235,0.40);
-  color: #2A3AAF;
-}
-.light-mode .chat-input-row { background: rgba(255,255,255,0.96); border-color: rgba(130,110,80,0.12); }
-.light-mode .chat-input {
-  background: rgba(255,255,255,0.90);
-  border-color: rgba(130,110,80,0.20);
-  color: #1A1F2E;
-}
-.light-mode .chat-input::placeholder { color: #8A8E9A; }
-.light-mode .chat-input:focus { border-color: var(--accent); }
-.light-mode .chat-typing { background: rgba(245,242,235,0.90); border-color: rgba(130,110,80,0.12); }
-.light-mode .chat-fab { box-shadow: 0 4px 24px rgba(82,102,235,0.30); }
-
-/* ---- Verdict card stats light mode ---- */
-.light-mode .stat-label { color: #6B6F7A; }
-.light-mode .stat-value { color: #1A1F2E; }
-.light-mode .stat-value.danger { color: #C53030; }
-.light-mode .verdict-preamble { color: #3A3F52; }
-.light-mode .verdict-sub { color: #4A4F5A; }
-.light-mode .verdict-address { color: #6B6F7A; }
-.light-mode .verdict-number { color: #0F8A5F; }
-.light-mode .risk-pill { border-color: rgba(251,191,36,0.30) !important; }
-
-/* ---- Flag cards light mode ---- */
-.light-mode .flag-title { color: #1A1F2E; }
-.light-mode .flag-description { color: #3A3F52; }
-.light-mode .flag-chevron { color: #8A8E9A; }
-.light-mode .script-eyebrow { color: #4A56C8; }
-.light-mode .script-text { color: #1A1F2E; }
-.light-mode .script-amount { color: #0F8A5F; }
-
-/* ---- Cost table light mode ---- */
-.light-mode thead tr { background: rgba(245,242,235,0.80); }
-.light-mode thead th { color: #6B6F7A; }
-.light-mode tbody td { color: #3A3F52; }
-.light-mode td.cat { color: #1A1F2E; }
-.light-mode tbody tr:hover { background: rgba(245,242,235,0.50); }
-.light-mode tr.total { background: rgba(245,242,235,0.80); }
-.light-mode tr.total td.cat { color: #1A1F2E; }
-.light-mode tr.total td:not(:first-child) { color: #C53030; }
-
-/* ---- Chart light mode ---- */
-.light-mode .chart-title { color: #6B6F7A; }
-.light-mode .chart-bar-label { color: #3A3F52; }
-.light-mode .chart-bar-value { color: #4A4F5A; }
-
-/* ---- Trace light mode ---- */
-.light-mode .trace-header:hover { background: rgba(245,242,235,0.50); }
-.light-mode .trace-label { color: #3A3F52; }
-.light-mode .trace-toggle-btn { color: #6B6F7A; }
-.light-mode .trace-toggle-btn:hover { color: #3A3F52; }
-.light-mode .trace-agent-text { color: #4A4F5A; }
-
-/* ---- Map light mode ---- */
-.light-mode .map-title { color: #1A1F2E; }
-.light-mode .map-subtitle { color: #6B6F7A; }
-
-/* ---- Section labels light mode ---- */
-.light-mode .section-label-text { color: #6B6F7A; }
-.light-mode .section-label-line { background: rgba(130,110,80,0.15); }
-
-/* ---- Analysis screen light mode ---- */
-.light-mode .analysis-address { color: #6B6F7A; }
-.light-mode .analysis-title { color: #1A1F2E; }
-.light-mode .agent-step-name { color: #1A1F2E; }
-.light-mode .agent-step-status { color: #6B6F7A; }
-.light-mode .agent-step.active .agent-step-status { color: #3A3F52; }
-.light-mode .agent-step-num { border-color: rgba(130,110,80,0.22); color: #6B6F7A; }
-.light-mode .agent-step.done .agent-step-num { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.30); color: #0F8A5F; }
-.light-mode .agent-step-time { color: #8A8E9A; }
-.light-mode .analysis-footer { color: #6B6F7A; }
-.light-mode .analysis-footer span { color: #3A3F52; }
-
 html { font-size: 16px; }
 body {
   background: var(--bg);
@@ -409,6 +307,51 @@ body {
   margin-top: 12px;
 }
 
+/* ---- Hero entrance: staggered rise + fade on load ---- */
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Visible by default; JS adds .hero-animate only when the page is actually
+   visible at load, so content is never stuck invisible in a background tab. */
+.hero-content.hero-animate > * {
+  opacity: 0;
+  animation: heroRise 0.7s var(--ease) both;
+}
+.hero-content.hero-animate .hero-title { animation-delay: 0.05s; }
+.hero-content.hero-animate .hero-sub   { animation-delay: 0.16s; }
+.hero-content.hero-animate .hero-cta   { animation-delay: 0.27s; }
+.hero-content.hero-animate .hero-hint  { animation-delay: 0.38s; }
+
+/* CTA arrow nudge + sheen sweep on hover */
+.hero-cta { position: relative; overflow: hidden; }
+.hero-cta svg { transition: transform 0.22s var(--ease); }
+.hero-cta:hover svg { transform: translateX(3px); }
+.hero-cta::after {
+  content: ""; position: absolute; top: 0; left: -60%; width: 45%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-18deg); pointer-events: none; opacity: 0;
+}
+.hero-cta:hover::after { animation: ctaSheen 0.7s var(--ease); }
+@keyframes ctaSheen {
+  0%   { left: -60%; opacity: 0; }
+  20%  { opacity: 1; }
+  100% { left: 130%; opacity: 0; }
+}
+
+/* ---- Feature cards: reveal on scroll (JS adds .in-view) ---- */
+.feature-card {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), border-color 0.2s;
+}
+.feature-card.in-view { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content.hero-animate > *,
+  .feature-card { opacity: 1 !important; transform: none !important; animation: none !important; }
+}
+
 /* Feature cards */
 .features {
   max-width: 1060px;
@@ -423,9 +366,9 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
   padding: 28px 24px;
-  transition: border-color 0.2s;
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), border-color 0.2s;
 }
-.feature-card:hover { border-color: rgba(175,178,206,0.5); }
+.feature-card:hover { border-color: rgba(175,178,206,0.5); transform: translateY(-2px); }
 .feature-icon {
   width: 36px; height: 36px;
   border-radius: var(--r-sm);
@@ -715,7 +658,10 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   .hero-content { align-items: center; }
   .hero-sub { max-width: 560px; margin: 0 auto 36px; }
   .hero-input-group { max-width: 520px; margin: 0 auto 14px; }
+  /* Keep the graph visible as a faint full-bleed backdrop instead of hiding it */
   .hero-graph-space { display: none; }
+  #knowledge-graph-canvas { opacity: 0.32; }
+  .light-mode #knowledge-graph-canvas { opacity: 0.4; }
 }
 @media (max-width: 768px) {
   .hero-title { font-size: 32px; }
@@ -1132,9 +1078,10 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
 #screen-landing { position: relative; overflow: hidden; }
 #knowledge-graph-canvas {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 100%;        /* JS overrides this to the hero band height */
   pointer-events: none;
   z-index: 0;
   opacity: 0.82;
@@ -1682,14 +1629,14 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   const C = { accent:'#5266EB', green:'#34D399', amber:'#FBBF24', red:'#F87171' };
 
   const NODES = [
-    { id:'center',   label:'',               sub:'',             color:C.accent, r:16, rx:0.73, ry:0.30, amp: 0,  period:12 },
-    { id:'heritage', label:'Heritage',       sub:'Part IV',      color:C.red,    r: 8, rx:0.56, ry:0.12, amp:22,  period:11 },
-    { id:'ltt',      label:'Land Transfer',  sub:'$28,950',      color:C.green,  r: 8, rx:0.63, ry:0.52, amp:20,  period:14 },
-    { id:'tax',      label:'Property Tax',   sub:'$53,820',      color:C.amber,  r: 8, rx:0.90, ry:0.44, amp:22,  period:12 },
-    { id:'flood',    label:'Flood Zone',     sub:'Elevated',     color:C.amber,  r: 8, rx:0.93, ry:0.17, amp:18,  period: 9 },
-    { id:'permits',  label:'Active Permits', sub:'3 structural', color:C.red,    r: 8, rx:0.83, ry:0.62, amp:24,  period:13 },
-    { id:'dev',      label:'Dev Pressure',   sub:'12 nearby',    color:C.amber,  r: 8, rx:0.57, ry:0.38, amp:20,  period:10 },
-    { id:'mortgage', label:'Mortgage',       sub:'$547,000',     color:C.green,  r: 8, rx:0.96, ry:0.30, amp:16,  period:16 },
+    { id:'center',   label:'',               sub:'',             color:C.accent, r:16, rx:0.73, ry:0.50, amp: 0,  period:12 },
+    { id:'heritage', label:'Heritage',       sub:'Part IV',      color:C.red,    r: 8, rx:0.56, ry:0.28, amp:22,  period:11 },
+    { id:'ltt',      label:'Land Transfer',  sub:'$28,950',      color:C.green,  r: 8, rx:0.63, ry:0.72, amp:20,  period:14 },
+    { id:'tax',      label:'Property Tax',   sub:'$53,820',      color:C.amber,  r: 8, rx:0.90, ry:0.68, amp:22,  period:12 },
+    { id:'flood',    label:'Flood Zone',     sub:'Elevated',     color:C.amber,  r: 8, rx:0.93, ry:0.24, amp:18,  period: 9 },
+    { id:'permits',  label:'Active Permits', sub:'3 structural', color:C.red,    r: 8, rx:0.83, ry:0.80, amp:24,  period:13 },
+    { id:'dev',      label:'Dev Pressure',   sub:'12 nearby',    color:C.amber,  r: 8, rx:0.57, ry:0.50, amp:20,  period:10 },
+    { id:'mortgage', label:'Mortgage',       sub:'$547,000',     color:C.green,  r: 8, rx:0.96, ry:0.44, amp:16,  period:16 },
   ];
   NODES.forEach((n, i) => { n.px = i * 0.83; n.py = i * 0.83 + 1.3 + i * 0.37; });
 
@@ -1699,40 +1646,104 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   ]);
   const SPEED = 0.00022;
 
+  // ---- Intro "build-on-load" timeline (ms) ----
+  let T0 = 0;                       // set on first active frame
+  const CENTER_IN = 420;            // center node fade/scale-in
+  const EDGE_DUR  = 420;            // edge draw-out per node
+  const NODE_POP  = 340;            // node pop-in per node
+  const STAGGER   = 150;            // gap between successive nodes
+  const introStart = i => CENTER_IN * 0.6 + (i - 1) * STAGGER;  // i >= 1
+
+  // ---- Easing ----
+  const clamp01      = t => (t < 0 ? 0 : t > 1 ? 1 : t);
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+  const easeOutBack  = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+
+  // ---- Pointer state (parallax + proximity glow) ----
+  const mouse = { x: null, y: null, tx: null, ty: null };
+  let pvx = 0, pvy = 0;             // smoothed parallax vector
+
+  // ---- Report pulses: occasional severity-colored burst node -> center ----
+  const reports = [];
+  let nextReport = 1400;
+
   let W = 0, H = 0;
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Confine the graph to the hero's actual box (top + height) so the
+    // constellation centers on the hero text and never overlaps the cards below.
+    const hero = document.querySelector('.landing-hero');
+    if (hero) {
+      canvas.style.top = hero.offsetTop + 'px';
+      canvas.style.height = hero.offsetHeight + 'px';
+    }
     W = canvas.offsetWidth; H = canvas.offsetHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  function nodePos(n, t) {
-    if (n.id === 'center') return { x: n.rx * W, y: n.ry * H };
+  function nodePos(n, t, now, i) {
+    if (n.id === 'center') return { x: n.rx * W + pvx, y: n.ry * H + pvy };
     const s = t / 1000, TAU = 2 * Math.PI;
+    // Drift amplitude ramps up only after the node has popped in
+    const settle = clamp01((now - (T0 + introStart(i) + NODE_POP)) / 1200);
+    const amp = n.amp * settle;
+    const depth = n.r / 16 + 0.35;   // bigger nodes parallax more
     return {
-      x: n.rx * W + Math.sin(s * TAU / n.period + n.px) * n.amp,
-      y: n.ry * H + Math.cos(s * TAU / n.period + n.py) * n.amp * 0.6,
+      x: n.rx * W + Math.sin(s * TAU / n.period + n.px) * amp + pvx * depth,
+      y: n.ry * H + Math.cos(s * TAU / n.period + n.py) * amp * 0.6 + pvy * depth,
     };
   }
 
-  // Draw thin connecting line — warm tone in light mode, cool in dark
-  function drawEdge(ax, ay, bx, by, isLight) {
+  // Per-node intro progress: edge draw-out, node pop, sub-label fade
+  function nodeIntro(i, now) {
+    if (REDUCED || !T0) return { scale: 1, edge: 1, sub: 1 };
+    if (i === 0) {
+      const p = clamp01((now - T0) / CENTER_IN);
+      return { scale: easeOutBack(p), edge: 1, sub: 1 };
+    }
+    const start = T0 + introStart(i);
+    const edge  = easeOutCubic(clamp01((now - start) / EDGE_DUR));
+    const popT  = clamp01((now - (start + EDGE_DUR * 0.6)) / NODE_POP);
+    const scale = popT <= 0 ? 0 : easeOutBack(popT);
+    const sub   = clamp01((now - (start + EDGE_DUR * 0.6 + NODE_POP)) / 320);
+    return { scale, edge, sub };
+  }
+
+  // Draw thin connecting line — draws OUTWARD from center during intro, brightens near cursor
+  function drawEdge(ax, ay, bx, by, isLight, progress, glow) {
+    const ex = bx + (ax - bx) * progress;
+    const ey = by + (ay - by) * progress;
     ctx.save();
-    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
-    ctx.strokeStyle = isLight ? 'rgba(100,80,55,0.13)' : 'rgba(175,178,206,0.09)';
-    ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(ex, ey);
+    const base = isLight ? 0.13 : 0.09;
+    ctx.strokeStyle = isLight
+      ? `rgba(100,80,55,${base + glow * 0.22})`
+      : `rgba(175,178,206,${base + glow * 0.18})`;
+    ctx.lineWidth = 0.8 + glow * 1.0;
     ctx.stroke();
     ctx.restore();
   }
 
   function drawPulse(ax, ay, bx, by, t, color) {
-    const x = ax + (bx - ax) * t, y = ay + (by - ay) * t;
+    const te = t * t * (3 - 2 * t);   // smoothstep: accelerate mid-edge
+    const x = ax + (bx - ax) * te, y = ay + (by - ay) * te;
     ctx.save();
     ctx.beginPath(); ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = rgba(color, 0.65 * Math.sin(t * Math.PI));
+    ctx.fillStyle = rgba(color, 0.7 * Math.sin(t * Math.PI));
     ctx.fill();
+    ctx.restore();
+  }
+
+  // Expanding ring when a report pulse reaches the center
+  function drawReportRing(cx, cy, prog, color) {
+    const r = 10 + prog * 26;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = rgba(color, 0.5 * (1 - prog));
+    ctx.lineWidth = 2 * (1 - prog);
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -1768,14 +1779,19 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
     ctx.restore();
   }
 
-  function drawNode(n, p, isLight) {
-    const { r, color, label, sub, id } = n;
+  function drawNode(n, p, isLight, intro, glow) {
+    const { color, label, sub, id } = n;
     const isCenter = id === 'center';
+    const scale = intro ? intro.scale : 1;
+    if (scale <= 0.01) return;
+    const r = n.r * scale;
+    glow = glow || 0;
 
-    // Glow halo
-    const hR = r * (isCenter ? 5.0 : 3.8);
+    // Glow halo (swells on cursor proximity)
+    const hR = r * (isCenter ? 5.0 : 3.8) * (1 + glow * 0.25);
+    const haloBase = isCenter ? 0.14 : 0.09;
     const gr = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, hR);
-    gr.addColorStop(0, rgba(color, isCenter ? 0.14 : 0.09));
+    gr.addColorStop(0, rgba(color, haloBase * (1 + glow * 1.6)));
     gr.addColorStop(1, rgba(color, 0));
     ctx.save();
     ctx.beginPath(); ctx.arc(p.x, p.y, hR, 0, Math.PI * 2);
@@ -1789,8 +1805,8 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       ctx.fillStyle = rgba(color, 0.88);
     } else {
       ctx.fillStyle  = isLight ? 'rgba(253,250,246,0.94)' : 'rgba(30,30,42,0.93)';
-      ctx.strokeStyle = rgba(color, 0.72);
-      ctx.lineWidth   = 1.5;
+      ctx.strokeStyle = rgba(color, 0.72 + glow * 0.28);
+      ctx.lineWidth   = 1.5 + glow * 0.8;
     }
     ctx.fill();
     if (!isCenter) ctx.stroke();
@@ -1808,20 +1824,22 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
     }
 
     // All nodes sit in the right half — labels point LEFT (inward) to avoid clipping
-    const tx    = isCenter ? p.x : p.x - r - 8;
+    const tx    = isCenter ? p.x : p.x - n.r - 8;
     const align = isCenter ? 'center' : 'right';
-    // Center: label+sub sit above the node; outer: label left/right
-    const ly1   = isCenter ? p.y - r - 20 : p.y - 2;
-    const ly2   = isCenter ? p.y - r - 7  : p.y + 13;
-    // Stronger contrast in light mode on warm gradient background
+    const ly1   = isCenter ? p.y - n.r - 20 : p.y - 2;
+    const ly2   = isCenter ? p.y - n.r - 7  : p.y + 13;
     const tCol  = isLight ? 'rgba(26,31,46,0.78)' : 'rgba(195,195,204,0.62)';
+    const labelA = intro ? intro.scale : 1;
+    const subA   = intro ? intro.sub : 1;
 
     ctx.save();
     ctx.textAlign = align;
+    ctx.globalAlpha = clamp01(labelA);
     ctx.font      = `500 11px 'DM Sans', system-ui, sans-serif`;
     ctx.fillStyle = tCol;
     ctx.fillText(label, tx, ly1);
     if (sub) {
+      ctx.globalAlpha = clamp01(subA);
       ctx.font      = `500 10px 'Geist Mono', 'Courier New', monospace`;
       ctx.fillStyle = rgba(color, isLight ? 0.85 : 0.72);
       ctx.fillText(sub, tx, ly2);
@@ -1829,39 +1847,153 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
     ctx.restore();
   }
 
-  function frame(ts) {
-    const t = REDUCED ? 0 : ts;
+  function frame(now) {
     if (!document.getElementById('screen-landing').classList.contains('active')) {
       requestAnimationFrame(frame); return;
     }
+    if (!T0) T0 = now;
+    const t = REDUCED ? 0 : now;
     const isLight = document.documentElement.classList.contains('light-mode');
     if (W !== canvas.offsetWidth || H !== canvas.offsetHeight) resize();
+
+    // Smooth pointer -> parallax vector
+    if (!REDUCED && mouse.tx != null) {
+      if (mouse.x == null) { mouse.x = mouse.tx; mouse.y = mouse.ty; }
+      mouse.x += (mouse.tx - mouse.x) * 0.08;
+      mouse.y += (mouse.ty - mouse.y) * 0.08;
+    }
+    pvx = (!REDUCED && mouse.x != null) ? (mouse.x - W * 0.73) * 0.045 : pvx * 0.9;
+    pvy = (!REDUCED && mouse.y != null) ? (mouse.y - H * 0.30) * 0.045 : pvy * 0.9;
+
     ctx.clearRect(0, 0, W, H);
 
-    const positions = NODES.map(n => nodePos(n, t));
+    const positions = NODES.map((n, i) => nodePos(n, t, now, i));
     const cp = positions[0];
+    const intros = NODES.map((_, i) => nodeIntro(i, now));
 
-    for (let i = 1; i < NODES.length; i++)
-      drawEdge(positions[i].x, positions[i].y, cp.x, cp.y, isLight);
+    // Proximity glow per node (0 when cursor absent)
+    const glows = positions.map(p => {
+      if (REDUCED || mouse.x == null) return 0;
+      return clamp01(1 - Math.hypot(p.x - mouse.x, p.y - mouse.y) / 150);
+    });
 
-    if (!REDUCED)
-      for (let i = 1; i < NODES.length; i++)
+    // Edges (draw outward during intro, brighten near cursor)
+    for (let i = 1; i < NODES.length; i++) {
+      if (intros[i].edge <= 0) continue;
+      drawEdge(positions[i].x, positions[i].y, cp.x, cp.y, isLight, intros[i].edge, glows[i]);
+    }
+
+    // Traveling pulses (only once the edge is fully drawn)
+    if (!REDUCED) {
+      for (let i = 1; i < NODES.length; i++) {
+        if (intros[i].edge < 1) continue;
         for (const p of PULSES[i - 1]) {
           p.t = (p.t + SPEED) % 1;
           drawPulse(positions[i].x, positions[i].y, cp.x, cp.y, p.t, NODES[i].color);
         }
+      }
+    }
 
-    for (let i = 1; i < NODES.length; i++) drawNode(NODES[i], positions[i], isLight);
-    drawNode(NODES[0], cp, isLight);
+    // Report pulses: occasional severity-weighted burst node -> center + arrival ring
+    if (!REDUCED) {
+      nextReport -= 16;
+      if (nextReport <= 0 && (now - T0) > 2600) {
+        const candidates = [];
+        for (let i = 1; i < NODES.length; i++) if (intros[i].edge >= 1) candidates.push(i);
+        if (candidates.length) {
+          const weighted = [];
+          candidates.forEach(i => {
+            const c = NODES[i].color, w = c === C.red ? 3 : c === C.amber ? 2 : 1;
+            for (let k = 0; k < w; k++) weighted.push(i);
+          });
+          const i = weighted[Math.floor(Math.random() * weighted.length)];
+          reports.push({ i, t: 0, color: NODES[i].color });
+        }
+        nextReport = 1300 + Math.random() * 1400;
+      }
+      for (let r = reports.length - 1; r >= 0; r--) {
+        const rep = reports[r];
+        rep.t += 0.02;
+        const a = positions[rep.i];
+        if (rep.t < 1) {
+          const te = rep.t * rep.t * (3 - 2 * rep.t);
+          const x = a.x + (cp.x - a.x) * te, y = a.y + (cp.y - a.y) * te;
+          ctx.save();
+          ctx.beginPath(); ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+          ctx.shadowColor = rgba(rep.color, 0.6); ctx.shadowBlur = 8;
+          ctx.fillStyle = rgba(rep.color, 0.85 * Math.sin(rep.t * Math.PI));
+          ctx.fill();
+          ctx.restore();
+        } else if (rep.t < 1.6) {
+          drawReportRing(cp.x, cp.y, (rep.t - 1) / 0.6, rep.color);
+        } else {
+          reports.splice(r, 1);
+        }
+      }
+    }
+
+    // Nodes
+    for (let i = 1; i < NODES.length; i++)
+      drawNode(NODES[i], positions[i], isLight, intros[i], glows[i]);
+    drawNode(NODES[0], cp, isLight, intros[0], glows[0]);
 
     requestAnimationFrame(frame);
   }
 
   document.fonts.ready.then(() => {
     resize();
-    new ResizeObserver(resize).observe(canvas);
+    const hero = document.querySelector('.landing-hero');
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+    if (hero) ro.observe(hero);
+    window.addEventListener('resize', resize);
+    if (!REDUCED) {
+      const host = document.getElementById('screen-landing');
+      host.addEventListener('pointermove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.tx = e.clientX - rect.left;
+        mouse.ty = e.clientY - rect.top;
+      });
+      host.addEventListener('pointerleave', () => {
+        mouse.tx = mouse.ty = mouse.x = mouse.y = null;
+      });
+    }
     requestAnimationFrame(frame);
   });
+})();
+
+// ============================================================
+// Hero entrance: arm the staggered animation only when the page is
+// actually visible at load (never leave text hidden in a background tab)
+(function () {
+  const hc = document.querySelector('.hero-content');
+  if (!hc) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (document.visibilityState === 'visible') hc.classList.add('hero-animate');
+})();
+
+// ============================================================
+// Feature cards: reveal on scroll (staggered)
+(function () {
+  const cards = document.querySelectorAll('.feature-card');
+  if (!cards.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      document.visibilityState !== 'visible' ||
+      !('IntersectionObserver' in window)) {
+    cards.forEach(c => c.classList.add('in-view'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const i = [...cards].indexOf(entry.target);
+        entry.target.style.transitionDelay = (i * 0.1) + 's';
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  cards.forEach(c => io.observe(c));
 })();
 
 // ============================================================
