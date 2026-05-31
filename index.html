@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meridian — NVIDIA Spark Hack Toronto 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #171721; --surface: #1E1E2A; --surface-raised: #272735;
+      --border: rgba(175,178,206,0.36); --border-faint: rgba(175,178,206,0.14);
+      --text-primary: #EDEDE3; --text-secondary: #C3C3CC; --text-muted: #70707D;
+      --accent: #5266EB; --accent-light: #CDDDFF;
+      --green: #34D399; --amber: #FBBF24; --red: #F87171;
+    }
+    html, body {
+      min-height: 100vh; background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      color: var(--text-primary);
+    }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 48px;
+      border-bottom: 1px solid var(--border-faint);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 420; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; }
+    .logo-mark { width: 28px; height: 28px; border: 1.5px solid var(--text-muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .logo-mark::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); }
+    .nav-pill { background: rgba(82,102,235,0.15); border: 1px solid rgba(82,102,235,0.35); color: var(--accent-light); font-size: 13px; font-weight: 420; padding: 7px 18px; border-radius: 40px; display: flex; align-items: center; gap: 8px; }
+    .nav-pill::before { content: '•'; color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      max-width: 900px; margin: 0 auto;
+      padding: 96px 48px 72px;
+      text-align: center;
+    }
+    .hero-kicker {
+      font-size: 12px; font-weight: 500; color: var(--text-muted);
+      letter-spacing: 0.16em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(52px, 7vw, 80px); font-weight: 480;
+      letter-spacing: -0.03em; line-height: 1;
+      color: var(--text-primary); margin-bottom: 28px;
+    }
+    .hero-tagline {
+      font-size: 22px; font-style: italic; color: var(--text-secondary);
+      font-weight: 360; line-height: 1.5; margin-bottom: 56px;
+      max-width: 680px; margin-left: auto; margin-right: auto;
+    }
+
+    /* CARDS */
+    .cards {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px; max-width: 860px; margin: 0 auto;
+      padding: 0 48px 80px;
+    }
+    @media (max-width: 640px) { .cards { grid-template-columns: 1fr; padding: 0 24px 60px; } }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 40px 36px;
+      display: flex; flex-direction: column; gap: 16px;
+      text-decoration: none; transition: border-color 0.15s, background 0.15s;
+    }
+    .card:hover { border-color: rgba(82,102,235,0.5); background: var(--surface-raised); }
+
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 4px;
+    }
+    .card-icon.deck { background: rgba(82,102,235,0.15); }
+    .card-icon.proto { background: rgba(52,211,153,0.12); }
+
+    .card-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .card-title { font-size: 26px; font-weight: 480; color: var(--text-primary); line-height: 1.2; }
+    .card-desc { font-size: 15px; color: var(--text-secondary); font-weight: 360; line-height: 1.6; flex: 1; }
+    .card-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 420;
+      padding: 11px 22px; border-radius: 40px;
+      margin-top: 8px; align-self: flex-start;
+    }
+    .card-cta.primary { background: var(--accent); color: #fff; }
+    .card-cta.secondary { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+    .card:hover .card-cta.primary { opacity: 0.9; }
+    .card:hover .card-cta.secondary { border-color: rgba(175,178,206,0.5); color: var(--text-primary); }
+
+    /* STATS */
+    .stats {
+      display: flex; justify-content: center; gap: 0;
+      max-width: 860px; margin: 0 auto 80px;
+      padding: 0 48px;
+      border: 1px solid var(--border-faint);
+      border-radius: 16px; overflow: hidden;
+    }
+    @media (max-width: 640px) { .stats { flex-direction: column; margin: 0 24px 60px; } }
+
+    .stat-item {
+      flex: 1; padding: 28px 32px;
+      border-right: 1px solid var(--border-faint);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Geist Mono', monospace; font-size: 32px; font-weight: 600;
+      font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .stat-num.green { color: var(--green); }
+    .stat-num.amber { color: var(--amber); }
+    .stat-num.white { color: var(--text-primary); }
+    .stat-desc { font-size: 13px; color: var(--text-muted); font-weight: 360; line-height: 1.4; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-faint);
+      padding: 28px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-left { font-size: 13px; color: var(--text-muted); font-weight: 360; }
+    .footer-right { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="logo" href="#">
+      <div class="logo-mark"></div>
+      MERIDIAN
+    </a>
+    <div class="nav-pill">NVIDIA Spark Hack Toronto 2026</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-kicker">The True Cost of Ownership Agent</div>
+    <div class="hero-title">Meridian</div>
+    <div class="hero-tagline">The price tag is the least honest number in the room. Meridian gives buyers a 10-year cost report, hidden risk flags, and negotiation leverage — run entirely on the DGX Spark.</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-num green">13.3%</div>
+      <div class="stat-desc">of Canada&#8217;s GDP is real estate &#8212; the single largest sector</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num amber">$2.4T</div>
+      <div class="stat-desc">in residential mortgage debt, 73% of national GDP</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num amber">+45%</div>
+      <div class="stat-desc">Toronto mortgage arrears, year over year</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num white">1.15M</div>
+      <div class="stat-desc">mortgages renewing in 2026 at rates far above what was signed</div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="meridian-pitch-deck.html">
+      <div class="card-icon deck">&#128203;</div>
+      <div class="card-label">Presentation</div>
+      <div class="card-title">Judge Pitch Deck</div>
+      <div class="card-desc">14-slide deck covering the national problem, the cascade from nation to individual, and Meridian&#8217;s four-agent architecture running locally on DGX Spark.</div>
+      <div class="card-cta primary">Open Deck &#8594;</div>
+    </a>
+    <a class="card" href="meridian-prototype.html">
+      <div class="card-icon proto">&#9881;&#65039;</div>
+      <div class="card-label">Live Prototype</div>
+      <div class="card-title">Interactive Demo</div>
+      <div class="card-desc">Full working UI prototype: address input, 10-year cost report, hidden risk flags with confidence badges, negotiation leverage, and visible reasoning trace.</div>
+      <div class="card-cta secondary">Open Prototype &#8594;</div>
+    </a>
+  </div>
+
+  <footer>
+    <div class="footer-left">Built by vivekally &nbsp;&middot;&nbsp; Buyer&#8217;s advocate intelligence, run locally on ASUS GB10 &middot; DGX Spark</div>
+    <div class="footer-right">May 31, 2026</div>
+  </footer>
+
+</body>
+</html>
