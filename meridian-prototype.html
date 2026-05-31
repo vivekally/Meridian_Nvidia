@@ -89,6 +89,33 @@
 /* Trust bar dots on warm bg */
 .light-mode .trust-dot { opacity: 0.8; }
 
+/* Light mode readability fixes */
+.light-mode .hero-title { color: #1A1F2E; }
+.light-mode .hero-sub { color: #3A3F52; }
+.light-mode .hero-hint { color: #6B6F7A; }
+.light-mode .hero-cta { box-shadow: 0 4px 16px rgba(82,102,235,0.25); }
+.light-mode .feature-title { color: #1A1F2E; }
+.light-mode .feature-desc { color: #4A4F5A; }
+.light-mode .feature-icon.green-bg { background: rgba(52,211,153,0.15); }
+.light-mode .feature-icon.amber-bg { background: rgba(251,191,36,0.15); }
+.light-mode .feature-icon.accent-bg { background: rgba(82,102,235,0.12); }
+.light-mode .trust-item { color: #4A4F5A; }
+.light-mode .footer-text { color: #6B6F7A; }
+.light-mode .footer-text a { color: #4A56C8; }
+.light-mode .verdict-card { background: rgba(255,255,255,0.80); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.light-mode .flag-card { background: rgba(255,255,255,0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.light-mode .table-card { background: rgba(255,255,255,0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.light-mode .trace-card { background: rgba(255,255,255,0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.light-mode .script-block { background: rgba(245,242,235,0.80); }
+.light-mode .badge.high { color: #0F8A5F; background: rgba(52,211,153,0.14); }
+.light-mode .badge.medium { color: #9A6D00; background: rgba(251,191,36,0.14); }
+.light-mode .badge.low { color: #C53030; background: rgba(248,113,113,0.14); }
+.light-mode .badge.unknown { color: #4A56C8; background: rgba(82,102,235,0.10); }
+.light-mode .trace-agent-name { color: #4A56C8; opacity: 1; }
+.light-mode .mode-btn { color: #4A4F5A; border-color: rgba(130,110,80,0.22); }
+.light-mode .btn-ghost { color: #1A1F2E; background: rgba(130,110,80,0.08); }
+.light-mode .nav-wordmark { color: #1A1F2E; }
+
 html { font-size: 16px; }
 body {
   background: var(--bg);
@@ -282,9 +309,9 @@ body {
 
 /* Feature cards */
 .features {
-  max-width: 860px;
+  max-width: 1060px;
   margin: 0 auto;
-  padding: 0 32px 80px;
+  padding: 80px 48px 80px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
@@ -419,7 +446,7 @@ body {
    SCREEN 3: VERDICT (ported from ui_verdict_screen.html)
    ============================================================ */
 .page {
-  max-width: 860px;
+  max-width: 1060px;
   margin: 0 auto;
   padding: 48px 32px 96px;
 }
@@ -839,6 +866,165 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
 }
 
 /* ============================================================
+   SIGNUP MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.45);
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.modal-overlay.open { display: flex; }
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 40px 36px;
+  width: 420px; max-width: calc(100vw - 32px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+  animation: chatSlideIn 0.25s var(--ease) both;
+}
+.light-mode .modal-card {
+  background: rgba(255,255,255,0.96);
+  border-color: rgba(130,110,80,0.18);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+}
+.modal-title {
+  font-size: 22px; font-weight: 480; letter-spacing: -0.02em;
+  color: var(--text-primary); margin-bottom: 6px;
+}
+.modal-sub {
+  font-size: 14px; font-weight: 360; color: var(--text-secondary);
+  margin-bottom: 28px; line-height: 1.5;
+}
+.modal-field { margin-bottom: 14px; }
+.modal-label {
+  display: block; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 6px;
+}
+.modal-input {
+  width: 100%;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 16px;
+  font-family: var(--font); font-size: 15px; font-weight: 420;
+  color: var(--text-primary); outline: none;
+  transition: border-color 0.2s;
+}
+.light-mode .modal-input {
+  background: rgba(255,255,255,0.88);
+  border-color: rgba(130,110,80,0.22);
+}
+.modal-input::placeholder { color: var(--text-muted); }
+.modal-input:focus { border-color: var(--accent); }
+.modal-input.mono { font-family: var(--font-mono); font-size: 14px; }
+.modal-cta {
+  width: 100%; margin-top: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--accent); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 13px 24px;
+  font-family: var(--font); font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+}
+.modal-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+.modal-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; font-size: 22px; line-height: 1;
+  color: var(--text-muted); cursor: pointer; padding: 4px;
+}
+.modal-close:hover { color: var(--text-secondary); }
+
+/* ============================================================
+   COST CHART (bar chart next to cost table)
+   ============================================================ */
+.cost-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.cost-chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 24px;
+  display: flex; flex-direction: column;
+}
+.light-mode .cost-chart-card {
+  background: rgba(255,255,255,0.68);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.chart-title {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px;
+}
+.chart-bars { display: flex; flex-direction: column; gap: 14px; flex: 1; justify-content: center; }
+.chart-bar-row { display: flex; align-items: center; gap: 12px; }
+.chart-bar-label {
+  width: 90px; flex-shrink: 0;
+  font-size: 11px; font-weight: 480; color: var(--text-secondary);
+  text-align: right;
+}
+.chart-bar-track {
+  flex: 1; height: 18px; border-radius: 4px;
+  background: var(--surface-raised); overflow: hidden; position: relative;
+}
+.light-mode .chart-bar-track { background: rgba(200,190,170,0.15); }
+.chart-bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 0.6s var(--ease);
+}
+.chart-bar-value {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  font-variant-numeric: tabular-nums; color: var(--text-muted);
+  width: 64px; flex-shrink: 0;
+}
+
+/* ============================================================
+   PROPERTY MAP
+   ============================================================ */
+.map-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.light-mode .map-card {
+  background: rgba(255,255,255,0.68);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.map-header {
+  padding: 20px 24px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.map-title {
+  font-size: 15px; font-weight: 480; color: var(--text-primary);
+}
+.map-subtitle {
+  font-size: 12px; color: var(--text-muted); margin-top: 2px;
+}
+.map-container {
+  width: 100%; height: 340px;
+  background: var(--surface-raised);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.map-container iframe {
+  width: 100%; height: 100%; border: none;
+}
+.map-placeholder {
+  font-size: 13px; color: var(--text-muted); text-align: center;
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 768px) {
+  .cost-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
    KNOWLEDGE GRAPH CANVAS
    ============================================================ */
 #screen-landing { position: relative; overflow: hidden; }
@@ -894,12 +1080,8 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   <canvas id="knowledge-graph-canvas" aria-hidden="true"></canvas>
 
   <div class="landing-hero">
-    <!-- Left column: text + inputs -->
+    <!-- Left column: text + CTA -->
     <div class="hero-content">
-      <div class="hero-badge">
-        <span class="hero-badge-dot"></span>
-        Built for NVIDIA Spark Hack Toronto
-      </div>
 
       <h1 class="hero-title">
         Know what you're <em>really</em> buying before you sign
@@ -910,16 +1092,8 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
         never shows, then turns each one into negotiation leverage with a dollar amount.
       </p>
 
-      <div class="hero-input-group">
-        <input class="hero-input" type="text" id="hero-address"
-               placeholder="Enter a Toronto address" aria-label="Toronto address"
-               value="401 Richmond St W, Toronto" autocomplete="off">
-        <input class="hero-input mono" type="text" id="hero-price"
-               placeholder="List price" aria-label="List price" value="$1,150,000">
-      </div>
-
-      <button class="hero-cta" onclick="startAnalysis()">
-        Analyze this property
+      <button class="hero-cta" onclick="openSignup()">
+        Analyze my property
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -1118,25 +1292,68 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="section-label-line"></div>
     </div>
 
-    <div class="table-card" role="region" aria-label="Cost breakdown">
-      <table>
-        <thead><tr>
-          <th scope="col">Category</th>
-          <th scope="col">Annual</th>
-          <th scope="col">10-Year total</th>
-          <th scope="col">Confidence</th>
-        </tr></thead>
-        <tbody>
-          <tr><td class="cat">Mortgage payments (5yr x 2 at 6.2%)</td><td>$74,820</td><td>$748,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
-          <tr><td class="cat">Property tax (2.5% avg increase)</td><td>$8,450</td><td>$94,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
-          <tr><td class="cat">Land Transfer Tax (one-time)</td><td>&mdash;</td><td>$38,950</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
-          <tr><td class="cat">Heritage renovation premium</td><td>&mdash;</td><td>$50,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
-          <tr><td class="cat">TRCA flood insurance premium</td><td>$2,500</td><td>$25,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
-          <tr><td class="cat">General maintenance (1.5%/yr)</td><td>$17,250</td><td>$172,500</td><td><span class="badge low"><span class="badge-dot"></span>Low</span></td></tr>
-          <tr><td class="cat">Permit resolution costs (est.)</td><td>&mdash;</td><td>$20,000</td><td><span class="badge unknown"><span class="badge-dot"></span>Unknown</span></td></tr>
-          <tr class="total"><td class="cat">True 10-year cost of ownership</td><td>&mdash;</td><td>$1,148,850</td><td></td></tr>
-        </tbody>
-      </table>
+    <div class="cost-grid">
+      <div class="table-card" role="region" aria-label="Cost breakdown">
+        <table>
+          <thead><tr>
+            <th scope="col">Category</th>
+            <th scope="col">Annual</th>
+            <th scope="col">10-Year total</th>
+            <th scope="col">Confidence</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="cat">Mortgage payments (5yr x 2 at 6.2%)</td><td>$74,820</td><td>$748,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Property tax (2.5% avg increase)</td><td>$8,450</td><td>$94,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Land Transfer Tax (one-time)</td><td>&mdash;</td><td>$38,950</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Heritage renovation premium</td><td>&mdash;</td><td>$50,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
+            <tr><td class="cat">TRCA flood insurance premium</td><td>$2,500</td><td>$25,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
+            <tr><td class="cat">General maintenance (1.5%/yr)</td><td>$17,250</td><td>$172,500</td><td><span class="badge low"><span class="badge-dot"></span>Low</span></td></tr>
+            <tr><td class="cat">Permit resolution costs (est.)</td><td>&mdash;</td><td>$20,000</td><td><span class="badge unknown"><span class="badge-dot"></span>Unknown</span></td></tr>
+            <tr class="total"><td class="cat">True 10-year cost of ownership</td><td>&mdash;</td><td>$1,148,850</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cost-chart-card" role="img" aria-label="Cost composition chart">
+        <p class="chart-title">Cost composition</p>
+        <div class="chart-bars">
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Mortgage</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:65%; background: var(--text-primary);"></div></div>
+            <span class="chart-bar-value">$748,200</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Maintenance</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:15%; background: var(--amber);"></div></div>
+            <span class="chart-bar-value">$172,500</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Property Tax</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:8.2%; background: var(--amber); opacity:0.7;"></div></div>
+            <span class="chart-bar-value">$94,200</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Heritage</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:4.4%; background: var(--red);"></div></div>
+            <span class="chart-bar-value">$50,000</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Transfer Tax</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:3.4%; background: var(--red); opacity:0.7;"></div></div>
+            <span class="chart-bar-value">$38,950</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Flood Ins.</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:2.2%; background: var(--amber); opacity:0.5;"></div></div>
+            <span class="chart-bar-value">$25,000</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Permits</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:1.7%; background: var(--accent);"></div></div>
+            <span class="chart-bar-value">$20,000</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="section-label" role="separator">
@@ -1172,8 +1389,58 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       </div>
     </div>
 
+    <div class="section-label" role="separator">
+      <span class="section-label-text">Property map</span>
+      <div class="section-label-line"></div>
+    </div>
+
+    <div class="map-card" role="region" aria-label="Property location map">
+      <div class="map-header">
+        <div>
+          <p class="map-title">401 Richmond St W, Toronto</p>
+          <p class="map-subtitle">Property pin &middot; Development pressure (500 m) &middot; Flood overlay</p>
+        </div>
+        <span class="badge high"><span class="badge-dot"></span>Geocoded</span>
+      </div>
+      <div class="map-container">
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-79.4000%2C43.6450%2C-79.3850%2C43.6530&layer=mapnik&marker=43.6492%2C-79.3925"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          title="Property location on OpenStreetMap"
+        ></iframe>
+      </div>
+    </div>
+
   </main>
 </section>
+
+<!-- ============================================================
+     SIGNUP MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="signup-modal" onclick="if(event.target===this)closeSignup()">
+  <div class="modal-card" style="position:relative;">
+    <button class="modal-close" onclick="closeSignup()" aria-label="Close">&times;</button>
+    <h2 class="modal-title">Analyze your property</h2>
+    <p class="modal-sub">Enter a Toronto address and list price. We'll scan 5 public datasets and show you what the listing price hides.</p>
+    <div class="modal-field">
+      <label class="modal-label" for="modal-address">Toronto address</label>
+      <input class="modal-input" type="text" id="modal-address" placeholder="e.g. 401 Richmond St W, Toronto" autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label" for="modal-price">List price</label>
+      <input class="modal-input mono" type="text" id="modal-price" placeholder="$1,150,000">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label" for="modal-email">Email (for your report)</label>
+      <input class="modal-input" type="email" id="modal-email" placeholder="you@email.com">
+    </div>
+    <button class="modal-cta" onclick="submitSignup()">
+      Run analysis
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
 
 <!-- ============================================================
      CHAT FAB + PANEL (verdict screen only)
@@ -1435,6 +1702,24 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
 })();
 
 // ============================================================
+// Signup modal
+function openSignup() {
+  document.getElementById('signup-modal').classList.add('open');
+  setTimeout(function(){ document.getElementById('modal-address').focus(); }, 120);
+}
+function closeSignup() {
+  document.getElementById('signup-modal').classList.remove('open');
+}
+function submitSignup() {
+  var addr = document.getElementById('modal-address').value || '401 Richmond St W, Toronto';
+  var price = document.getElementById('modal-price').value || '$1,150,000';
+  closeSignup();
+  document.getElementById('nav-address').value = addr;
+  document.getElementById('nav-price').value = price;
+  startAnalysis(addr, price);
+}
+
+// ============================================================
 // Screen management
 function goToScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1460,9 +1745,9 @@ function goToScreen(name) {
 }
 
 // Analysis flow
-function startAnalysis() {
-  const address = document.getElementById('hero-address').value || '401 Richmond St W, Toronto';
-  const price = document.getElementById('hero-price').value || '$1,150,000';
+function startAnalysis(addrArg, priceArg) {
+  const address = addrArg || '401 Richmond St W, Toronto';
+  const price = priceArg || '$1,150,000';
 
   document.getElementById('analysis-address-label').textContent = address;
   document.getElementById('nav-address').value = address;
