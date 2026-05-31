@@ -57,6 +57,24 @@
       max-width: 680px; margin-left: auto; margin-right: auto;
     }
 
+    /* VIDEO */
+    .video-section {
+      max-width: 900px; margin: 0 auto 80px;
+      padding: 0 48px;
+    }
+    @media (max-width: 640px) { .video-section { padding: 0 24px; margin-bottom: 60px; } }
+    .video-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-muted);
+      text-align: center; margin-bottom: 16px;
+    }
+    .video-frame {
+      border: 1px solid var(--border); border-radius: 20px;
+      overflow: hidden; background: #000;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+    .video-frame video { display: block; width: 100%; height: auto; }
+
     /* CARDS */
     .cards {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -149,6 +167,17 @@
     <div class="hero-kicker">The True Cost of Ownership Agent</div>
     <div class="hero-title">Meridian</div>
     <div class="hero-tagline">The price tag is the least honest number in the room. Meridian gives buyers a 10-year cost report, hidden risk flags, and negotiation leverage — run entirely on the DGX Spark.</div>
+  </div>
+
+  <div class="video-section">
+    <div class="video-label">3-Minute Demo</div>
+    <div class="video-frame">
+      <video controls preload="metadata" poster="meridian-demo-poster.jpg" playsinline>
+        <source src="meridian-demo.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+        <a href="meridian-demo.mp4">Download the demo video</a>.
+      </video>
+    </div>
   </div>
 
   <div class="stats">
