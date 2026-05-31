@@ -1088,8 +1088,8 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       </h1>
 
       <p class="hero-sub">
-        Meridian scans 5 public datasets to surface hidden risks that list price
-        never shows, then turns each one into negotiation leverage with a dollar amount.
+        Meridian queries 7 Toronto open data sources to surface hidden risks that list price
+        never shows, then turns each one into negotiation leverage with a dollar range.
       </p>
 
       <button class="hero-cta" onclick="openSignup()">
@@ -1131,9 +1131,9 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   </div>
 
   <div class="trust-bar">
-    <div class="trust-item"><span class="trust-dot"></span> 5 Toronto open data sources</div>
-    <div class="trust-item"><span class="trust-dot"></span> Llama 3.1 8B via NVIDIA NIM</div>
-    <div class="trust-item"><span class="trust-dot"></span> Runs 100% locally on DGX Spark</div>
+    <div class="trust-item"><span class="trust-dot"></span> 7 Toronto open data sources</div>
+    <div class="trust-item"><span class="trust-dot"></span> 2 LLM calls, all dollar math deterministic</div>
+    <div class="trust-item"><span class="trust-dot"></span> Runs 100% locally on DGX Spark via NIM</div>
     <div class="trust-item"><span class="trust-dot"></span> Per-source confidence badges</div>
   </div>
 
@@ -1154,7 +1154,7 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="agent-step" id="step-1">
         <div class="agent-step-num">1</div>
         <div class="agent-step-content">
-          <div class="agent-step-name">Planning Agent</div>
+          <div class="agent-step-name">Intake + Planning</div>
           <div class="agent-step-status" id="step-1-status">Waiting...</div>
         </div>
         <div class="agent-step-time" id="step-1-time"></div>
@@ -1162,7 +1162,7 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="agent-step" id="step-2">
         <div class="agent-step-num">2</div>
         <div class="agent-step-content">
-          <div class="agent-step-name">Retrieval Agent</div>
+          <div class="agent-step-name">Data Retrieval</div>
           <div class="agent-step-status" id="step-2-status">Waiting...</div>
         </div>
         <div class="agent-step-time" id="step-2-time"></div>
@@ -1170,7 +1170,7 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="agent-step" id="step-3">
         <div class="agent-step-num">3</div>
         <div class="agent-step-content">
-          <div class="agent-step-name">Analysis Agent</div>
+          <div class="agent-step-name">Analysis + Cost</div>
           <div class="agent-step-status" id="step-3-status">Waiting...</div>
         </div>
         <div class="agent-step-time" id="step-3-time"></div>
@@ -1178,7 +1178,7 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="agent-step" id="step-4">
         <div class="agent-step-num">4</div>
         <div class="agent-step-content">
-          <div class="agent-step-name">Synthesis Agent</div>
+          <div class="agent-step-name">Synthesis</div>
           <div class="agent-step-status" id="step-4-status">Waiting...</div>
         </div>
         <div class="agent-step-time" id="step-4-time"></div>
@@ -1198,7 +1198,7 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   <main class="page screen-fade-in" role="main">
 
     <section class="verdict-card" aria-label="Negotiation summary">
-      <div class="risk-pill" aria-label="3 material risks found">3 material risks</div>
+      <div class="risk-pill" style="background:var(--amber-tint);color:var(--amber);border-color:rgba(251,191,36,0.25);" aria-label="Verdict: YELLOW">YELLOW</div>
       <p class="verdict-address">401 Richmond St W, Toronto &middot; $1,150,000</p>
       <p class="verdict-preamble">You have negotiation leverage the seller doesn't know you know.</p>
       <div class="verdict-number" aria-label="Negotiation leverage: $55,000 to $75,000">$55,000&ndash;$75,000</div>
@@ -1206,15 +1206,15 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="verdict-stats" role="list">
         <div class="verdict-stat" role="listitem">
           <div class="stat-label">True 10-Year Cost</div>
-          <div class="stat-value danger">$1,847,230</div>
+          <div class="stat-value danger">$849,930</div>
         </div>
         <div class="verdict-stat" role="listitem">
           <div class="stat-label">List Price</div>
           <div class="stat-value">$1,150,000</div>
         </div>
         <div class="verdict-stat" role="listitem">
-          <div class="stat-label">Hidden Premium</div>
-          <div class="stat-value danger">+$697,230</div>
+          <div class="stat-label">LTT + Tax + Mortgage</div>
+          <div class="stat-value danger">$28,950 + $72,780 + $748,200</div>
         </div>
       </div>
     </section>
@@ -1288,6 +1288,45 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
     </article>
 
     <div class="section-label" role="separator">
+      <span class="section-label-text">Composite signals</span>
+      <div class="section-label-line"></div>
+    </div>
+
+    <article class="flag-card amber">
+      <div class="flag-header" onclick="toggleFlag(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFlag(this)" aria-expanded="false">
+        <div class="flag-left">
+          <div class="flag-stripe" aria-hidden="true"></div>
+          <h2 class="flag-title">Maintenance Complexity Signal — Elevated</h2>
+        </div>
+        <div class="flag-badges">
+          <span class="badge low"><span class="badge-dot"></span>Low confidence</span>
+          <span class="flag-chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="flag-body">
+        <p class="flag-description">Factors: Older building age, Active structural permit, Multiple structural permits, Heritage designation, Flood zone exposure (3 of 6 factors elevated).</p>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:8px; font-style:italic;">This is an inferred signal and not evidence of a historical special assessment. Confidence is always Low for composite signals.</p>
+      </div>
+    </article>
+
+    <article class="flag-card amber">
+      <div class="flag-header" onclick="toggleFlag(this)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFlag(this)" aria-expanded="false">
+        <div class="flag-left">
+          <div class="flag-stripe" aria-hidden="true"></div>
+          <h2 class="flag-title">Future Tax Pressure Signal — High</h2>
+        </div>
+        <div class="flag-badges">
+          <span class="badge low"><span class="badge-dot"></span>Low confidence</span>
+          <span class="flag-chevron">&#9662;</span>
+        </div>
+      </div>
+      <div class="flag-body">
+        <p class="flag-description">12 active OZ/SA development applications within 500m. Significant redevelopment activity nearby may affect future neighbourhood character and values.</p>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:8px; font-style:italic;">This is a neighbourhood signal, not an MPAC reassessment prediction. Confidence is always Low for composite signals.</p>
+      </div>
+    </article>
+
+    <div class="section-label" role="separator">
       <span class="section-label-text">10-Year cost breakdown</span>
       <div class="section-label-line"></div>
     </div>
@@ -1302,55 +1341,57 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
             <th scope="col">Confidence</th>
           </tr></thead>
           <tbody>
-            <tr><td class="cat">Mortgage payments (5yr x 2 at 6.2%)</td><td>$74,820</td><td>$748,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
-            <tr><td class="cat">Property tax (2.5% avg increase)</td><td>$8,450</td><td>$94,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
-            <tr><td class="cat">Land Transfer Tax (one-time)</td><td>&mdash;</td><td>$38,950</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
-            <tr><td class="cat">Heritage renovation premium</td><td>&mdash;</td><td>$50,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
-            <tr><td class="cat">TRCA flood insurance premium</td><td>$2,500</td><td>$25,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
-            <tr><td class="cat">General maintenance (1.5%/yr)</td><td>$17,250</td><td>$172,500</td><td><span class="badge low"><span class="badge-dot"></span>Low</span></td></tr>
-            <tr><td class="cat">Permit resolution costs (est.)</td><td>&mdash;</td><td>$20,000</td><td><span class="badge unknown"><span class="badge-dot"></span>Unknown</span></td></tr>
-            <tr class="total"><td class="cat">True 10-year cost of ownership</td><td>&mdash;</td><td>$1,148,850</td><td></td></tr>
+            <tr><td class="cat">Mortgage (base scenario, 4.79%)</td><td>$74,820</td><td>$748,200</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Property tax (AV proxy $805K, 3.5% growth)</td><td>$6,174</td><td>$72,780</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Ontario LTT (one-time)</td><td>&mdash;</td><td>$14,475</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Toronto MLTT (one-time)</td><td>&mdash;</td><td>$14,475</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">CMHC premium + PST</td><td>&mdash;</td><td>$0</td><td><span class="badge high"><span class="badge-dot"></span>High</span></td></tr>
+            <tr><td class="cat">Transit dividend</td><td>&mdash;</td><td style="color:var(--green);">-$87,000</td><td><span class="badge medium"><span class="badge-dot"></span>Medium</span></td></tr>
+            <tr class="total"><td class="cat">True 10-year cost of ownership</td><td>&mdash;</td><td>$762,930</td><td></td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="cost-chart-card" role="img" aria-label="Cost composition chart">
+      <div class="cost-chart-card" role="img" aria-label="Mortgage scenario comparison + cost composition">
+        <p class="chart-title">Mortgage scenario ladder (10yr)</p>
+        <div class="chart-bars" style="margin-bottom:28px;">
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Bear +1.5%</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:85%; background: var(--red);"></div></div>
+            <span class="chart-bar-value">$812,400</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Base 4.79%</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:70%; background: var(--amber);"></div></div>
+            <span class="chart-bar-value">$748,200</span>
+          </div>
+          <div class="chart-bar-row">
+            <span class="chart-bar-label">Bull -0.5%</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:62%; background: var(--green);"></div></div>
+            <span class="chart-bar-value">$718,600</span>
+          </div>
+        </div>
         <p class="chart-title">Cost composition</p>
         <div class="chart-bars">
           <div class="chart-bar-row">
             <span class="chart-bar-label">Mortgage</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:65%; background: var(--text-primary);"></div></div>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:88%; background: var(--text-primary);"></div></div>
             <span class="chart-bar-value">$748,200</span>
           </div>
           <div class="chart-bar-row">
-            <span class="chart-bar-label">Maintenance</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:15%; background: var(--amber);"></div></div>
-            <span class="chart-bar-value">$172,500</span>
-          </div>
-          <div class="chart-bar-row">
             <span class="chart-bar-label">Property Tax</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:8.2%; background: var(--amber); opacity:0.7;"></div></div>
-            <span class="chart-bar-value">$94,200</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:8.5%; background: var(--amber);"></div></div>
+            <span class="chart-bar-value">$72,780</span>
           </div>
           <div class="chart-bar-row">
-            <span class="chart-bar-label">Heritage</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:4.4%; background: var(--red);"></div></div>
-            <span class="chart-bar-value">$50,000</span>
+            <span class="chart-bar-label">LTT (net)</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:3.4%; background: var(--red);"></div></div>
+            <span class="chart-bar-value">$28,950</span>
           </div>
           <div class="chart-bar-row">
-            <span class="chart-bar-label">Transfer Tax</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:3.4%; background: var(--red); opacity:0.7;"></div></div>
-            <span class="chart-bar-value">$38,950</span>
-          </div>
-          <div class="chart-bar-row">
-            <span class="chart-bar-label">Flood Ins.</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:2.2%; background: var(--amber); opacity:0.5;"></div></div>
-            <span class="chart-bar-value">$25,000</span>
-          </div>
-          <div class="chart-bar-row">
-            <span class="chart-bar-label">Permits</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:1.7%; background: var(--accent);"></div></div>
-            <span class="chart-bar-value">$20,000</span>
+            <span class="chart-bar-label">Transit</span>
+            <div class="chart-bar-track"><div class="chart-bar-fill" style="width:10.2%; background: var(--green);"></div></div>
+            <span class="chart-bar-value" style="color:var(--green);">-$87,000</span>
           </div>
         </div>
       </div>
@@ -1365,26 +1406,26 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
       <div class="trace-header" onclick="toggleTrace()" role="button" tabindex="0" aria-expanded="false" aria-controls="trace-body" onkeydown="if(event.key==='Enter'||event.key===' ')toggleTrace()">
         <div class="trace-header-left">
           <span class="trace-label">How Meridian reached this verdict</span>
-          <span class="badge unknown" style="font-size:11px;"><span class="badge-dot"></span>4 sources &middot; Llama 3.1 8B</span>
+          <span class="badge unknown" style="font-size:11px;"><span class="badge-dot"></span>6 sources &middot; 2 LLM calls &middot; Llama 3.1 8B via NIM</span>
         </div>
         <button class="trace-toggle-btn" tabindex="-1" aria-hidden="true">Show reasoning <span style="font-size:10px;">&#9662;</span></button>
       </div>
       <div class="trace-body" id="trace-body">
         <div class="trace-entry">
-          <p class="trace-agent-name">Agent 1 — Planning</p>
-          <p class="trace-agent-text">Property type: detached house. Queried: Heritage Register, Building Permits (active + cleared), Development Applications, TRCA Flood Zone. Skipped: RentSafeTO (not a condo).</p>
+          <p class="trace-agent-name">Agent 1 — Intake + Planning (LLM call #1)</p>
+          <p class="trace-agent-text">Geocoded via Address Points CKAN → 43.6492, -79.3925 <span class="badge high" style="font-size:10px;vertical-align:middle;margin-left:4px;"><span class="badge-dot"></span>High</span>. Property type: detached_urban. QueryPlan: heritage_register ✓, heritage_conservation_districts ✓, building_permits_active ✓, building_permits_cleared ✓, development_applications ✓, trca_flood ✓, rentsafeto ✗ (not a condo).</p>
         </div>
         <div class="trace-entry">
-          <p class="trace-agent-name">Agent 2 — Retrieval</p>
-          <p class="trace-agent-text">Heritage Register: HTTP 200, last_updated 2026-01-15 → HIGH. Permits: HTTP 200, 3 active + 7 cleared → HIGH. Dev Applications: HTTP 200, 0 active → HIGH. TRCA Flood Zone: HTTP 200, no extract_date → MEDIUM.</p>
+          <p class="trace-agent-name">Agent 2 — Data Retrieval (deterministic, async)</p>
+          <p class="trace-agent-text">heritage_register: <span class="badge high" style="font-size:10px;vertical-align:middle;"><span class="badge-dot"></span>High</span> Part IV, 1987. building_permits_active: <span class="badge high" style="font-size:10px;vertical-align:middle;"><span class="badge-dot"></span>High</span> 3 structural. building_permits_cleared: <span class="badge high" style="font-size:10px;vertical-align:middle;"><span class="badge-dot"></span>High</span> 7 in 10yr. development_applications: <span class="badge high" style="font-size:10px;vertical-align:middle;"><span class="badge-dot"></span>High</span> 12 OZ/SA within 500m. trca_flood: <span class="badge medium" style="font-size:10px;vertical-align:middle;"><span class="badge-dot"></span>Medium</span> intersect via GeoJSON PIP. Total latency: 2,340ms.</p>
         </div>
         <div class="trace-entry">
-          <p class="trace-agent-name">Agent 3 — Analysis</p>
-          <p class="trace-agent-text">No contradictions detected. Heritage status corroborated by permit history. Cost breakdown: deterministic math. Confidence HIGH on mortgage, tax, LTT. MEDIUM on heritage premium (range estimate). LOW on maintenance.</p>
+          <p class="trace-agent-name">Agent 3 — Analysis + Cost (deterministic, no LLM)</p>
+          <p class="trace-agent-text">LTT: Ontario $14,475 + Toronto MLTT $14,475 = $28,950 net (no FTB rebate — not first-time). Property tax: AV proxy $805,000 × 0.767% = $6,174/yr, 10yr = $72,780. Mortgage base (4.79%, 25yr): $748,200/10yr. CMHC: $0 (20% down). Composites: Maintenance Complexity = Elevated (heritage + 3 structural + flood), confidence always Low. Future Tax Pressure = High (12 OZ/SA), confidence always Low.</p>
         </div>
         <div class="trace-entry">
-          <p class="trace-agent-name">Agent 4 — Synthesis</p>
-          <p class="trace-agent-text">Leverage = heritage ($40K-$60K) + permits ($15K-$25K) + flood PV ($8K-$12K) = $63K-$97K. Presented as $55K-$75K conservative middle range. Verdict: YELLOW — material risks, not a dealbreaker if leverage is applied.</p>
+          <p class="trace-agent-name">Agent 4 — Synthesis (LLM call #2)</p>
+          <p class="trace-agent-text">Leverage = heritage ($40K-$60K) + permits ($15K-$25K) + flood ($8K-$12K) = $63K-$97K. Presented as $55K-$75K conservative middle range. Verdict: YELLOW — material risks, not a dealbreaker if leverage is applied. RAG: heritage corpus retrieved (Ontario Heritage Act). All dollar figures from Agent 3 — LLM formatted only, never computed.</p>
         </div>
       </div>
     </div>
@@ -1422,18 +1463,38 @@ tr.total td:not(:first-child) { font-family: var(--font-mono); font-size: 16px; 
   <div class="modal-card" style="position:relative;">
     <button class="modal-close" onclick="closeSignup()" aria-label="Close">&times;</button>
     <h2 class="modal-title">Analyze your property</h2>
-    <p class="modal-sub">Enter a Toronto address and list price. We'll scan 5 public datasets and show you what the listing price hides.</p>
+    <p class="modal-sub">Enter a Toronto address and buyer profile. We'll scan 7 city data sources, compute your true 10-year cost, and surface negotiation leverage.</p>
     <div class="modal-field">
       <label class="modal-label" for="modal-address">Toronto address</label>
       <input class="modal-input" type="text" id="modal-address" placeholder="e.g. 401 Richmond St W, Toronto" autocomplete="off">
     </div>
-    <div class="modal-field">
-      <label class="modal-label" for="modal-price">List price</label>
-      <input class="modal-input mono" type="text" id="modal-price" placeholder="$1,150,000">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="modal-field">
+        <label class="modal-label" for="modal-price">List price</label>
+        <input class="modal-input mono" type="text" id="modal-price" placeholder="$1,150,000">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="modal-profile">Buyer profile</label>
+        <select class="modal-input" id="modal-profile">
+          <option value="first-time" selected>First-time buyer</option>
+          <option value="investor">Investor</option>
+          <option value="downsizer">Downsizer</option>
+        </select>
+      </div>
     </div>
-    <div class="modal-field">
-      <label class="modal-label" for="modal-email">Email (for your report)</label>
-      <input class="modal-input" type="email" id="modal-email" placeholder="you@email.com">
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+      <div class="modal-field">
+        <label class="modal-label" for="modal-down">Down payment %</label>
+        <input class="modal-input mono" type="text" id="modal-down" placeholder="20" value="20">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="modal-rate">Rate %</label>
+        <input class="modal-input mono" type="text" id="modal-rate" placeholder="4.79" value="4.79">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="modal-amort">Amortization (yrs)</label>
+        <input class="modal-input mono" type="text" id="modal-amort" placeholder="25" value="25">
+      </div>
     </div>
     <button class="modal-cta" onclick="submitSignup()">
       Run analysis
@@ -1764,10 +1825,10 @@ function startAnalysis(addrArg, priceArg) {
   goToScreen('analysis');
 
   const steps = [
-    { id: 1, status: 'Classifying property type...', done: 'Detached house → querying 4 of 5 sources (skipped RentSafeTO)', time: '1.2s' },
-    { id: 2, status: 'Fetching Heritage Register, Permits, Dev Apps, TRCA...', done: '4/4 sources returned · 3 flags detected', time: '3.8s' },
-    { id: 3, status: 'Cross-referencing findings, calculating 10-year costs...', done: '0 contradictions · cost breakdown complete · 3 risk flags scored', time: '2.1s' },
-    { id: 4, status: 'Generating negotiation leverage and buyer report...', done: 'Leverage: $55K–$75K · 3 scripts ready · verdict: YELLOW', time: '1.9s' },
+    { id: 1, status: 'Geocoding via Address Points CKAN... classifying property type (LLM call #1)...', done: 'detached_urban → QueryPlan: 6 sources queried, 1 skipped (rentsafeto)', time: '1.4s' },
+    { id: 2, status: 'Async fetch: heritage PIP, permits bbox+haversine, dev apps, TRCA GeoJSON...', done: '6/6 sources returned · heritage HIGH · flood MEDIUM · 2,340ms total', time: '2.3s' },
+    { id: 3, status: 'LTT marginal brackets, AV proxy $805K, mortgage 3 scenarios, composites...', done: 'LTT $28,950 · tax $72,780/10yr · mortgage base $748,200 · 2 composites scored', time: '0.8s' },
+    { id: 4, status: 'Synthesizing report with conditional RAG (heritage corpus)... (LLM call #2)', done: 'Leverage: $55K–$75K · 3 scripts · verdict: YELLOW · all $ from Agent 3', time: '2.1s' },
   ];
 
   let delay = 400;
