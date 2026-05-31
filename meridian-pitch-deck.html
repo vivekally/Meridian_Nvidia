@@ -8,24 +8,16 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg:             #171721;
-      --surface:        #1E1E2A;
-      --surface-raised: #272735;
-      --border:         rgba(175,178,206,0.36);
-      --border-faint:   rgba(175,178,206,0.14);
-      --text-primary:   #EDEDE3;
-      --text-secondary: #C3C3CC;
-      --text-muted:     #70707D;
-      --accent:         #5266EB;
-      --accent-light:   #CDDDFF;
-      --green:          #34D399;
-      --amber:          #FBBF24;
-      --red:            #F87171;
-      --red-tint:       rgba(248,113,113,0.12);
+      --bg:#171721; --surface:#1E1E2A; --surface-raised:#272735;
+      --border:rgba(175,178,206,0.36); --border-faint:rgba(175,178,206,0.14);
+      --text-primary:#EDEDE3; --text-secondary:#C3C3CC; --text-muted:#70707D;
+      --accent:#5266EB; --accent-light:#CDDDFF;
+      --green:#34D399; --amber:#FBBF24; --red:#F87171;
+      --red-tint:rgba(248,113,113,0.12);
     }
-    html, body { width:100%; height:100%; background:#0D0D14; font-family:'DM Sans',sans-serif; -webkit-font-smoothing:antialiased; overflow:hidden; }
+    html,body { width:100%; height:100%; background:#0D0D14; font-family:'DM Sans',sans-serif; -webkit-font-smoothing:antialiased; overflow:hidden; }
     .presentation { display:flex; width:100vw; height:100vh; }
 
     /* SIDEBAR */
@@ -50,21 +42,19 @@
     .controls { position:fixed; bottom:28px; right:36px; display:flex; align-items:center; gap:14px; z-index:200; }
     .ctrl-btn { width:38px; height:38px; border-radius:40px; border:1px solid var(--border); background:var(--surface); color:var(--text-secondary); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
     .ctrl-btn:hover { background:var(--surface-raised); color:var(--text-primary); }
-    .counter { font-size:12px; color:var(--text-muted); font-family:'Geist Mono',monospace; min-width:44px; text-align:center; }
+    .counter { font-size:12px; color:var(--text-muted); font-family:'Geist Mono',monospace; min-width:52px; text-align:center; }
 
     /* SHARED */
     .slide-pad { padding:80px 120px; height:100%; display:flex; flex-direction:column; }
     .kicker { display:flex; align-items:center; gap:14px; font-size:12px; font-weight:500; color:var(--text-muted); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:44px; }
     .kicker::before { content:''; display:block; width:28px; height:1px; background:var(--text-muted); flex-shrink:0; }
     .slide-headline { font-size:56px; font-weight:480; line-height:1.1; color:var(--text-primary); letter-spacing:-0.02em; }
-    .slide-footer { margin-top:auto; font-size:15px; color:var(--text-muted); font-weight:360; padding-top:32px; }
-
-    /* LOGO MARK */
+    .slide-footer { margin-top:auto; font-size:15px; color:var(--text-muted); font-weight:360; padding-top:32px; border-top:1px solid var(--border-faint); }
     .logo { display:flex; align-items:center; gap:12px; color:var(--text-muted); font-size:13px; font-weight:420; letter-spacing:0.16em; text-transform:uppercase; }
     .logo-mark { width:30px; height:30px; border:1.5px solid var(--text-muted); border-radius:50%; display:flex; align-items:center; justify-content:center; }
     .logo-mark::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--text-muted); }
 
-    /* ── SLIDE 1: COVER ── */
+    /* ── S1: COVER ── */
     #f1 { display:flex; flex-direction:column; }
     .cover-nav { display:flex; align-items:center; justify-content:space-between; padding:52px 88px 0; }
     .hackathon-pill { background:rgba(82,102,235,0.15); border:1px solid rgba(82,102,235,0.35); color:var(--accent-light); font-size:14px; font-weight:420; padding:9px 22px; border-radius:40px; display:flex; align-items:center; gap:9px; }
@@ -76,25 +66,86 @@
     .cover-footer { padding:0 120px 60px; display:flex; align-items:center; gap:6px; font-size:15px; color:var(--text-muted); font-weight:360; }
     .cover-footer .tnum { font-family:'Geist Mono',monospace; font-variant-numeric:tabular-nums; }
 
-    /* ── SLIDE 2: STAKES ── */
+    /* ── S2: STAKES ── */
     #f2 .stat-row { display:grid; grid-template-columns:1fr 1fr; gap:100px; flex:1; align-items:center; }
     .stat-fig { font-family:'Geist Mono',monospace; font-size:128px; font-weight:600; letter-spacing:-0.03em; line-height:1; font-variant-numeric:tabular-nums; margin-bottom:24px; }
     .stat-fig.amber { color:var(--amber); }
     .stat-fig.white { color:var(--text-primary); }
     .stat-cap { font-size:20px; color:var(--text-secondary); font-weight:360; line-height:1.55; max-width:480px; }
 
-    /* ── SLIDE 3: WRONG QUESTION ── */
-    #f3 .q-table { flex:1; display:flex; flex-direction:column; justify-content:center; }
+    /* ── S3: SCALE OF EXPOSURE ── */
+    #f3 .scale-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; flex:1; align-items:stretch; margin-top:44px; }
+    .scale-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:48px 44px; display:flex; flex-direction:column; }
+    .scale-card-label { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:20px; }
+    .scale-num { font-family:'Geist Mono',monospace; font-size:96px; font-weight:600; letter-spacing:-0.03em; font-variant-numeric:tabular-nums; line-height:1; margin-bottom:16px; }
+    .scale-num.green { color:var(--green); }
+    .scale-num.amber { color:var(--amber); }
+    .scale-num.white { color:var(--text-primary); }
+    .scale-desc { font-size:18px; color:var(--text-secondary); font-weight:360; line-height:1.5; flex:1; }
+    .scale-source { font-size:11px; color:var(--text-muted); margin-top:16px; font-weight:360; }
+
+    /* ── S4: RENEWAL BOMB ── */
+    #f4 .renewal-layout { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:44px; flex:1; }
+    .renewal-card { border-radius:20px; padding:48px 44px; display:flex; flex-direction:column; }
+    .renewal-card.then-card { background:var(--surface); border:1px solid var(--border); }
+    .renewal-card.now-card { background:rgba(248,113,113,0.05); border:1px solid rgba(248,113,113,0.22); }
+    .renewal-era { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:24px; }
+    .renewal-era.then-era { color:var(--text-muted); }
+    .renewal-era.now-era { color:var(--red); }
+    .renewal-rate { font-family:'Geist Mono',monospace; font-size:80px; font-weight:600; letter-spacing:-0.03em; line-height:1; margin-bottom:10px; font-variant-numeric:tabular-nums; }
+    .renewal-rate.then-rate { color:var(--text-primary); }
+    .renewal-rate.now-rate { color:var(--red); }
+    .renewal-sublabel { font-size:15px; color:var(--text-muted); margin-bottom:24px; font-weight:360; }
+    .renewal-detail { font-size:18px; color:var(--text-secondary); font-weight:360; line-height:1.55; }
+    .renewal-shock { font-family:'Geist Mono',monospace; font-size:40px; font-weight:600; color:var(--red); margin-top:20px; font-variant-numeric:tabular-nums; }
+    .renewal-shock-note { font-size:13px; color:var(--text-muted); margin-top:4px; }
+    #f4 .renewal-bottom { display:flex; gap:48px; margin-top:28px; padding-top:28px; border-top:1px solid var(--border-faint); }
+    .renewal-bottom-stat { font-size:15px; color:var(--text-secondary); font-weight:360; }
+    .renewal-bottom-stat strong { color:var(--text-primary); font-weight:480; }
+
+    /* ── S5: CASCADE ── */
+    #f5 .cascade-flow { display:grid; grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr; flex:1; align-items:start; margin-top:40px; gap:0; }
+    .cascade-col { display:flex; flex-direction:column; height:100%; }
+    .cascade-arrow-col { display:flex; align-items:flex-start; justify-content:center; padding-top:36px; color:var(--border); font-size:18px; }
+    .cascade-level-tag { font-size:10px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; }
+    .cascade-big-num { font-family:'Geist Mono',monospace; font-size:48px; font-weight:600; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1; margin-bottom:10px; }
+    .cascade-title { font-size:17px; font-weight:480; color:var(--text-primary); margin-bottom:16px; line-height:1.25; }
+    .cascade-pts { display:flex; flex-direction:column; gap:10px; }
+    .cascade-pt { font-size:13px; color:var(--text-secondary); font-weight:360; line-height:1.5; padding-left:16px; position:relative; }
+    .cascade-pt::before { content:'—'; position:absolute; left:0; color:var(--text-muted); }
+    .cascade-col-border { border-left:2px solid var(--border-faint); padding-left:20px; }
+
+    /* ── S6: ROOT CAUSE ── */
+    #f6 { display:flex; flex-direction:column; }
+    #f6 .rc-pad { padding:72px 120px 60px; height:100%; display:flex; flex-direction:column; }
+    .rc-layout { display:grid; grid-template-columns:1fr 1px 1fr; gap:64px; flex:1; align-items:start; margin-top:48px; }
+    .rc-divider { background:var(--border-faint); align-self:stretch; }
+    .rc-col-header { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:24px; display:flex; align-items:center; gap:10px; }
+    .rc-col-header.seller { color:var(--text-muted); }
+    .rc-col-header.buyer { color:var(--accent-light); }
+    .rc-fact { border-radius:12px; padding:16px 20px; margin-bottom:8px; display:flex; align-items:flex-start; gap:12px; }
+    .rc-fact.known { background:var(--surface); border:1px solid var(--border); }
+    .rc-fact.visible { background:var(--surface); border:1px solid var(--border); }
+    .rc-fact.hidden { background:rgba(248,113,113,0.05); border:1px solid rgba(248,113,113,0.18); }
+    .rc-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+    .rc-fact-text { font-size:16px; color:var(--text-secondary); font-weight:360; line-height:1.4; }
+    .rc-fact-text strong { color:var(--text-primary); font-weight:480; }
+    .rc-unknown { font-family:'Geist Mono',monospace; font-size:14px; color:var(--amber); font-weight:600; margin-top:4px; }
+    .rc-footer { font-size:17px; color:var(--text-muted); font-weight:360; padding-top:28px; border-top:1px solid var(--border-faint); line-height:1.6; }
+    .rc-footer strong { color:var(--text-secondary); font-weight:480; }
+
+    /* ── S7: WRONG QUESTION ── */
+    #f7 .q-table { flex:1; display:flex; flex-direction:column; justify-content:center; }
     .q-row { display:grid; grid-template-columns:240px 1fr; gap:72px; align-items:start; padding:52px 0; }
-    .q-row + .q-row { border-top:1px solid var(--border-faint); }
+    .q-row+.q-row { border-top:1px solid var(--border-faint); }
     .q-label { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; padding-top:8px; line-height:1.4; }
     .q-label.muted { color:var(--text-muted); }
     .q-label.accent { color:var(--accent-light); }
     .q-text { font-size:34px; font-weight:360; line-height:1.3; color:var(--text-muted); }
     .q-row.highlight .q-text { color:var(--text-primary); font-weight:480; font-size:36px; }
 
-    /* ── SLIDE 4: WHAT IT DOES ── */
-    #f4 .io-diagram { display:grid; grid-template-columns:1fr 88px 1fr; flex:1; align-items:center; margin-top:52px; }
+    /* ── S8: WHAT IT DOES ── */
+    #f8 .io-diagram { display:grid; grid-template-columns:1fr 88px 1fr; flex:1; align-items:center; margin-top:52px; }
     .io-col-label { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:18px; }
     .io-input-row { display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 22px; margin-bottom:8px; font-size:17px; color:var(--text-secondary); font-weight:360; }
     .io-input-row .val { font-family:'Geist Mono',monospace; font-variant-numeric:tabular-nums; font-weight:500; font-size:16px; color:var(--text-primary); }
@@ -107,8 +158,8 @@
     .io-out-val.mono { font-family:'Geist Mono',monospace; font-variant-numeric:tabular-nums; }
     .io-out-val.green { color:var(--green); }
 
-    /* ── SLIDE 5: HOW IT WORKS ── */
-    #f5 .agent-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; flex:1; align-items:stretch; margin-top:52px; }
+    /* ── S9: HOW IT WORKS ── */
+    #f9 .agent-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; flex:1; align-items:stretch; margin-top:52px; }
     .agent-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px 28px; display:flex; flex-direction:column; gap:14px; }
     .agent-num { font-family:'Geist Mono',monospace; font-size:13px; font-weight:500; color:var(--text-muted); letter-spacing:0.06em; }
     .agent-title { font-size:24px; font-weight:480; color:var(--text-primary); line-height:1.2; }
@@ -117,8 +168,8 @@
     .agent-badge.llm { background:rgba(82,102,235,0.18); color:var(--accent-light); border:1px solid rgba(82,102,235,0.3); }
     .agent-badge.det { background:var(--surface-raised); color:var(--text-muted); border:1px solid var(--border-faint); }
 
-    /* ── SLIDE 6: NVIDIA STACK ── */
-    #f6 .nvidia-layout { display:grid; grid-template-columns:1fr 1fr; gap:80px; flex:1; align-items:center; margin-top:20px; }
+    /* ── S10: NVIDIA STACK ── */
+    #f10 .nvidia-layout { display:grid; grid-template-columns:1fr 1fr; gap:80px; flex:1; align-items:center; margin-top:20px; }
     .bullet-list { display:flex; flex-direction:column; gap:36px; }
     .bullet-item { display:flex; align-items:flex-start; gap:18px; font-size:19px; font-weight:360; color:var(--text-secondary); line-height:1.55; }
     .bullet-dot { width:8px; height:8px; border-radius:50%; background:var(--green); margin-top:12px; flex-shrink:0; }
@@ -128,8 +179,8 @@
     .runtime-item-title { font-family:'Geist Mono',monospace; font-size:22px; font-weight:600; color:var(--text-primary); margin-bottom:5px; }
     .runtime-item-sub { font-size:14px; color:var(--text-muted); font-weight:360; }
 
-    /* ── SLIDE 7: DATA UNDERNEATH ── */
-    #f7 .data-stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:60px; margin-top:64px; margin-bottom:72px; }
+    /* ── S11: DATA UNDERNEATH ── */
+    #f11 .data-stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:60px; margin-top:64px; margin-bottom:72px; }
     .data-stat-num { font-family:'Geist Mono',monospace; font-size:108px; font-weight:600; letter-spacing:-0.03em; font-variant-numeric:tabular-nums; line-height:1; margin-bottom:14px; }
     .data-stat-num.white { color:var(--text-primary); }
     .data-stat-num.green { color:var(--green); }
@@ -140,8 +191,8 @@
     .signal-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .signal-desc { font-size:15px; color:var(--text-secondary); font-weight:360; line-height:1.6; }
 
-    /* ── SLIDE 8: LIVE DEMO ── */
-    #f8 .demo-layout { display:grid; grid-template-columns:1fr 1.15fr; gap:72px; flex:1; align-items:center; }
+    /* ── S12: LIVE DEMO ── */
+    #f12 .demo-layout { display:grid; grid-template-columns:1fr 1.15fr; gap:72px; flex:1; align-items:center; }
     .live-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(82,102,235,0.18); border:1px solid rgba(82,102,235,0.35); color:var(--accent-light); font-size:14px; font-weight:420; padding:8px 18px; border-radius:40px; margin-bottom:28px; }
     .live-badge::before { content:'•'; color:var(--accent); }
     .demo-label { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px; }
@@ -161,9 +212,9 @@
     .cost-cell-val.red { color:var(--red); }
     .cost-cell-val.white { color:var(--text-primary); }
 
-    /* ── SLIDE 9: WHY IT MATTERS ── */
-    #f9 .big-quote { font-size:58px; font-weight:480; color:var(--text-primary); line-height:1.15; letter-spacing:-0.02em; max-width:1480px; margin-bottom:auto; }
-    #f9 .timeline { display:grid; grid-template-columns:repeat(4,1fr); position:relative; padding-top:36px; }
+    /* ── S13: WHY IT MATTERS ── */
+    #f13 .big-quote { font-size:58px; font-weight:480; color:var(--text-primary); line-height:1.15; letter-spacing:-0.02em; max-width:1480px; margin-bottom:auto; }
+    #f13 .timeline { display:grid; grid-template-columns:repeat(4,1fr); position:relative; padding-top:36px; }
     .timeline-track { position:absolute; top:9px; left:9px; right:9px; height:1px; background:var(--border-faint); }
     .timeline-item { position:relative; padding-right:24px; }
     .tl-dot { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); background:var(--bg); position:absolute; top:0; left:0; transform:translateY(-50%); }
@@ -174,8 +225,8 @@
     .tl-title { font-size:22px; font-weight:480; color:var(--text-primary); margin-bottom:8px; }
     .tl-desc { font-size:15px; color:var(--text-secondary); font-weight:360; line-height:1.55; }
 
-    /* ── SLIDE 10: CLOSING ── */
-    #f10 { display:flex; flex-direction:column; }
+    /* ── S14: CLOSING ── */
+    #f14 { display:flex; flex-direction:column; }
     .closing-nav { padding:52px 88px 0; }
     .closing-body { flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 120px; }
     .closing-quote { font-size:68px; font-weight:480; line-height:1.18; letter-spacing:-0.025em; color:var(--text-primary); max-width:1360px; }
@@ -211,50 +262,76 @@
     <div class="thumb" data-n="3" onclick="goTo(3)">
       <div class="thumb-preview">
         <span class="thumb-num">3</span>
-        <div class="thumb-label">The Wrong Question</div>
+        <div class="thumb-label" style="color:#34D399;font-size:11px;font-weight:700;margin-bottom:1px;">13.3%</div>
+        <div class="thumb-label">Scale of GDP</div>
       </div>
     </div>
     <div class="thumb" data-n="4" onclick="goTo(4)">
       <div class="thumb-preview">
         <span class="thumb-num">4</span>
-        <div class="thumb-label">What Meridian Does</div>
+        <div class="thumb-label" style="color:#F87171;font-size:9px;font-weight:700;margin-bottom:1px;">+$800/mo</div>
+        <div class="thumb-label">Renewal Bomb</div>
       </div>
     </div>
     <div class="thumb" data-n="5" onclick="goTo(5)">
       <div class="thumb-preview">
         <span class="thumb-num">5</span>
-        <div class="thumb-label">4-Agent Pipeline</div>
+        <div class="thumb-label">The Cascade</div>
       </div>
     </div>
     <div class="thumb" data-n="6" onclick="goTo(6)">
       <div class="thumb-preview">
         <span class="thumb-num">6</span>
-        <div class="thumb-label">The NVIDIA Stack</div>
+        <div class="thumb-label">Root Cause</div>
       </div>
     </div>
     <div class="thumb" data-n="7" onclick="goTo(7)">
       <div class="thumb-preview">
         <span class="thumb-num">7</span>
-        <div class="thumb-label" style="color:#34D399;font-size:11px;font-weight:700;margin-bottom:1px;">43</div>
-        <div class="thumb-label">The Data</div>
+        <div class="thumb-label">The Wrong Question</div>
       </div>
     </div>
     <div class="thumb" data-n="8" onclick="goTo(8)">
       <div class="thumb-preview">
         <span class="thumb-num">8</span>
-        <div class="thumb-label" style="color:#34D399;font-size:8.5px;font-weight:600;margin-bottom:1px;">$55K–$75K</div>
-        <div class="thumb-label">Live Demo</div>
+        <div class="thumb-label">What Meridian Does</div>
       </div>
     </div>
     <div class="thumb" data-n="9" onclick="goTo(9)">
       <div class="thumb-preview">
         <span class="thumb-num">9</span>
-        <div class="thumb-label">V1 &rarr; V3 Roadmap</div>
+        <div class="thumb-label">4-Agent Pipeline</div>
       </div>
     </div>
     <div class="thumb" data-n="10" onclick="goTo(10)">
       <div class="thumb-preview">
         <span class="thumb-num">10</span>
+        <div class="thumb-label">NVIDIA Stack</div>
+      </div>
+    </div>
+    <div class="thumb" data-n="11" onclick="goTo(11)">
+      <div class="thumb-preview">
+        <span class="thumb-num">11</span>
+        <div class="thumb-label" style="color:#34D399;font-size:11px;font-weight:700;margin-bottom:1px;">43</div>
+        <div class="thumb-label">The Data</div>
+      </div>
+    </div>
+    <div class="thumb" data-n="12" onclick="goTo(12)">
+      <div class="thumb-preview">
+        <span class="thumb-num">12</span>
+        <div class="thumb-label" style="color:#34D399;font-size:8.5px;font-weight:600;margin-bottom:1px;">$55K&#8211;$75K</div>
+        <div class="thumb-label">Live Demo</div>
+      </div>
+    </div>
+    <div class="thumb" data-n="13" onclick="goTo(13)">
+      <div class="thumb-preview">
+        <span class="thumb-num">13</span>
+        <div class="thumb-label">V1 &#8594; V3 Roadmap</div>
+      </div>
+    </div>
+    <div class="thumb" data-n="14" onclick="goTo(14)">
+      <div class="thumb-preview">
+        <span class="thumb-num">14</span>
         <div class="thumb-label">The Ask</div>
       </div>
     </div>
@@ -263,7 +340,7 @@
   <div class="stage-wrap">
     <div class="stage" id="stage">
 
-      <!-- SLIDE 1: COVER -->
+      <!-- ═══ S1: COVER ═══ -->
       <section class="frame active" id="f1">
         <div class="cover-nav">
           <div class="logo"><div class="logo-mark"></div>MERIDIAN</div>
@@ -277,7 +354,7 @@
         <div class="cover-footer">Buyer&#8217;s advocate intelligence, run locally &nbsp;&middot;&nbsp; <span class="tnum">May 31, 2026</span></div>
       </section>
 
-      <!-- SLIDE 2: THE STAKES -->
+      <!-- ═══ S2: THE STAKES ═══ -->
       <section class="frame" id="f2">
         <div class="slide-pad">
           <div class="kicker">The Stakes</div>
@@ -295,8 +372,202 @@
         </div>
       </section>
 
-      <!-- SLIDE 3: THE WRONG QUESTION -->
+      <!-- ═══ S3: SCALE OF EXPOSURE (NEW) ═══ -->
       <section class="frame" id="f3">
+        <div class="slide-pad">
+          <div class="kicker">The Scale of Exposure</div>
+          <div class="slide-headline" style="margin-bottom:0;">Canada&#8217;s largest single sector. And it&#8217;s under stress.</div>
+          <div class="scale-stats">
+            <div class="scale-card">
+              <div class="scale-card-label">Real estate, rental &amp; leasing &#8212; Statistics Canada</div>
+              <div class="scale-num green">13.3%</div>
+              <div class="scale-desc">of Canada&#8217;s GDP. The single largest sector &#8212; bigger than manufacturing, oil &amp; gas, construction, and healthcare.</div>
+              <div class="scale-source">Source: Statistics Canada, NAICS 53 &middot; 2024</div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-label">Total residential mortgage debt</div>
+              <div class="scale-num amber">$2.4T</div>
+              <div class="scale-desc">Outstanding as of January 2026, up 4.8% year-over-year. Equivalent to 73% of Canada&#8217;s entire GDP.</div>
+              <div class="scale-source">Source: CMHC Residential Mortgage Industry Report &middot; 2026</div>
+            </div>
+            <div class="scale-card">
+              <div class="scale-card-label">Household debt-to-disposable income</div>
+              <div class="scale-num white">$1.73</div>
+              <div class="scale-desc">Owed for every $1.00 earned. Canadian households are the most indebted in the G7 &#8212; and the renewal wave hasn&#8217;t fully hit yet.</div>
+              <div class="scale-source">Source: Statistics Canada, Q1 2026</div>
+            </div>
+          </div>
+          <div class="slide-footer">When this sector is under stress, the whole economy feels it. The math is straightforward: a 1% rise in the delinquency rate applied to $2.4 trillion is $24 billion in stressed loans.</div>
+        </div>
+      </section>
+
+      <!-- ═══ S4: THE RENEWAL BOMB (NEW) ═══ -->
+      <section class="frame" id="f4">
+        <div class="slide-pad">
+          <div class="kicker">The Renewal Wave</div>
+          <div class="slide-headline" style="margin-bottom:0;">1.15 million mortgages are repricing right now.</div>
+          <div class="renewal-layout">
+            <div class="renewal-card then-card">
+              <div class="renewal-era then-era">Then &#8212; 2020&#8211;2021</div>
+              <div class="renewal-rate then-rate">1.3&#8211;1.9%</div>
+              <div class="renewal-sublabel">Rate when signed</div>
+              <div class="renewal-detail">Pandemic-era buyers locked in historically low rates. Monthly payment on a $550K mortgage: roughly $2,400. Stress test passed easily.</div>
+            </div>
+            <div class="renewal-card now-card">
+              <div class="renewal-era now-era">Now &#8212; 2026 renewal</div>
+              <div class="renewal-rate now-rate">4&#8211;5%+</div>
+              <div class="renewal-sublabel">Rate at renewal</div>
+              <div class="renewal-detail">Same mortgage, same house. But the payment is now $3,000&#8211;$3,200 per month &#8212; and for the most exposed borrowers, the shock is worse.</div>
+              <div class="renewal-shock">+$600&#8211;$800/mo</div>
+              <div class="renewal-shock-note">Additional monthly cost on a $550K mortgage</div>
+            </div>
+          </div>
+          <div class="renewal-bottom">
+            <div class="renewal-bottom-stat"><strong>35%</strong> of renewing households report increased financial pressure (CMHC Survey, 2026)</div>
+            <div class="renewal-bottom-stat"><strong>40%</strong> payment shock for 10% of highly leveraged borrowers</div>
+            <div class="renewal-bottom-stat"><strong>60%</strong> of all outstanding Canadian mortgages renew in 2025&#8211;2026</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ S5: THE CASCADE (NEW) ═══ -->
+      <section class="frame" id="f5">
+        <div class="slide-pad">
+          <div class="kicker">What a Single Default Triggers</div>
+          <div class="slide-headline" style="margin-bottom:0;">One bad purchase decision ripples outward.</div>
+          <div class="cascade-flow">
+
+            <div class="cascade-col">
+              <div class="cascade-level-tag">Nation</div>
+              <div class="cascade-big-num" style="color:var(--text-primary);">13.3%</div>
+              <div class="cascade-title">Systemic exposure</div>
+              <div class="cascade-pts">
+                <div class="cascade-pt">Largest single sector of GDP at systemic risk</div>
+                <div class="cascade-pt">Consumer spending, retail, and small business all contract when housing stress rises</div>
+                <div class="cascade-pt">Capital shifted from innovation to housing: machinery investment fell from 8.3% to 5.7% of GDP since 2000</div>
+              </div>
+            </div>
+
+            <div class="cascade-arrow-col">&#8594;</div>
+
+            <div class="cascade-col cascade-col-border">
+              <div class="cascade-level-tag">Economy</div>
+              <div class="cascade-big-num" style="color:var(--amber);">$24B</div>
+              <div class="cascade-title">Stressed loans per 1% rise</div>
+              <div class="cascade-pts">
+                <div class="cascade-pt">Alternative lenders already at 1.96% delinquency &#8212; the canary</div>
+                <div class="cascade-pt">Bank of Canada&#8217;s 3 warning signs for default are all currently elevated: unemployment, negative equity, payment shock</div>
+                <div class="cascade-pt">2008 US lesson: housing defaults cascaded into a global financial crisis</div>
+              </div>
+            </div>
+
+            <div class="cascade-arrow-col">&#8594;</div>
+
+            <div class="cascade-col cascade-col-border">
+              <div class="cascade-level-tag">Neighbourhood</div>
+              <div class="cascade-big-num" style="color:var(--amber);">&#8722;0.9%</div>
+              <div class="cascade-title">Home value per nearby foreclosure</div>
+              <div class="cascade-pts">
+                <div class="cascade-pt">Each foreclosure within &#8539; mile depresses neighbouring values by 0.9% (Cleveland Fed)</div>
+                <div class="cascade-pt">24% contagion &#8212; default risk rises in ZIP codes where neighbours default</div>
+                <div class="cascade-pt">Crime rises, school funding drops, community disinvestment spiral begins</div>
+              </div>
+            </div>
+
+            <div class="cascade-arrow-col">&#8594;</div>
+
+            <div class="cascade-col cascade-col-border">
+              <div class="cascade-level-tag">Family</div>
+              <div class="cascade-big-num" style="color:var(--red);">4&#215;</div>
+              <div class="cascade-title">Toronto arrears since 2022</div>
+              <div class="cascade-pts">
+                <div class="cascade-pt">Depression, anxiety, and physical health deterioration linked to foreclosure stress (Princeton research)</div>
+                <div class="cascade-pt">Children show poor academic performance and long-term developmental disruption</div>
+                <div class="cascade-pt">Suicide rates rise with foreclosure rates in affected communities</div>
+              </div>
+            </div>
+
+            <div class="cascade-arrow-col">&#8594;</div>
+
+            <div class="cascade-col cascade-col-border">
+              <div class="cascade-level-tag">Individual</div>
+              <div class="cascade-big-num" style="color:var(--red);">0</div>
+              <div class="cascade-title">Warning before signing</div>
+              <div class="cascade-pts">
+                <div class="cascade-pt">The buyer saw a list price and a monthly payment. Nothing else.</div>
+                <div class="cascade-pt">First-time buyers face a structural information disadvantage vs. repeat investors</div>
+                <div class="cascade-pt">The shock was baked in at the moment of signing &#8212; they had no tool to see it coming</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ S6: ROOT CAUSE (NEW) ═══ -->
+      <section class="frame" id="f6">
+        <div class="rc-pad">
+          <div class="kicker">Why This Keeps Happening</div>
+          <div class="slide-headline" style="margin-bottom:0;">The buyer is always the last to know.</div>
+          <div class="rc-layout">
+            <div>
+              <div class="rc-col-header seller">&#9679;&nbsp; What the seller knows</div>
+              <div class="rc-fact known">
+                <div class="rc-dot" style="background:var(--red);"></div>
+                <div class="rc-fact-text"><strong>Heritage designation</strong> &#8212; renovations are restricted; the value ceiling is lower than the ask implies</div>
+              </div>
+              <div class="rc-fact known">
+                <div class="rc-dot" style="background:var(--amber);"></div>
+                <div class="rc-fact-text"><strong>Active building permits within 500m</strong> &#8212; development pressure will change the neighbourhood character and density</div>
+              </div>
+              <div class="rc-fact known">
+                <div class="rc-dot" style="background:var(--red);"></div>
+                <div class="rc-fact-text"><strong>Flood-zone intersection</strong> &#8212; TRCA-designated area with insurance implications and resale restrictions</div>
+              </div>
+              <div class="rc-fact known">
+                <div class="rc-dot" style="background:var(--amber);"></div>
+                <div class="rc-fact-text"><strong>10-year property tax trajectory</strong> &#8212; MPAC reassessment cycle projects +$8,400/yr by year 10</div>
+              </div>
+              <div class="rc-fact known" style="background:rgba(52,211,153,0.06);border-color:rgba(52,211,153,0.2);">
+                <div class="rc-dot" style="background:var(--green);"></div>
+                <div class="rc-fact-text"><strong>True 10-year cost:</strong> <span style="font-family:'Geist Mono',monospace;color:var(--red);font-weight:600;">$1,847,230</span></div>
+              </div>
+            </div>
+
+            <div class="rc-divider"></div>
+
+            <div>
+              <div class="rc-col-header buyer">&#9675;&nbsp; What the buyer sees</div>
+              <div class="rc-fact visible">
+                <div class="rc-dot" style="background:var(--accent);"></div>
+                <div class="rc-fact-text"><strong>List price:</strong> <span style="font-family:'Geist Mono',monospace;font-weight:600;">$1,150,000</span></div>
+              </div>
+              <div class="rc-fact visible">
+                <div class="rc-dot" style="background:var(--accent);"></div>
+                <div class="rc-fact-text"><strong>Estimated monthly payment:</strong> <span style="font-family:'Geist Mono',monospace;font-weight:600;">~$4,800</span></div>
+              </div>
+              <div class="rc-fact visible">
+                <div class="rc-dot" style="background:var(--green);"></div>
+                <div class="rc-fact-text"><strong>Stress test:</strong> passed &#10003;</div>
+              </div>
+              <div class="rc-fact hidden">
+                <div class="rc-dot" style="background:var(--amber);"></div>
+                <div class="rc-fact-text">Heritage status, flood risk, permit history, tax trajectory&#8230;</div>
+                <div class="rc-unknown">Not disclosed. Not visible. Not priced in.</div>
+              </div>
+              <div class="rc-fact hidden" style="background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.3);">
+                <div class="rc-dot" style="background:var(--red);"></div>
+                <div class="rc-fact-text"><strong>True 10-year cost:</strong></div>
+                <div class="rc-unknown" style="color:var(--red);font-size:20px;">????</div>
+              </div>
+            </div>
+          </div>
+          <div class="rc-footer">This isn&#8217;t a rates problem. It isn&#8217;t a prices problem. <strong>It&#8217;s an information problem &#8212; and it&#8217;s structural.</strong> The buyer&#8217;s disadvantage doesn&#8217;t resolve with time or experience. It resolves with the right tools.</div>
+        </div>
+      </section>
+
+      <!-- ═══ S7: THE WRONG QUESTION ═══ -->
+      <section class="frame" id="f7">
         <div class="slide-pad">
           <div class="kicker">The Wrong Question</div>
           <div class="q-table">
@@ -313,8 +584,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 4: WHAT MERIDIAN DOES -->
-      <section class="frame" id="f4">
+      <!-- ═══ S8: WHAT MERIDIAN DOES ═══ -->
+      <section class="frame" id="f8">
         <div class="slide-pad">
           <div class="kicker">What Meridian Does</div>
           <div class="slide-headline">From an address to the true cost of ownership.</div>
@@ -348,8 +619,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 5: HOW IT WORKS -->
-      <section class="frame" id="f5">
+      <!-- ═══ S9: HOW IT WORKS ═══ -->
+      <section class="frame" id="f9">
         <div class="slide-pad">
           <div class="kicker">How It Works</div>
           <div class="slide-headline">A four-agent reasoning pipeline.</div>
@@ -383,8 +654,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 6: THE NVIDIA STACK -->
-      <section class="frame" id="f6">
+      <!-- ═══ S10: THE NVIDIA STACK ═══ -->
+      <section class="frame" id="f10">
         <div class="slide-pad">
           <div class="kicker">The NVIDIA Stack</div>
           <div class="slide-headline" style="margin-bottom:56px;">It runs entirely on the DGX Spark.</div>
@@ -404,8 +675,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 7: THE DATA UNDERNEATH -->
-      <section class="frame" id="f7">
+      <!-- ═══ S11: THE DATA UNDERNEATH ═══ -->
+      <section class="frame" id="f11">
         <div class="slide-pad">
           <div class="kicker">The Data Underneath</div>
           <div class="data-stats-row">
@@ -430,8 +701,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 8: LIVE DEMO -->
-      <section class="frame" id="f8">
+      <!-- ═══ S12: LIVE DEMO ═══ -->
+      <section class="frame" id="f12">
         <div class="slide-pad">
           <div class="demo-layout">
             <div style="display:flex;flex-direction:column;justify-content:center;">
@@ -460,8 +731,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 9: WHY IT MATTERS -->
-      <section class="frame" id="f9">
+      <!-- ═══ S13: WHY IT MATTERS ═══ -->
+      <section class="frame" id="f13">
         <div class="slide-pad">
           <div class="kicker">Why It Matters &amp; Where It Goes</div>
           <div class="big-quote">We break the default cascade at the one place it can still be stopped &#8212; before the offer.</div>
@@ -496,8 +767,8 @@
         </div>
       </section>
 
-      <!-- SLIDE 10: CLOSING -->
-      <section class="frame" id="f10">
+      <!-- ═══ S14: CLOSING ═══ -->
+      <section class="frame" id="f14">
         <div class="closing-nav"><div class="logo"><div class="logo-mark"></div>MERIDIAN</div></div>
         <div class="closing-body">
           <div class="closing-quote">
@@ -521,13 +792,13 @@
 
   <div class="controls">
     <button class="ctrl-btn" onclick="navigate(-1)">&#8592;</button>
-    <span class="counter" id="counter">1 / 10</span>
+    <span class="counter" id="counter">1 / 14</span>
     <button class="ctrl-btn" onclick="navigate(1)">&#8594;</button>
   </div>
 
 </div>
 <script>
-  let cur = 1, total = 10;
+  let cur = 1, total = 14;
   function goTo(n) {
     document.querySelectorAll('.frame').forEach(f => f.classList.remove('active'));
     document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
@@ -543,7 +814,6 @@
     if (['ArrowLeft','ArrowUp'].includes(e.key)) { e.preventDefault(); navigate(-1); }
     if (e.key === 'Home') goTo(1);
     if (e.key === 'End') goTo(total);
-    const n = parseInt(e.key); if (n >= 1 && n <= total) goTo(n);
   });
   function scale() {
     const wrap = document.querySelector('.stage-wrap');
