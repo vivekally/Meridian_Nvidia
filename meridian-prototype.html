@@ -116,6 +116,108 @@
 .light-mode .btn-ghost { color: #1A1F2E; background: rgba(130,110,80,0.08); }
 .light-mode .nav-wordmark { color: #1A1F2E; }
 
+/* ---- Chat panel light mode ---- */
+.light-mode .chat-panel {
+  background: rgba(255,255,255,0.96);
+  border-color: rgba(130,110,80,0.20);
+  box-shadow: 0 16px 64px rgba(0,0,0,0.12);
+}
+.light-mode .chat-header { background: rgba(245,242,235,0.90); }
+.light-mode .chat-header-name { color: #1A1F2E; }
+.light-mode .chat-header-status { color: #0F8A5F; }
+.light-mode .chat-avatar { background: rgba(82,102,235,0.10); border-color: rgba(82,102,235,0.20); }
+.light-mode .chat-avatar svg { color: #4A56C8; }
+.light-mode .chat-close { color: #6B6F7A; }
+.light-mode .chat-close:hover { color: #1A1F2E; }
+.light-mode .chat-msg.ai .chat-bubble {
+  background: rgba(245,242,235,0.95);
+  border-color: rgba(130,110,80,0.15);
+  color: #3A3F52;
+}
+.light-mode .chat-bubble strong { color: #1A1F2E; }
+.light-mode .chat-bubble .mono-inline { color: #0F8A5F; }
+.light-mode .chat-msg-time { color: #8A8E9A; }
+.light-mode .chat-suggestion {
+  background: rgba(82,102,235,0.08);
+  border-color: rgba(82,102,235,0.25);
+  color: #3A4ABF;
+}
+.light-mode .chat-suggestion:hover {
+  background: rgba(82,102,235,0.15);
+  border-color: rgba(82,102,235,0.40);
+  color: #2A3AAF;
+}
+.light-mode .chat-input-row { background: rgba(255,255,255,0.96); border-color: rgba(130,110,80,0.12); }
+.light-mode .chat-input {
+  background: rgba(255,255,255,0.90);
+  border-color: rgba(130,110,80,0.20);
+  color: #1A1F2E;
+}
+.light-mode .chat-input::placeholder { color: #8A8E9A; }
+.light-mode .chat-input:focus { border-color: var(--accent); }
+.light-mode .chat-typing { background: rgba(245,242,235,0.90); border-color: rgba(130,110,80,0.12); }
+.light-mode .chat-fab { box-shadow: 0 4px 24px rgba(82,102,235,0.30); }
+
+/* ---- Verdict card stats light mode ---- */
+.light-mode .stat-label { color: #6B6F7A; }
+.light-mode .stat-value { color: #1A1F2E; }
+.light-mode .stat-value.danger { color: #C53030; }
+.light-mode .verdict-preamble { color: #3A3F52; }
+.light-mode .verdict-sub { color: #4A4F5A; }
+.light-mode .verdict-address { color: #6B6F7A; }
+.light-mode .verdict-number { color: #0F8A5F; }
+.light-mode .risk-pill { border-color: rgba(251,191,36,0.30) !important; }
+
+/* ---- Flag cards light mode ---- */
+.light-mode .flag-title { color: #1A1F2E; }
+.light-mode .flag-description { color: #3A3F52; }
+.light-mode .flag-chevron { color: #8A8E9A; }
+.light-mode .script-eyebrow { color: #4A56C8; }
+.light-mode .script-text { color: #1A1F2E; }
+.light-mode .script-amount { color: #0F8A5F; }
+
+/* ---- Cost table light mode ---- */
+.light-mode thead tr { background: rgba(245,242,235,0.80); }
+.light-mode thead th { color: #6B6F7A; }
+.light-mode tbody td { color: #3A3F52; }
+.light-mode td.cat { color: #1A1F2E; }
+.light-mode tbody tr:hover { background: rgba(245,242,235,0.50); }
+.light-mode tr.total { background: rgba(245,242,235,0.80); }
+.light-mode tr.total td.cat { color: #1A1F2E; }
+.light-mode tr.total td:not(:first-child) { color: #C53030; }
+
+/* ---- Chart light mode ---- */
+.light-mode .chart-title { color: #6B6F7A; }
+.light-mode .chart-bar-label { color: #3A3F52; }
+.light-mode .chart-bar-value { color: #4A4F5A; }
+
+/* ---- Trace light mode ---- */
+.light-mode .trace-header:hover { background: rgba(245,242,235,0.50); }
+.light-mode .trace-label { color: #3A3F52; }
+.light-mode .trace-toggle-btn { color: #6B6F7A; }
+.light-mode .trace-toggle-btn:hover { color: #3A3F52; }
+.light-mode .trace-agent-text { color: #4A4F5A; }
+
+/* ---- Map light mode ---- */
+.light-mode .map-title { color: #1A1F2E; }
+.light-mode .map-subtitle { color: #6B6F7A; }
+
+/* ---- Section labels light mode ---- */
+.light-mode .section-label-text { color: #6B6F7A; }
+.light-mode .section-label-line { background: rgba(130,110,80,0.15); }
+
+/* ---- Analysis screen light mode ---- */
+.light-mode .analysis-address { color: #6B6F7A; }
+.light-mode .analysis-title { color: #1A1F2E; }
+.light-mode .agent-step-name { color: #1A1F2E; }
+.light-mode .agent-step-status { color: #6B6F7A; }
+.light-mode .agent-step.active .agent-step-status { color: #3A3F52; }
+.light-mode .agent-step-num { border-color: rgba(130,110,80,0.22); color: #6B6F7A; }
+.light-mode .agent-step.done .agent-step-num { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.30); color: #0F8A5F; }
+.light-mode .agent-step-time { color: #8A8E9A; }
+.light-mode .analysis-footer { color: #6B6F7A; }
+.light-mode .analysis-footer span { color: #3A3F52; }
+
 html { font-size: 16px; }
 body {
   background: var(--bg);
