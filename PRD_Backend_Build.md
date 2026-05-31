@@ -884,4 +884,100 @@ Conflict risk: A and B both import `models.py` only (read-only) — no overlap.
   fallback). A "no permits found" is "none found in available data", not "none".
 - Composite signals are inferences over public data, never condo-corporation
   facts. Always Low confidence, always disclaimed.
-```
+
+---
+
+## 22. User Inputs
+
+| Input | Type | Default | Validation | Used by |
+|-------|------|---------|------------|---------|
+| `address` | string | — | Must be a Toronto address | Agent 1 (geocoding), all spatial lookups |
+| `list_price` | int | — | 100,000 – 10,000,000 | LTT, CMHC, mortgage, assessed value proxy |
+| `buyer_profile` | enum | `"first-time"` | `first-time` / `investor` / `downsizer` | Tax rate, rebates, FHSA/HBP flags |
+| `down_payment_pct` | float | 20 | 5 – 100 | CMHC logic, mortgage principal |
+| `rate` | float | 4.79 | 0.5 – 15.0 | Mortgage scenario base rate |
+| `amortization` | int | 25 | 15 – 30 | Payment calc, CMHC surcharge if >25 |
+
+---
+
+## 23. Streamlit Frontend (V1)
+
+Separate workstream — consumes `run_pipeline()` and the `Report` schema (§5). Backend has no Streamlit dependencies.
+
+### Screens
+
+| Screen | Components |
+|--------|-----------|
+| **Landing** | Address autocomplete (Address Points CKAN), list price `st.number_input(min=100000, step=50000)`, buyer profile dropdown, down payment / rate / amortization fields, "Analyze" CTA; submit lock via `st.session_state['analyzing']` |
+| **Analysis** | Real-time reasoning trace via `st.status()` — one expanding section per agent stage, showing `TraceEvent` messages as they yield |
+| **Verdict** | Verdict card (true 10-yr cost, leverage range, GREEN/YELLOW/RED, key stats), flag cards (expandable, with negotiation scripts + confidence badge), cost breakdown table, reasoning trace (collapsible), chat panel for RAG-grounded follow-up questions |
+
+### Per-source confidence badges
+
+Each source in the reasoning trace displays a colored badge driven by `SourceResult.confidence`:
+
+| Badge | Color | Condition |
+|-------|-------|-----------|
+| HIGH | Green `#34D399` | HTTP 200 + recency field present |
+| MEDIUM | Amber `#FBBF24` | HTTP 200, no recency metadata |
+| LOW | Amber `#FBBF24` | HTTP 200, empty result set |
+| UNKNOWN | Red `#F87171` | Timeout, 4xx, or 5xx |
+
+### Edge cases
+
+- **Zero-flag property (GREEN verdict):** Show explicit text "No concerns identified in available city data." — do not show an empty card.
+- **Submit lock:** Set `st.session_state['analyzing'] = True` on submit; disable the button until the generator completes or errors out.
+
+Full design tokens and aesthetic spec: [`DESIGN.md`](./DESIGN.md). Working 3-screen prototype: [`meridian-prototype.html`](./meridian-prototype.html).
+
+---
+
+## 24. Cut List (if time runs short)
+
+In priority order — cut top-to-bottom, never skip ahead:
+
+1. RentSafeTO live query (least dramatic flag for the demo)
+2. Live API calls for non-demo properties (fall back to DEMO_MODE only)
+3. Merge Agent 3 logic into Agent 4 prompt (last resort — loses auditability)
+4. Confidence badges in the UI (defer to post-hack)
+5. **NEVER cut:** Reasoning trace UI — it is the agentic differentiator
+
+---
+
+## 25. Validation Checklist (pre-demo gate)
+
+- [ ] LTT calculation matches ratehub.ca/land-transfer-tax-ontario for the 3 oracle rows in §9.1
+- [ ] Property tax estimate within 15% of actual for a known property
+- [ ] Flood zone detection matches TRCA interactive map for 3 addresses
+- [ ] Heritage lookup matches City of Toronto heritage property search
+- [ ] Each of the 3 demo properties produces a meaningfully different report (RED / GREEN / YELLOW)
+- [ ] Zero-flag property outputs "No concerns identified in available city data."
+- [ ] First-time buyer profile triggers all 5 buyer flags (LTT rebate, FHSA, RRSP HBP, assumable mortgage, tax relief)
+- [ ] Investor profile uses `RATE_MULTI_RES = 0.01208792`
+- [ ] Zero banned phrases in any output string (`wording.validate()` passes)
+- [ ] `pytest -q` green (all deterministic tests)
+
+---
+
+## 26. Success Criteria
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Pipeline end-to-end latency | < 35 seconds |
+| Agent reasoning visible in UI | Yes — real-time `st.status()` updates per stage |
+| 3 demo properties with different risk profiles | Meaningfully different reports (RED / GREEN / YELLOW) |
+| LLM output references specific data points | Dollar amounts from `cost_breakdown`, not generic warnings |
+| Demo + pitch | Under 4 minutes total |
+| Live query capability | At least 1 non-cached Toronto address completes successfully |
+| Wording rules compliance | Zero banned phrases in output |
+
+---
+
+## 27. References
+
+| Document | Purpose |
+|----------|---------|
+| [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md) | 43-parameter inventory with CKAN slugs, confidence rules, spec alignment |
+| [`DESIGN.md`](./DESIGN.md) | Mercury dark-theme design system — typography, color, spacing |
+| [`meridian-prototype.html`](./meridian-prototype.html) | Working 3-screen prototype with chat panel |
+| [`TODOS.md`](./TODOS.md) | V1.5 / V2 backlog — data expansion, GPU acceleration, model upgrade |

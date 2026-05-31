@@ -12,12 +12,11 @@ Built for **NVIDIA Spark Hack Toronto** (May 31, 2026). Runs locally on the ASUS
 
 | File | Description |
 |------|-------------|
-| [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md) | Complete inventory of 43 hidden cost parameters across 5 tiers, mapped to 29 CKAN datasets with confidence scores and spec alignment |
-| [`CEO_Plan_V1_Hackathon.md`](./CEO_Plan_V1_Hackathon.md) | CEO-reviewed build plan — scope decisions, build schedule, phase gates, pitch strategy |
-| [`Meridian_V3_Default_Prevention_-_Final_Idea_Doc.md`](./Meridian_V3_Default_Prevention_-_Final_Idea_Doc.md) | Full product thesis — V1/V2/V3 roadmap, judging criteria analysis, default cascade framing |
-| [`Office_Hours_Gap_Analysis_and_Build_Strategy.md`](./Office_Hours_Gap_Analysis_and_Build_Strategy.md) | Gap analysis — architecture changes, prompt skeletons, inter-agent data contracts, build schedule |
-| [`DESIGN.md`](./DESIGN.md) | Design system — Mercury-inspired dark theme, typography, color palette, spacing |
-| [`TODOS.md`](./TODOS.md) | Deferred items — RAPIDS cuDF, model upgrade, data expansion |
+| [`PRD_Backend_Build.md`](./PRD_Backend_Build.md) | **Single source of truth** — locked architecture, data contracts, agent specs, 24-hour build sequence |
+| [`DATA_PARAMETERS.md`](./DATA_PARAMETERS.md) | 43-parameter inventory across 5 tiers, mapped to 29 CKAN datasets with confidence scores |
+| [`DESIGN.md`](./DESIGN.md) | Mercury dark-theme design system — typography, color palette, spacing |
+| [`TODOS.md`](./TODOS.md) | V1 UI details (P0), V1.5 data expansion, V2 backlog |
+| [`meridian-prototype.html`](./meridian-prototype.html) | Working 3-screen prototype with chat panel |
 
 ---
 
@@ -56,20 +55,24 @@ LAYER 3 — SIMULATED (projection scenarios, not forecasts)
 ```
 User Input (address, list price, buyer profile)
     │
-Agent 1 — Intake (deterministic)
-  → Resolves address → parcel, ward, zoning code
+Agent 1 — Intake + Planning
+  → deterministic: geocode via Address Points CKAN → lat/lon
+  → LLM call #1: classify property type, emit QueryPlan (query/skip per source)
+    │ QueryPlan
+Agent 2 — Data Retrieval (deterministic, async, NO LLM)
+  → Parallel httpx fanout to sources marked query=true. 5s timeout each.
+  → Heritage/HCD/Flood: local GeoJSON + shapely point-in-polygon
+  → Permits/Dev Apps/RentSafeTO: CKAN bbox-SQL + haversine
     │
-Agent 2 — Data Retrieval (deterministic, parallel async)
-  → Heritage (CKAN) | RentSafeTO (CKAN) | Dev Apps (CKAN)
-  → Permits (CKAN) | LTT (hardcoded)  | TRCA Flood (ArcGIS)
+Agent 3 — Analysis + Cost (deterministic, NO LLM)
+  → LTT, property tax, mortgage scenarios, 10 signals, 2 composite signals
+  → ALL dollar math lives here. LLM never computes money.
     │
-Agent 3 — Cost Computation (deterministic)
-  → LTT, property tax, mortgage scenarios, risk-weighted signals
+Agent 4 — Synthesis (LLM call #2 — Llama 3.1 8B via NIM, or Claude toggle)
+  → Plain-English report + negotiation leverage per elevated flag
+  → Conditional RAG from local offline Chroma index
     │
-Agent 4 — Synthesis (LLM — local on GB10)
-  → Plain-English report with confidence scores and negotiation leverage
-    │
-Output: True 10-year cost, hidden flags, confidence per source
+Output: True 10-year cost, hidden flags, confidence per source, negotiation scripts
 ```
 
 ---
@@ -95,9 +98,11 @@ Full parameter inventory with confidence scores: [`DATA_PARAMETERS.md`](./DATA_P
 | Component | Technology |
 |-----------|-----------|
 | Runtime | Python 3.11 on ASUS GX10 (DGX Spark) |
-| LLM (Agent 4) | Mistral Medium 3.5 or Qwen 3 7B via NVIDIA NIM |
-| Spatial queries | GeoPandas + Shapely |
+| LLM default | `meta/llama-3.1-8b-instruct` via NVIDIA NIM (OpenAI-compatible) |
+| LLM quality toggle | Claude (`MERIDIAN_LLM_PROVIDER=quality`) |
+| Spatial queries | shapely (point-in-polygon) — no GeoPandas/GDAL dependency |
 | Data fetch | httpx (async) |
+| Vector store | Chroma (local, offline) + NV-Embed / bge-small embeddings |
 | Frontend | Streamlit |
 | Data sources | 29 Toronto Open Data (CKAN) + TRCA ArcGIS |
 
